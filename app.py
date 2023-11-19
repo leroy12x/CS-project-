@@ -1,13 +1,18 @@
 print ('Hello Wolrd ')
 import streamlit as st
+from streamlit_dpustovit import st_date_input
+
 # Title of the app
-st.title('My Streamlit App')
+st.title('Task Manager')
 
-# Adding text to the app
-st.write('Welcome to my first Streamlit app!')
+# Date selection
+selected_date = st_date_input('Select a date')
 
-# Adding a slider widget
-slider_value = st.slider('Select a value', 0, 100, 50)
+# Task input
+task = st.text_input('Enter task description')
 
-# Displaying the value selected on the slider
-st.write('You selected:', slider_value)
+# Button to add task
+if st.button('Add Task'):
+    # Store tasks for different dates
+    if 'tasks' not in st.session_state:
+        st.session_state.tasks = {}
