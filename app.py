@@ -31,7 +31,7 @@ col_width = st.columns(7)
 for i, day in enumerate(days_of_week):
     col_width[i].write(day)
 
-days_list = []  # A 6x7 matrix to hold the days of the month
+days_list = [[] for _ in range(6)]  # A 6x7 matrix to hold the days of the month
 counter = 0
 
 # Fill in the matrix with the days of the month
@@ -44,5 +44,7 @@ for day in range(1, num_days + 1):
 
 # Display the days of the month in the layout
 for week in days_list:
+    row = ""
     for day in week:
-        st.write(day)
+        row += f"{day} | "
+    st.write(row)
