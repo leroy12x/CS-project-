@@ -1,12 +1,12 @@
 print ('Hello Wolrd ')
 import streamlit as st
-from streamlit_dpustovit import st_date_input
+import datetime
 
 # Title of the app
 st.title('Task Manager')
 
 # Date selection
-selected_date = st_date_input('Select a date')
+selected_date = st.date_input('Select a date', datetime.date.today())
 
 # Task input
 task = st.text_input('Enter task description')
