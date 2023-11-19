@@ -46,5 +46,5 @@ for day in range(1, num_days + 1):
 for week in days_list:
     row = ""
     for day in week:
-        row += f"{day} | "
+        row += f"{day:2s} | "  # Use f-string formatting to ensure consistent spacing
     st.write(row)
