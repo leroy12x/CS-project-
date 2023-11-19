@@ -20,31 +20,23 @@ last_day_of_month = first_day_of_month.replace(
 # Create a header with the name of the month and year
 st.header(first_day_of_month.strftime('%B %Y'))
 
-# Calculate the number of days in the current month
-num_days = (last_day_of_month - first_day_of_month).days + 1
-
-# Create a list to hold the days of the week
-days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-
 # Create a layout to display the days of the current month
+days_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
 col_width = st.columns(7)
 for i, day in enumerate(days_of_week):
     col_width[i].write(day)
 
-days_list = [[] for _ in range(6)]  # A 6x7 matrix to hold the days of the month
-counter = 0
+# Create a list to hold the days of the month
+days_list = []
 
 # Fill in the matrix with the days of the month
-for day in range(1, num_days + 1):
+for day in range(1, last_day_of_month.day + 1):
     date = first_day_of_month + datetime.timedelta(days=day - 1)
     week_day = date.weekday()  # Get the day of the week (0 - Monday, 6 - Sunday)
-    days_list[counter].append(date.strftime('%d'))
-    if week_day == 6:  # If it's Sunday, move to the next row
-        counter += 1
+    days_list.append((date, week_day))
 
 # Display the days of the month in the layout
-for week in days_list:
-    row = ""
-    for day in week:
-        row += f"{day:12s} | "  # Use f-string formatting to ensure consistent spacing
-    st.write(row)
+for date, week_day in days_list:
+    cell = st.columns(7)[week_day]
+    cell.write(f"{date.day}")
