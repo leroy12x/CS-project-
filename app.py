@@ -8,16 +8,27 @@ def display_monthly_calendar(year, month):
 
     st.title(f"Kalender für {month_name} {year}")
 
-    col_width = 50
+    # Erstelle eine leere Tabelle für den Kalender
+    table = "<table style='width:100%; border-collapse: collapse;'>"
 
     # Tabellenkopf mit den Wochentagen
-    st.write("|".join(["Mo".center(col_width), "Di".center(col_width), "Mi".center(col_width), "Do".center(col_width), "Fr".center(col_width), "Sa".center(col_width), "So".center(col_width)]))
-    st.write("-" * (col_width * 7))
+    table += "<tr>"
+    for day in ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]:
+        table += f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>"
+    table += "</tr>"
 
     # Darstellung des Kalenders
     for week in cal:
-        week_str = "|".join([str(day).center(col_width) if day != 0 else " ".center(col_width) for day in week])
-        st.write(week_str)
+        table += "<tr>"
+        for day in week:
+            if day != 0:
+                table += f"<td style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</td>"
+            else:
+                table += "<td style='border: 1px solid black; padding: 8px;'></td>"
+        table += "</tr>"
+
+    table += "</table>"
+    st.write(table, unsafe_allow_html=True)
 
 # Streamlit App
 st.title("Monatskalender")
