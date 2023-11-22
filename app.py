@@ -48,7 +48,7 @@ month_index = month_names.index(selected_month) + 1
 
 display_monthly_calendar(year, month_index)
 def display_settings():
-    st.title("Einstellungen")
+    st.title("Task manager")
     # Hier füge den Code für die Einstellungsseite ein
 
 # Navigation zwischen den Seiten
