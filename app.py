@@ -36,3 +36,22 @@ year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=20
 month = st.slider("Monat auswählen", 1, 12, 1)
 
 display_monthly_calendar(year, month)
+def display_settings():
+    st.title("Einstellungen")
+    # Hier füge den Code für die Einstellungsseite ein
+
+# Navigation zwischen den Seiten
+def main():
+    st.sidebar.title("Navigation")
+    app_mode = st.sidebar.selectbox(
+        "Wähle eine Seite",
+        ["Kalender anzeigen", "Einstellungen"]
+    )
+
+    if app_mode == "Kalender anzeigen":
+        display_calendar()
+    elif app_mode == "Einstellungen":
+        display_settings()
+
+if __name__ == "__main__":
+    main()
