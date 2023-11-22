@@ -33,9 +33,20 @@ def display_monthly_calendar(year, month):
 # Streamlit App
 st.title("Monatskalender")
 year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023)
-month = st.slider("Monat auswählen", 1, 12, 1)
 
-display_monthly_calendar(year, month)
+# Liste der Monate
+month_names = [
+    "Januar", "Februar", "März", "April",
+    "Mai", "Juni", "Juli", "August",
+    "September", "Oktober", "November", "Dezember"
+]
+
+selected_month = st.selectbox("Monat auswählen", month_names)
+
+# Index des ausgewählten Monats im Array der Monatsnamen
+month_index = month_names.index(selected_month) + 1
+
+display_monthly_calendar(year, month_index)
 def display_settings():
     st.title("Einstellungen")
     # Hier füge den Code für die Einstellungsseite ein
