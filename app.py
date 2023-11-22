@@ -11,12 +11,12 @@ def display_monthly_calendar(year, month):
     col_width = 50
 
     # Tabellenkopf mit den Wochentagen
-    st.write("|".join(["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]))
+    st.write("|".join(["Mo".center(col_width), "Di".center(col_width), "Mi".center(col_width), "Do".center(col_width), "Fr".center(col_width), "Sa".center(col_width), "So".center(col_width)]))
     st.write("-" * (col_width * 7))
 
     # Darstellung des Kalenders
     for week in cal:
-        week_str = "|".join([str(day) if day != 0 else "" for day in week])
+        week_str = "|".join([str(day).center(col_width) if day != 0 else " ".center(col_width) for day in week])
         st.write(week_str)
 
 # Streamlit App
