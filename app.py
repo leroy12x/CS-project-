@@ -43,7 +43,7 @@ def display_task_overview():
         st.subheader(f"Aufgaben für {date[0]}-{date[1]}-{date[2]}")
         for idx, task in enumerate(day_tasks):
             st.write(f"{idx + 1}. {task['time']}, {task['duration']}: {task['description']}")
-            if st.checkbox(f"Löschen##{date[0]}-{date[1]}-{date[2]}##{idx}"):
+            if st.checkbox(f"Löschen {date[0]}-{date[1]}-{date[2]} {idx}"):
                 tasks_to_delete.append((date, idx))
 
     if tasks_to_delete:
