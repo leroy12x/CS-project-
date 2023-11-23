@@ -25,7 +25,10 @@ def display_monthly_calendar(year, month, tasks):
             if day != 0:
                 tasks_for_day = tasks.get((year, month, day), [])
                 task_info = "<br>".join([f"{task['time']} - {task['end_time']}: {task['description']}" for task in tasks_for_day])
-                table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>{day}<br>{task_info}</td>"
+                table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>"
+                table += f"<a href='#' id='{year}-{month}-{day}' style='text-decoration: none; color: black;'>{day}</a>"
+                table += f"<div style='display: none; position: absolute; background-color: white; border: 1px solid black; padding: 8px;' id='details-{year}-{month}-{day}'>{task_info}</div>"
+                table += "</td>"
             else:
                 table += "<td style='border: 1px solid black; padding: 8px;'></td>"
         table += "</tr>"
