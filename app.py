@@ -2,6 +2,7 @@
 import streamlit as st
 import calendar
 
+# Funktion zur Anzeige des Kalenders für den ausgewählten Monat
 def display_monthly_calendar(year, month):
     cal = calendar.monthcalendar(year, month)
     month_name = calendar.month_name[month]
@@ -30,27 +31,11 @@ def display_monthly_calendar(year, month):
     table += "</table>"
     st.write(table, unsafe_allow_html=True)
 
-# Streamlit App
-st.title("Monatskalender")
-year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023)
-
-# Liste der Monate
-month_names = [
-    "Januar", "Februar", "März", "April",
-    "Mai", "Juni", "Juli", "August",
-    "September", "Oktober", "November", "Dezember"
-]
-
-selected_month = st.selectbox("Monat auswählen", month_names)
-
-# Index des ausgewählten Monats im Array der Monatsnamen
-month_index = month_names.index(selected_month) + 1
-
-display_monthly_calendar(year, month_index)
+# Funktion zur Anzeige des Taskmanagers
 def display_task_manager():
     st.title("Taskmanager")
-    task_date = st.date_input("Datum auswählen")
-    task_description = st.text_input("Aufgabenbeschreibung eingeben")
+    task_date = st.date_input("Datum auswählen", key="task_date")
+    task_description = st.text_input("Aufgabenbeschreibung eingeben", key="task_description")
 
     if st.button("Aufgabe hinzufügen"):
         # Hier könntest du den Code einfügen, um die Aufgabe zu speichern oder zu verarbeiten
@@ -65,13 +50,13 @@ def main():
     )
 
     if app_mode == "Kalender anzeigen":
-        year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023)
+        year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023, key="calendar_year")
         month_names = [
             "Januar", "Februar", "März", "April",
             "Mai", "Juni", "Juli", "August",
             "September", "Oktober", "November", "Dezember"
         ]
-        selected_month = st.selectbox("Monat auswählen", month_names)
+        selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
         month_index = month_names.index(selected_month) + 1
         display_monthly_calendar(year, month_index)
     elif app_mode == "Taskmanager":
