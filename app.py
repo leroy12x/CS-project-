@@ -47,22 +47,35 @@ selected_month = st.selectbox("Monat auswählen", month_names)
 month_index = month_names.index(selected_month) + 1
 
 display_monthly_calendar(year, month_index)
-def display_settings():
-    st.title("Einstellungen")
-    # Hier füge den Code für die Einstellungsseite ein
+def display_task_manager():
+    st.title("Taskmanager")
+    task_date = st.date_input("Datum auswählen")
+    task_description = st.text_input("Aufgabenbeschreibung eingeben")
+
+    if st.button("Aufgabe hinzufügen"):
+        # Hier könntest du den Code einfügen, um die Aufgabe zu speichern oder zu verarbeiten
+        st.success(f"Aufgabe für {task_date}: '{task_description}' hinzugefügt!")
 
 # Navigation zwischen den Seiten
 def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox(
         "Wähle eine Seite",
-        ["Kalender anzeigen", "Einstellungen"]
+        ["Kalender anzeigen", "Taskmanager"]
     )
 
     if app_mode == "Kalender anzeigen":
-        display_calendar()
-    elif app_mode == "Einstellungen":
-        display_settings()
+        year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023)
+        month_names = [
+            "Januar", "Februar", "März", "April",
+            "Mai", "Juni", "Juli", "August",
+            "September", "Oktober", "November", "Dezember"
+        ]
+        selected_month = st.selectbox("Monat auswählen", month_names)
+        month_index = month_names.index(selected_month) + 1
+        display_monthly_calendar(year, month_index)
+    elif app_mode == "Taskmanager":
+        display_task_manager()
 
 if __name__ == "__main__":
     main()
