@@ -84,6 +84,7 @@ def display_task_manager():
 
         st.experimental_rerun()
 
+
 # Navigation zwischen den Seiten
 def main():
     st.sidebar.title("Navigation")
