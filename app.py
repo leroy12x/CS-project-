@@ -46,7 +46,7 @@ selected_month = st.selectbox("Monat auswählen", month_names)
 # Index des ausgewählten Monats im Array der Monatsnamen
 month_index = month_names.index(selected_month) + 1
 
-display_monthly_calendar(year, month_index)
+#display_monthly_calendar(year, month_index)
 def display_settings():
     st.title("Einstellungen")
     # Hier füge den Code für die Einstellungsseite ein
