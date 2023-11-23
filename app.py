@@ -23,7 +23,7 @@ def display_monthly_calendar(year, month, tasks):
         for day in week:
             if day != 0:
                 tasks_for_day = tasks.get((year, month, day), [])
-                task_info = "<br>".join([f"{task['time']}, {task['duration']}" for task in tasks_for_day])
+                task_info = "<br>".join([f"{task['time']}, {task['duration']}: {task['description']}" for task in tasks_for_day])
                 table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top;'>{day}<br>{task_info}</td>"
             else:
                 table += "<td style='border: 1px solid black; padding: 8px;'></td>"
@@ -31,6 +31,26 @@ def display_monthly_calendar(year, month, tasks):
 
     table += "</table>"
     st.write(table, unsafe_allow_html=True)
+
+# Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
+def display_task_overview():
+    st.title("Aufgabenübersicht")
+
+    tasks = st.session_state.get('tasks', {})
+    tasks_to_delete = []
+
+    for date, day_tasks in tasks.items():
+        st.subheader(f"Aufgaben für {date[0]}-{date[1]}-{date[2]}")
+        for idx, task in enumerate(day_tasks):
+            st.write(f"{idx + 1}. {task['time']}, {task['duration']}: {task['description']}")
+            if st.checkbox(f"Löschen##{date[0]}-{date[1]}-{date[2]}##{idx}"):
+                tasks_to_delete.append((date, idx))
+
+    if tasks_to_delete:
+        for date, idx in tasks_to_delete:
+            del tasks[date][idx]
+            st.success(f"Aufgabe gelöscht: {date[0]}-{date[1]}-{date[2]}, Index: {idx}")
+        st.session_state.tasks = tasks
 
 # Funktion zur Anzeige des Taskmanagers
 def display_task_manager():
@@ -62,7 +82,7 @@ def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox(
         "Wähle eine Seite",
-        ["Kalender anzeigen", "Taskmanager"]
+        ["Kalender anzeigen", "Taskmanager", "Aufgabenübersicht"]
     )
 
     if app_mode == "Kalender anzeigen":
@@ -78,6 +98,8 @@ def main():
         display_monthly_calendar(year, month_index, tasks)
     elif app_mode == "Taskmanager":
         display_task_manager()
+    elif app_mode == "Aufgabenübersicht":
+        display_task_overview()
 
 if __name__ == "__main__":
     main()
