@@ -23,15 +23,14 @@ def display_monthly_calendar(year, month, tasks):
         for day in week:
             if day != 0:
                 tasks_for_day = tasks.get((year, month, day), [])
-                task_info = "<br>".join([f"{task['time']}, {task['duration']}: {task['description']}" for task in tasks_for_day])
-                table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top;'>{day}<br>{task_info}</td>"
+                task_info = "<br>".join([f"{task['time']}, {task['duration']}:{task['description'][:15]}" for task in tasks_for_day])
+                table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>{day}<br>{task_info}</td>"
             else:
                 table += "<td style='border: 1px solid black; padding: 8px;'></td>"
         table += "</tr>"
 
     table += "</table>"
     st.write(table, unsafe_allow_html=True)
-
 # Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
 def display_task_overview():
     st.title("Aufgabenübersicht")
