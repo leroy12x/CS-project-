@@ -3,7 +3,7 @@ import calendar
 from datetime import datetime
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_calendar(year, month, tasks, show_week=False, week_number=None):
+ddef display_calendar(year, month, tasks, show_week=False, week_number=None):
     if show_week:
         cal = calendar.Calendar().monthdayscalendar(year, month)
         days = cal[week_number - 1] if week_number <= len(cal) else []
@@ -24,8 +24,7 @@ def display_calendar(year, month, tasks, show_week=False, week_number=None):
                 col1.subheader(f"{day}.{month}.{year}")
                 with col2:
                     st.write(task_info)
-                    st.write("---")
-# Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
+                    st.write("---")sicht und zum Löschen von Aufgaben
 def display_task_overview():
     st.title("Aufgabenübersicht")
 
