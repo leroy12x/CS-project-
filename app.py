@@ -108,7 +108,7 @@ def main():
         ]
         selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
         month_index = month_names.index(selected_month) + 1
-        display_monthly_calendar(year, month_index, tasks)
+        display_monthly_calendar(year, month_index)
     elif app_mode == "Taskmanager":
         display_task_manager()
 
