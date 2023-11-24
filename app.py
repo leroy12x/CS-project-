@@ -5,32 +5,28 @@ from datetime import datetime
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
 def display_calendar(year, month, tasks, show_week=False, week_number=None):
-    cal = calendar.Calendar().monthdayscalendar(year, month)
     if show_week:
-        days = cal[week_number - 1] if week_number <= len(cal) else []
+        days = calendar.Calendar().yeardatescalendar(year, 1)[0][week_number - 1] if week_number <= len(calendar.Calendar().yeardatescalendar(year, 1)[0]) else []
         st.title(f"Kalenderwoche {week_number}")
     else:
         st.title(f"Kalender für {calendar.month_name[month]} {year}")
 
-    # Tabellenkopf mit den Wochentagen
-    weekdays = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+    cal = calendar.monthcalendar(year, month)
     table = "<table style='width:100%; border-collapse: collapse;'>"
-    table += "<tr>" + "".join(f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>" for day in weekdays) + "</tr>"
+    table += "<tr><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th></tr>"
 
-    # Darstellung des Kalenders
     for week in cal if not show_week else [days]:
         for day in week:
-            if show_week and day == 0:
-                table += "<tr><td colspan='7' style='border: 1px solid black; padding: 8px; text-align: center;'>---</td></tr>"
-            elif day != 0:
+            if day == 0:
+                table += "<td></td>"
+            else:
                 tasks_for_day = tasks.get((year, month, day), [])
                 task_info = "<br>".join([f"{task['time']} - {task['end_time']}: {task['description']}" for task in tasks_for_day])
                 table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>"
                 table += f"<span style='text-decoration: none; color: black;'>{day}</span>"
                 table += f"<div style='display: none; position: absolute; background-color: white; border: 1px solid black; padding: 8px;'>{task_info}</div>"
                 table += "</td>"
-            else:
-                table += "<td style='border: 1px solid black; padding: 8px;'></td>"
+
         table += "</tr>"
 
     table += "</table>"
@@ -108,7 +104,7 @@ def main():
         tasks = st.session_state.get('tasks', {})
         show_week = st.checkbox("Nur eine Woche anzeigen")
         if show_week:
-            week_number = st.slider("Kalenderwoche auswählen", 1, 6, 1)
+            week_number = st.slider("Kalenderwoche auswählen", 1, len(calendar.Calendar().yeardatescalendar(year, 1)[0]), 1)
             st.button("Woche anzeigen")
         else:
             week_number = None
