@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_weekly_calendar(year, month, week,tasks):
+def display_weekly_calendar(year, month_index, week,tasks):
     cal = calendar.monthcalendar(year, month)
     month_name = calendar.month_name[month]
 
@@ -105,7 +105,7 @@ def main():
         month_index = month_names.index(selected_month) + 1
         week = st.slider("Woche auswählen", 1, 5, 1)
         tasks = st.session_state.get('tasks', {})
-        display_monthly_calendar(year, month_index, tasks)
+        display_monthly_calendar(year, month_index,week, tasks)
     elif app_mode == "Taskmanager":
         display_task_manager()
 
