@@ -4,30 +4,35 @@ from datetime import datetime
 
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_weekly_calendar(year, month, week):
+def display_monthly_calendar(year, month, tasks):
     cal = calendar.monthcalendar(year, month)
     month_name = calendar.month_name[month]
 
-    st.title(f"Wochenansicht für {week}. Woche in {month_name} {year}")
+    st.title(f"Kalender für {month_name} {year}")
 
-    # Tabelle für den Kalender
+    # Erstelle eine leere Tabelle für den Kalender
     table = "<table style='width:100%; border-collapse: collapse;'>"
 
     # Tabellenkopf mit den Wochentagen
     table += "<tr>"
     for day in ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]:
-        table += f"<th style='border: 1px white; padding: 8px; text-align: center;'>{day}</th>"
+        table += f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>"
     table += "</tr>"
 
-    # Darstellung der ausgewählten Woche
-    selected_week = cal[week - 1]
-    table += "<tr>"
-    for day in selected_week:
-        if day != 0:
-            table += f"<td style='border: 1px white; padding: 8px; text-align: center;'>{day}</td>"
-        else:
-            table += "<td style='border: 1px white; padding: 8px;'></td>"
-    table += "</tr>"
+    # Darstellung des Kalenders
+    for week in cal:
+        table += "<tr>"
+        for day in week:
+            if day != 0:
+                tasks_for_day = tasks.get((year, month, day), [])
+                task_info = "<br>".join([f"{task['time']} - {task['end_time']}: {task['description']}" for task in tasks_for_day])
+                table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>"
+                table += f"<a href='javascript:void(0)' onclick=\"document.getElementById('details-{year}-{month}-{day}').style.display='block'\" style='text-decoration: none; color: black;'>{day}</a>"
+                table += f"<div style='display: none; position: absolute; background-color: white; border: 1px solid black; padding: 8px;' id='details-{year}-{month}-{day}'>{task_info}</div>"
+                table += "</td>"
+            else:
+                table += "<td style='border: 1px solid black; padding: 8px;'></td>"
+        table += "</tr>"
 
     table += "</table>"
     st.markdown(table, unsafe_allow_html=True)
@@ -101,8 +106,8 @@ def main():
         ]
         selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
         month_index = month_names.index(selected_month) + 1
-        week = st.slider("Woche auswählen", 1, 5, 1)
-        display_weekly_calendar(year, month_index, week)
+        tasks = st.session_state.get('tasks', {})
+        display_monthly_calendar(year, month_index, tasks)
     elif app_mode == "Taskmanager":
         display_task_manager()
 
