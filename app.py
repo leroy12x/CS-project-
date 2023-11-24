@@ -32,13 +32,6 @@ def display_monthly_calendar(year, month):
     table += "</table>"
     st.markdown(table, unsafe_allow_html=True)
 
-# Streamlit App
-st.title("Monatskalender")
-year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023)
-month = st.slider("Monat auswählen", 1, 12, 1)
-
-display_monthly_calendar(year, month)
-
 # Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
 def display_task_overview():
     st.title("Aufgabenübersicht")
