@@ -106,7 +106,7 @@ def main():
         # Display für die Taskübersicht unterhalb des Taskmanagers
         display_task_overview()
 
-    elif app_mode == "Aufgabenübersicht":
+    else app_mode == "Aufgabenübersicht":
         display_task_overview()
 
 if __name__ == "__main__":
