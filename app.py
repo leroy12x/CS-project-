@@ -4,13 +4,14 @@ from datetime import datetime
 
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_monthly_calendar(year, month, tasks):
-    cal = calendar.monthcalendar(year, month)
-    month_name = calendar.month_name[month]
+def display_calendar(year, month, tasks, show_week=False, week_number=None):
+    cal = calendar.Calendar().monthdayscalendar(year, month)
+    if show_week:
+        days = cal[week_number - 1] if week_number <= len(cal) else []
+        st.title(f"Kalenderwoche {week_number}")
+    else:
+        st.title(f"Kalender für {calendar.month_name[month]} {year}")
 
-    st.title(f"Kalender für {month_name} {year}")
-
-    # Erstelle eine leere Tabelle für den Kalender
     table = "<table style='width:100%; border-collapse: collapse;'>"
 
     # Tabellenkopf mit den Wochentagen
@@ -20,10 +21,11 @@ def display_monthly_calendar(year, month, tasks):
     table += "</tr>"
 
     # Darstellung des Kalenders
-    for week in cal:
-        table += "<tr>"
+    for week in cal if not show_week else [days]:
         for day in week:
-            if day != 0:
+            if show_week and day == 0:
+                table += "<tr><td colspan='7' style='border: 1px solid black; padding: 8px; text-align: center;'>---</td></tr>"
+            elif day != 0:
                 tasks_for_day = tasks.get((year, month, day), [])
                 task_info = "<br>".join([f"{task['time']} - {task['end_time']}: {task['description']}" for task in tasks_for_day])
                 table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>"
@@ -97,7 +99,6 @@ def main():
         ["Kalender anzeigen", "Taskmanager", "Aufgabenübersicht"]
     )
 
-
     if app_mode == "Kalender anzeigen":
         year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023, key="calendar_year")
         month_names = [
@@ -108,13 +109,20 @@ def main():
         selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
         month_index = month_names.index(selected_month) + 1
         tasks = st.session_state.get('tasks', {})
-        display_monthly_calendar(year, month_index, tasks)
+        show_week = st.checkbox("Nur eine Woche anzeigen")
+        if show_week:
+            week_number = st.slider("Kalenderwoche auswählen", 1, 6, 1)
+        else:
+            week_number = None
+        display_calendar(year, month_index, tasks, show_week, week_number)
     elif app_mode == "Taskmanager":
         display_task_manager()
 
         # Display für die Taskübersicht unterhalb des Taskmanagers
         display_task_overview()
 
+    elif app_mode == "Aufgabenübersicht":
+        display_task_overview()
 
 if __name__ == "__main__":
     main()
