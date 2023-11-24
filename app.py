@@ -4,11 +4,11 @@ from datetime import datetime
 
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_monthly_calendar(year, month):
+def display_weekly_calendar(year, month, week):
     cal = calendar.monthcalendar(year, month)
     month_name = calendar.month_name[month]
 
-    st.title(f"Kalender für {month_name} {year}")
+    st.title(f"Wochenansicht für {week}. Woche in {month_name} {year}")
 
     # Tabelle für den Kalender
     table = "<table style='width:100%; border-collapse: collapse;'>"
@@ -19,15 +19,15 @@ def display_monthly_calendar(year, month):
         table += f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>"
     table += "</tr>"
 
-    # Darstellung des Kalenders
-    for week in cal:
-        table += "<tr>"
-        for day in week:
-            if day != 0:
-                table += f"<td style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</td>"
-            else:
-                table += "<td style='border: 1px solid black; padding: 8px;'></td>"
-        table += "</tr>"
+    # Darstellung der ausgewählten Woche
+    selected_week = cal[week - 1]
+    table += "<tr>"
+    for day in selected_week:
+        if day != 0:
+            table += f"<td style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</td>"
+        else:
+            table += "<td style='border: 1px solid black; padding: 8px;'></td>"
+    table += "</tr>"
 
     table += "</table>"
     st.markdown(table, unsafe_allow_html=True)
@@ -101,7 +101,8 @@ def main():
         ]
         selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
         month_index = month_names.index(selected_month) + 1
-        display_monthly_calendar(year, month_index)
+        week = st.slider("Woche auswählen", 1, 5, 1)
+        display_weekly_calendar(year, month_index, week)
     elif app_mode == "Taskmanager":
         display_task_manager()
 
