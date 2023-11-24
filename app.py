@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_monthly_calendar(year, month):
+def display_monthly_calendar(year, month, tasks):
     cal = calendar.monthcalendar(year, month)
     month_name = calendar.month_name[month]
 
