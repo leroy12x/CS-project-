@@ -4,28 +4,38 @@ from datetime import datetime
 
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_calendar(year, month, tasks, show_week=False, week_number=None):
-    if show_week:
-        cal = calendar.Calendar().monthdayscalendar(year, month)
-        days = cal[week_number - 1] if week_number <= len(cal) else []
-        st.title(f"Kalenderwoche {week_number}")
-    else:
-        cal = calendar.monthcalendar(year, month)
-        st.title(f"Kalender für {calendar.month_name[month]} {year}")
+def display_monthly_calendar(year, month, tasks):
+    cal = calendar.monthcalendar(year, month)
+    month_name = calendar.month_name[month]
 
+    st.title(f"Kalender für {month_name} {year}")
+
+    # Erstelle eine leere Tabelle für den Kalender
+    table = "<table style='width:100%; border-collapse: collapse;'>"
+
+    # Tabellenkopf mit den Wochentagen
+    table += "<tr>"
+    for day in ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]:
+        table += f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>"
+    table += "</tr>"
+
+    # Darstellung des Kalenders
     for week in cal:
+        table += "<tr>"
         for day in week:
-            if show_week and day == 0:
-                st.write("---")
-            elif day != 0:
+            if day != 0:
                 tasks_for_day = tasks.get((year, month, day), [])
-                task_info = "\n".join([f"{task['time']} - {task['end_time']}: {task['description']}" for task in tasks_for_day])
+                task_info = "<br>".join([f"{task['time']} - {task['end_time']}: {task['description']}" for task in tasks_for_day])
+                table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>"
+                table += f"<a href='javascript:void(0)' onclick=\"document.getElementById('details-{year}-{month}-{day}').style.display='block'\" style='text-decoration: none; color: black;'>{day}</a>"
+                table += f"<div style='display: none; position: absolute; background-color: white; border: 1px solid black; padding: 8px;' id='details-{year}-{month}-{day}'>{task_info}</div>"
+                table += "</td>"
+            else:
+                table += "<td style='border: 1px solid black; padding: 8px;'></td>"
+        table += "</tr>"
 
-                col1, col2 = st.beta_columns(2)
-                col1.subheader(f"{day}.{month}.{year}")
-                with col2:
-                    st.write(task_info)
-                    st.write("---")
+    table += "</table>"
+    st.write(table, unsafe_allow_html=True)
 
 # Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
 def display_task_overview():
@@ -81,17 +91,27 @@ def display_task_manager():
 
 # Navigation zwischen den Seiten
 def main():
-    year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023)
-    month_index = st.slider("Monat auswählen", 1, 12, 1)
-    show_week = st.checkbox("Nur eine Woche anzeigen")
+    st.sidebar.title("Navigation")
+    app_mode = st.sidebar.selectbox(
+        "Wähle eine Seite",
+        ["Kalender anzeigen", "Taskmanager", "Aufgabenübersicht"]
+    )
 
-    if show_week:
-        week_number = st.slider("Kalenderwoche auswählen", 1, 6, 1)
-    else:
-        week_number = None
+    if app_mode == "Kalender anzeigen":
+        year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023, key="calendar_year")
+        month_names = [
+            "Januar", "Februar", "März", "April",
+            "Mai", "Juni", "Juli", "August",
+            "September", "Oktober", "November", "Dezember"
+        ]
+        selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
+        month_index = month_names.index(selected_month) + 1
+        tasks = st.session_state.get('tasks', {})
+        display_monthly_calendar(year, month_index, tasks)
+    elif app_mode == "Taskmanager":
+        display_task_manager()
+    elif app_mode == "Aufgabenübersicht":
+        display_task_overview()
 
-    tasks = {}  # Deine Aufgaben hier
-
-    display_calendar(year, month_index, tasks, show_week, week_number)
 if __name__ == "__main__":
     main()
