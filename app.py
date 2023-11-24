@@ -4,33 +4,40 @@ from datetime import datetime
 
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_calendar(year, month, tasks, show_week=False, week_number=None):
-    if show_week:
-        days = calendar.Calendar().yeardatescalendar(year, 1)[0][week_number - 1] if week_number <= len(calendar.Calendar().yeardatescalendar(year, 1)[0]) else []
-        st.title(f"Kalenderwoche {week_number}")
-    else:
-        st.title(f"Kalender für {calendar.month_name[month]} {year}")
-
+def display_monthly_calendar(year, month):
     cal = calendar.monthcalendar(year, month)
+    month_name = calendar.month_name[month]
+
+    st.title(f"Kalender für {month_name} {year}")
+
+    # Erstelle eine leere Tabelle für den Kalender
     table = "<table style='width:100%; border-collapse: collapse;'>"
-    table += "<tr><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th></tr>"
 
-    for week in cal if not show_week else [days]:
+    # Tabellenkopf mit den Wochentagen
+    table += "<tr>"
+    for day in ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]:
+        table += f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>"
+    table += "</tr>"
+
+    # Darstellung des Kalenders
+    for week in cal:
+        table += "<tr>"
         for day in week:
-            if day == 0:
-                table += "<td></td>"
+            if day != 0:
+                table += f"<td style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</td>"
             else:
-                tasks_for_day = tasks.get((year, month, day), [])
-                task_info = "<br>".join([f"{task['time']} - {task['end_time']}: {task['description']}" for task in tasks_for_day])
-                table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top; height: 100px;'>"
-                table += f"<span style='text-decoration: none; color: black;'>{day}</span>"
-                table += f"<div style='display: none; position: absolute; background-color: white; border: 1px solid black; padding: 8px;'>{task_info}</div>"
-                table += "</td>"
-
+                table += "<td style='border: 1px solid black; padding: 8px;'></td>"
         table += "</tr>"
 
     table += "</table>"
     st.markdown(table, unsafe_allow_html=True)
+
+# Streamlit App
+st.title("Monatskalender")
+year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023)
+month = st.slider("Monat auswählen", 1, 12, 1)
+
+display_monthly_calendar(year, month)
 
 # Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
 def display_task_overview():
