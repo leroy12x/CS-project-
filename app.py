@@ -3,7 +3,7 @@ import calendar
 from datetime import datetime
 
 # Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-ddef display_calendar(year, month, tasks, show_week=False, week_number=None):
+def display_calendar(year, month, tasks, show_week=False, week_number=None):
     if show_week:
         cal = calendar.Calendar().monthdayscalendar(year, month)
         days = cal[week_number - 1] if week_number <= len(cal) else []
