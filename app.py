@@ -105,7 +105,7 @@ def main():
         month_index = month_names.index(selected_month) + 1
         week = st.slider("Woche auswählen", 1, 5, 1)
         tasks = st.session_state.get('tasks', {})
-        display_monthly_calendar(year, month_index,week, tasks)
+        display_weekly_calendar(year, month_index,week, tasks)
     elif app_mode == "Taskmanager":
         display_task_manager()
 
