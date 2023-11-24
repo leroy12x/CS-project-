@@ -16,7 +16,7 @@ def display_weekly_calendar(year, month, week):
     # Tabellenkopf mit den Wochentagen
     table += "<tr>"
     for day in ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]:
-        table += f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>"
+        table += f"<th style='border: 1px white; padding: 8px; text-align: center;'>{day}</th>"
     table += "</tr>"
 
     # Darstellung der ausgewählten Woche
@@ -24,9 +24,9 @@ def display_weekly_calendar(year, month, week):
     table += "<tr>"
     for day in selected_week:
         if day != 0:
-            table += f"<td style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</td>"
+            table += f"<td style='border: 1px white; padding: 8px; text-align: center;'>{day}</td>"
         else:
-            table += "<td style='border: 1px solid black; padding: 8px;'></td>"
+            table += "<td style='border: 1px white; padding: 8px;'></td>"
     table += "</tr>"
 
     table += "</table>"
