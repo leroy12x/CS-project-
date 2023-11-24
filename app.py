@@ -97,17 +97,24 @@ def main():
         ["Kalender anzeigen", "Taskmanager", "Aufgabenübersicht"]
     )
 
-    if app_mode == "Kalender anzeigen":
-        # ... (unverändert)
 
+    if app_mode == "Kalender anzeigen":
+        year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023, key="calendar_year")
+        month_names = [
+            "Januar", "Februar", "März", "April",
+            "Mai", "Juni", "Juli", "August",
+            "September", "Oktober", "November", "Dezember"
+        ]
+        selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
+        month_index = month_names.index(selected_month) + 1
+        tasks = st.session_state.get('tasks', {})
+        display_monthly_calendar(year, month_index, tasks)
     elif app_mode == "Taskmanager":
         display_task_manager()
 
         # Display für die Taskübersicht unterhalb des Taskmanagers
         display_task_overview()
 
-    else app_mode == "Aufgabenübersicht":
-        display_task_overview()
 
 if __name__ == "__main__":
     main()
