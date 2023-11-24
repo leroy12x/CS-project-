@@ -12,13 +12,10 @@ def display_calendar(year, month, tasks, show_week=False, week_number=None):
     else:
         st.title(f"Kalender für {calendar.month_name[month]} {year}")
 
-    table = "<table style='width:100%; border-collapse: collapse;'>"
-
     # Tabellenkopf mit den Wochentagen
-    table += "<tr>"
-    for day in ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]:
-        table += f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>"
-    table += "</tr>"
+    weekdays = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+    table = "<table style='width:100%; border-collapse: collapse;'>"
+    table += "<tr>" + "".join(f"<th style='border: 1px solid black; padding: 8px; text-align: center;'>{day}</th>" for day in weekdays) + "</tr>"
 
     # Darstellung des Kalenders
     for week in cal if not show_week else [days]:
@@ -37,7 +34,7 @@ def display_calendar(year, month, tasks, show_week=False, week_number=None):
         table += "</tr>"
 
     table += "</table>"
-    st.write(table, unsafe_allow_html=True)
+    st.markdown(table, unsafe_allow_html=True)
 
 # Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
 def display_task_overview():
