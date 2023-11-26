@@ -1,119 +1,33 @@
 import streamlit as st
-import calendar
-from datetime import datetime
+import plotly.graph_objs as go
+import datetime
 
+def generate_weekly_calendar():
+    # Dummy-Daten für den Kalender
+    days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
+    times = [f"{hour}:00" for hour in range(8, 18)]  # Beispielzeiten von 8:00 bis 17:00 Uhr
 
-# Funktion zur Anzeige des Kalenders für den ausgewählten Monat
-def display_weekly_calendar(year, month, week,tasks):
-    cal = calendar.monthcalendar(year, month)
-    month_name = calendar.month_name[month]
+    # Erstellung des Kalenderlayouts mit Plotly
+    fig = go.Figure()
 
-    st.title(f"Wochenansicht für {week}. Woche in {month_name} {year}")
+    # Hinzufügen von leeren Plots für jeden Wochentag und jede Uhrzeit
+    for day in days:
+        for time in times:
+            fig.add_trace(go.Scatter(x=[day], y=[time], mode='markers', marker=dict(size=10), name=''))
 
-    # Tabelle für den Kalender
-    table = "<table style='width:100%; border-collapse: collapse;'>"
-
-    # Tabellenkopf mit den Wochentagen
-    table += "<tr>"
-    for day in ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]:
-        table += f"<th style='border: 1px white; padding: 8px; text-align: center;'>{day}</th>"
-    table += "</tr>"
-
-    # Darstellung der ausgewählten Woche
-    selected_week = cal[week - 1]
-    table += "<tr>"
-    for day in selected_week:
-        if day != 0:
-            tasks_for_day = tasks.get((year, month, day), [])
-            task_info = "<br>".join([f"{task['time']}, {task['duration']}" for task in tasks_for_day])
-            table += f"<td style='border: 1px solid black; padding: 8px; text-align: left; vertical-align: top;'>{day}<br>{task_info}</td>"
-        else:
-            table += "<td style='border: 1px white; padding: 8px;'></td>"
-    table += "</tr>"
-
-    table += "</table>"
-    st.markdown(table, unsafe_allow_html=True)
-
-# Funktion zur Anzeige der Aufgabenübersicht und zum Löschen von Aufgaben
-def display_task_overview():
-    st.title("Aufgabenübersicht")
-
-    tasks = st.session_state.get('tasks', {})
-    tasks_to_delete = []
-
-    for date, day_tasks in tasks.items():
-        st.subheader(f"Aufgaben für {date[0]}-{date[1]}-{date[2]}")
-        for idx, task in enumerate(day_tasks):
-            st.write(f"{idx + 1}. {task['time']} - {task['end_time']}: {task['description']}")
-            if st.checkbox(f"Löschen {date[0]}-{date[1]}-{date[2]}"):
-                tasks_to_delete.append((date, idx))
-
-    if tasks_to_delete:
-        for date, idx in tasks_to_delete:
-            del tasks[date][idx]
-            st.success(f"Aufgabe gelöscht: {date[0]}-{date[1]}-{date[2]}, Index: {idx}")
-        st.session_state.tasks = tasks
-
-# Funktion zur Anzeige des Taskmanagers
-def display_task_manager():
-    st.title("Taskmanager")
-    task_date = st.date_input("Datum auswählen", key="task_date")
-    task_time = st.time_input("Startzeit eingeben", key="task_time")
-    task_end_date = st.date_input("Enddatum auswählen", key="task_end_date")
-    task_end_time = st.time_input("Endzeit eingeben", key="task_end_time")
-    task_description = st.text_input("Aufgabenbeschreibung eingeben", key="task_description")
-
-    if st.button("Aufgabe hinzufügen"):
-        start_date_time = datetime.combine(task_date, task_time)
-        end_date_time = datetime.combine(task_end_date, task_end_time)
-        duration = end_date_time - start_date_time
-
-        task_info = {
-            'time': str(task_time),
-            'end_time': str(task_end_time),
-            'duration': str(duration),
-            'description': task_description
-        }
-        tasks = st.session_state.get('tasks', {})
-        date_key = (task_date.year, task_date.month, task_date.day)
-        if date_key in tasks:
-            tasks[date_key].append(task_info)
-        else:
-            tasks[date_key] = [task_info]
-        st.session_state.tasks = tasks
-        st.success(f"Aufgabe für {task_date} von {task_time} bis {task_end_time} hinzugefügt!")
-
-        st.experimental_rerun()
-
-
-# Navigation zwischen den Seiten
-def main():
-    st.sidebar.title("Navigation")
-    app_mode = st.sidebar.selectbox(
-        "Wähle eine Seite",
-        ["Kalender anzeigen", "Taskmanager", "Aufgabenübersicht"]
+    # Anpassung des Layouts und der Achsenbeschriftungen
+    fig.update_layout(
+        title='Wochenkalender',
+        xaxis=dict(title='Wochentage'),
+        yaxis=dict(title='Uhrzeit')
     )
 
-    if app_mode == "Kalender anzeigen":
-        year = st.number_input("Jahr eingeben", min_value=1900, max_value=2100, value=2023, key="calendar_year")
-        month_names = [
-            "Januar", "Februar", "März", "April",
-            "Mai", "Juni", "Juli", "August",
-            "September", "Oktober", "November", "Dezember"
-        ]
-        selected_month = st.selectbox("Monat auswählen", month_names, key="selected_month")
-        month_index = month_names.index(selected_month) + 1
-        week = st.slider("Woche auswählen", 1, 5, 1)
-        tasks = st.session_state.get('tasks', {})
-        display_weekly_calendar(year, month_index,week, tasks)
-    elif app_mode == "Taskmanager":
-        display_task_manager()
+    return fig
 
-        # Display für die Taskübersicht unterhalb des Taskmanagers
-        display_task_overview()
+def main():
+    st.title("Interaktiver Wochenkalender")
 
-    elif app_mode == "Aufgabenübersicht":
-        display_task_overview()
+    st.plotly_chart(generate_weekly_calendar())
 
 if __name__ == "__main__":
     main()
