@@ -193,23 +193,13 @@ def load_tasks_from_csv():
         return {}
 def display_task_overview():
     st.title("To Do List")
-    tasks = load_tasks_from_csv()
 
-    # Display completed tasks
-    st.subheader("Completed")
-    for day, day_tasks in tasks.items():
-        for task in day_tasks:
-            if task.get('completed', False):
-                with st.container():
-                    st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
-                    if st.button("Revert to Not Completed", key=f"revert_{task['description']}"):
-                        task['completed'] = False
-                        save_tasks_to_csv(tasks)
-                        st.experimental_rerun()
+    if 'tasks' not in st.session_state:
+        st.session_state.tasks = load_tasks_from_csv()
 
     # Display pending tasks
-    st.subheader("Pending")
-    for day, day_tasks in tasks.items():
+    st.subheader("Pending Tasks")
+    for day, day_tasks in st.session_state.tasks.items():
         for task in day_tasks:
             if not task.get('completed', False):
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
@@ -217,8 +207,18 @@ def display_task_overview():
                 st.write(task_info)
                 if st.button("Mark as Completed", key=f"complete_{task['description']}"):
                     task['completed'] = True
-                    save_tasks_to_csv(tasks)
-                    st.experimental_rerun()
+                    save_tasks_to_csv(st.session_state.tasks)
+
+    # Display completed tasks
+    st.subheader("Completed Tasks")
+    for day, day_tasks in st.session_state.tasks.items():
+        for task in day_tasks:
+            if task.get('completed', False):
+                with st.container():
+                    st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
+                    if st.button("Revert to Not Completed", key=f"revert_{task['description']}"):
+                        task['completed'] = False
+                        save_tasks_to_csv(st.session_state.tasks)
 # Modify the main function to include the edit tasks option
 def main():
     st.sidebar.title("Navigation")
