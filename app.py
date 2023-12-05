@@ -232,4 +232,4 @@ def main():
         edit_tasks()
 
 if _name_ == "_main_":
-    main(
+    main()
