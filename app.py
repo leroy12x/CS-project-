@@ -114,7 +114,7 @@ def load_tasks_from_csv():
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
                 'due_date': row['Due Date'],
-                'completed': row.get('Completed', False)  # Ensure to handle the 'completed' field
+                'completed': row.get('Completed', False)  # Use get() method for safe access
             }
             if date_key in tasks:
                 tasks[date_key].append(task_info)
@@ -191,7 +191,22 @@ def load_tasks_from_csv():
         return tasks
     except FileNotFoundError:
         return {}
+def display_task_overview():
+    st.title("To Do List")
+    tasks = load_tasks_from_csv()
 
+    for day, day_tasks in tasks.items():
+        st.subheader(f"Tasks for {day}")
+        for task in day_tasks:
+            if task.get('completed', False):
+                st.write(f"Completed: {task['description']}")
+            else:
+                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
+                st.write(f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                    task['completed'] = True
+                    save_tasks_to_csv(tasks)
+                    st.experimental_rerun()
 # Modify the main function to include the edit tasks option
 def main():
     st.sidebar.title("Navigation")
