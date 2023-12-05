@@ -194,26 +194,27 @@ def load_tasks_from_csv():
 def display_task_overview():
     st.title("To Do List")
 
-    # Load tasks from CSV or session state
-    if 'tasks' not in st.session_state:
+    # Load tasks from CSV
+    if 'tasks' not in st.session_state or 'update_tasks' in st.session_state:
         st.session_state.tasks = load_tasks_from_csv()
+        st.session_state.update_tasks = False
 
-    def update_task_status(description, completed):
-        for day, day_tasks in st.session_state.tasks.items():
+    # Function to update task status
+    def update_task_status(task_description, status):
+        for day_tasks in st.session_state.tasks.values():
             for task in day_tasks:
-                if task['description'] == description:
-                    task['completed'] = completed
-                    save_tasks_to_csv(st.session_state.tasks)
-                    st.session_state.tasks = load_tasks_from_csv()  # Refresh tasks list
-                    return
+                if task['description'] == task_description:
+                    task['completed'] = status
+                    break
+        save_tasks_to_csv(st.session_state.tasks)
+        st.session_state.update_tasks = True
 
     # Display pending tasks
     st.subheader("Pending Tasks")
     for day, day_tasks in st.session_state.tasks.items():
         for task in day_tasks:
             if not task.get('completed', False):
-                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                task_info = f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}"
+                task_info = f"{task['description']} - Due: {task['due_date']}"
                 st.write(task_info)
                 if st.button("Mark as Completed", key=f"complete_{task['description']}"):
                     update_task_status(task['description'], True)
@@ -227,6 +228,10 @@ def display_task_overview():
                     st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
                     if st.button("Revert to Not Completed", key=f"revert_{task['description']}"):
                         update_task_status(task['description'], False)
+
+    # Force a rerun to refresh the page with updated tasks
+    if st.session_state.update_tasks:
+        st.experimental_rerun()
 def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks"])
