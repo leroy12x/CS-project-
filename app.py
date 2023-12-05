@@ -197,6 +197,14 @@ def display_task_overview():
     if 'tasks' not in st.session_state:
         st.session_state.tasks = load_tasks_from_csv()
 
+    def update_task_status(description, completed):
+        for day, day_tasks in st.session_state.tasks.items():
+            for task in day_tasks:
+                if task['description'] == description:
+                    task['completed'] = completed
+                    save_tasks_to_csv(st.session_state.tasks)
+                    return
+
     # Display pending tasks
     st.subheader("Pending Tasks")
     for day, day_tasks in st.session_state.tasks.items():
@@ -206,8 +214,7 @@ def display_task_overview():
                 task_info = f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}"
                 st.write(task_info)
                 if st.button("Mark as Completed", key=f"complete_{task['description']}"):
-                    task['completed'] = True
-                    save_tasks_to_csv(st.session_state.tasks)
+                    update_task_status(task['description'], True)
 
     # Display completed tasks
     st.subheader("Completed Tasks")
@@ -217,8 +224,7 @@ def display_task_overview():
                 with st.container():
                     st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
                     if st.button("Revert to Not Completed", key=f"revert_{task['description']}"):
-                        task['completed'] = False
-                        save_tasks_to_csv(st.session_state.tasks)
+                        update_task_status(task['description'], False)
 # Modify the main function to include the edit tasks option
 def main():
     st.sidebar.title("Navigation")
