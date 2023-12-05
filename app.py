@@ -51,7 +51,7 @@ def display_task_manager():
             'percentage': task_percentage,
             'due_date': task_due_date  # Use 'due_date' instead of 'end_time' for the due date
         }
-
+#hallo
         date_key = (start_date_time.year, start_date_time.month, start_date_time.day)
         if date_key in tasks:
             tasks[date_key].append(task_info)
