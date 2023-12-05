@@ -137,23 +137,44 @@ def edit_tasks():
     task_list = [f"{task['description']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
     
     selected_task = st.selectbox("Select a Task to Edit", task_list)
+    
+    # Find the task in the tasks dictionary
+    for day_tasks in tasks.values():
+        for task in day_tasks:
+            if selected_task.startswith(task['description']):
+                selected_task_details = task
+                break
 
-# Navigation between pages
+    if 'selected_task_details' in locals():
+        # Display current task details and allow for edits
+        new_description = st.text_input("Task Description", value=selected_task_details['description'])
+        new_due_date = st.date_input("Due Date", value=datetime.strptime(selected_task_details['due_date'], '%Y-%m-%d'))
+        
+        if st.button("Update Task"):
+            # Update task details
+            selected_task_details['description'] = new_description
+            selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
+            save_tasks_to_csv(tasks)
+            st.success("Task updated successfully!")
+
+        if st.button("Delete Task"):
+            # Remove task
+            day_tasks.remove(selected_task_details)
+            save_tasks_to_csv(tasks)
+            st.success("Task deleted successfully!")
+
+# Modify the main function
 def main():
     st.sidebar.title("Navigation")
-    app_mode = st.sidebar.selectbox(
-        "Choose a Page",
-        ["Create Tasks", "To Do List"]  # Renamed from "Task Manager"
-    )
+    app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks"])
 
-    # Commented out for the To Do List version
-    # if app_mode == "Show Calendar":
-    #     year = st.number_input("Enter Year", min_value=1900, max_value
     if app_mode == "Create Tasks":
         display_task_manager()
     elif app_mode == "To Do List":
         display_task_overview()
+    elif app_mode == "Edit Tasks":
+        edit_tasks()
 
 if __name__ == "__main__":
     main()
-# new
+
