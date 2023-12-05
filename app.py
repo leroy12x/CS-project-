@@ -130,6 +130,9 @@ def load_tasks_from_csv():
         # If the file doesn't exist, return an empty dictionary
         return {}
         
+
+
+# Function to edit or delete tasks
 def edit_tasks():
     st.title("Edit Tasks")
 
@@ -146,24 +149,25 @@ def edit_tasks():
                 break
 
     if 'selected_task_details' in locals():
-        # Display current task details and allow for edits
         new_description = st.text_input("Task Description", value=selected_task_details['description'])
         new_due_date = st.date_input("Due Date", value=datetime.strptime(selected_task_details['due_date'], '%Y-%m-%d'))
+        new_ects = st.number_input("ECTS Points", value=selected_task_details['ects'], min_value=0)
+        new_percentage = st.number_input("Percentage of Grade", value=selected_task_details['percentage'], min_value=0, max_value=100)
         
         if st.button("Update Task"):
-            # Update task details
             selected_task_details['description'] = new_description
             selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
+            selected_task_details['ects'] = new_ects
+            selected_task_details['percentage'] = new_percentage
             save_tasks_to_csv(tasks)
             st.success("Task updated successfully!")
 
         if st.button("Delete Task"):
-            # Remove task
             day_tasks.remove(selected_task_details)
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
 
-# Modify the main function
+# Modify the main function to include the edit tasks option
 def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks"])
@@ -175,6 +179,12 @@ def main():
     elif app_mode == "Edit Tasks":
         edit_tasks()
 
+# Load and save tasks functions (make sure to include your existing versions of these)
+def save_tasks_to_csv(tasks):
+    # ... [Your existing save_tasks_to_csv function] ...
+
+def load_tasks_from_csv():
+    # ... [Your existing load_tasks_from_csv function] ...
+
 if __name__ == "__main__":
     main()
-
