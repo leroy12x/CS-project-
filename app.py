@@ -195,15 +195,27 @@ def display_task_overview():
     st.title("To Do List")
     tasks = load_tasks_from_csv()
 
+    # Display completed tasks
+    st.subheader("Completed")
     for day, day_tasks in tasks.items():
-        st.subheader(f"Tasks for {day}")
         for task in day_tasks:
             if task.get('completed', False):
-                st.write(f"Completed: {task['description']}")
-            else:
+                with st.container():
+                    st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
+                    if st.button("Revert to Not Completed", key=f"revert_{task['description']}"):
+                        task['completed'] = False
+                        save_tasks_to_csv(tasks)
+                        st.experimental_rerun()
+
+    # Display pending tasks
+    st.subheader("Pending")
+    for day, day_tasks in tasks.items():
+        for task in day_tasks:
+            if not task.get('completed', False):
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                st.write(f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                task_info = f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}"
+                st.write(task_info)
+                if st.button("Mark as Completed", key=f"complete_{task['description']}"):
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
                     st.experimental_rerun()
