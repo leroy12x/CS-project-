@@ -51,7 +51,7 @@ def display_task_manager():
             'percentage': task_percentage,
             'due_date': task_due_date  # Use 'due_date' instead of 'end_time' for the due date
         }
-#hallo
+
         date_key = (start_date_time.year, start_date_time.month, start_date_time.day)
         if date_key in tasks:
             tasks[date_key].append(task_info)
@@ -129,6 +129,14 @@ def load_tasks_from_csv():
     except FileNotFoundError:
         # If the file doesn't exist, return an empty dictionary
         return {}
+        
+def edit_tasks():
+    st.title("Edit Tasks")
+
+    tasks = load_tasks_from_csv()
+    task_list = [f"{task['description']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
+    
+    selected_task = st.selectbox("Select a Task to Edit", task_list)
 
 # Navigation between pages
 def main():
