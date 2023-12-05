@@ -193,44 +193,21 @@ def load_tasks_from_csv():
         return {}
 def display_task_overview():
     st.title("To Do List")
+    tasks = load_tasks_from_csv()
 
-    # Load tasks from CSV
-    if 'tasks' not in st.session_state:
-        st.session_state.tasks = load_tasks_from_csv()
-
-    # Function to update task status and save changes
-    def update_task_status(description, completed):
-        for day_tasks in st.session_state.tasks.values():
-            for task in day_tasks:
-                if task['description'] == description:
-                    task['completed'] = completed
-                    save_tasks_to_csv(st.session_state.tasks)
-                    st.session_state.update_tasks = True
-                    return
-
-    pending_tasks = {k: v for k, v in st.session_state.tasks.items() if not any(t.get('completed', False) for t in v)}
-    completed_tasks = {k: v for k, v in st.session_state.tasks.items() if any(t.get('completed', False) for t in v)}
-
-    # Display pending tasks
-    st.subheader("Pending Tasks")
-    for day, day_tasks in pending_tasks.items():
+    for day, day_tasks in tasks.items():
+        st.subheader(f"Tasks for {day}")
         for task in day_tasks:
-            task_info = f"{task['description']} - Due: {task['due_date']}"
-            st.write(task_info)
-            if st.button("Mark as Completed", key=f"complete_{task['description']}"):
-                update_task_status(task['description'], True)
-
-    # Display completed tasks
-    st.subheader("Completed Tasks")
-    for day, day_tasks in completed_tasks.items():
-        for task in day_tasks:
-            with st.container():
-                st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
-                if st.button("Revert to Not Completed", key=f"revert_{task['description']}"):
-                    update_task_status(task['description'], False)
-
-    if st.session_state.get('update_tasks'):
-        st.experimental_rerun()
+            if task.get('completed', False):
+                st.write(f"Completed: {task['description']}")
+            else:
+                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
+                st.write(f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                    task['completed'] = True
+                    save_tasks_to_csv(tasks)
+                    st.experimental_rerun()
+# Modify the main function to include the edit tasks option
 def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks"])
