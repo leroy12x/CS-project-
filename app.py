@@ -31,7 +31,7 @@ def display_task_manager():
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_description = st.text_input("Enter Task Description", key="task_description")
-    
+
     # New input fields for ECTS and Percentage
     task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
@@ -123,7 +123,7 @@ def load_tasks_from_csv():
         return tasks
     except FileNotFoundError:
         return {}
-        
+
 
 
 # Function to edit or delete tasks
@@ -132,9 +132,9 @@ def edit_tasks():
 
     tasks = load_tasks_from_csv()
     task_list = [f"{task['description']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
-    
+
     selected_task = st.selectbox("Select a Task to Edit", task_list)
-    
+
     # Find the task in the tasks dictionary
     for day_tasks in tasks.values():
         for task in day_tasks:
@@ -147,7 +147,7 @@ def edit_tasks():
         new_due_date = st.date_input("Due Date", value=datetime.strptime(selected_task_details['due_date'], '%Y-%m-%d'))
         new_ects = st.number_input("ECTS Points", value=selected_task_details['ects'], min_value=0)
         new_percentage = st.number_input("Percentage of Grade", value=selected_task_details['percentage'], min_value=0, max_value=100)
-        
+
         if st.button("Update Task"):
             selected_task_details['description'] = new_description
             selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
@@ -233,4 +233,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # sajvhoa
