@@ -231,6 +231,6 @@ def main():
     elif app_mode == "Edit Tasks":
         edit_tasks()
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     main()
     # sajvhoa
