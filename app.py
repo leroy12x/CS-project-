@@ -4,6 +4,13 @@ import pandas as pd
 from datetime import datetime, timedelta
 import math
 
+st.set_page_config(
+    initial_sidebar_state="auto",
+    layout="wide",
+    page_icon"📅"
+    page_title="HSG Task Manager"
+    )
+
 # Function to display the calendar for the selected month
 def display_weekly_calendar(year, month, week, tasks):
     # Commented out for the To Do List version
