@@ -1,15 +1,7 @@
-#!pip install streamlit
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 import math
-
-st.set_page_config(
-    initial_sidebar_state="auto",
-    layout="wide",
-    #page_icon"kalander"
-    page_title="HSG Task Manager"
-    )
 
 # Function to display the calendar for the selected month
 def display_weekly_calendar(year, month, week, tasks):
@@ -26,7 +18,7 @@ def display_task_overview():
 
     # Sort tasks based on grade relevance (descending order)
     sorted_tasks = sorted((task for day_tasks in tasks.values() for task in day_tasks), key=lambda x: x['ects'] * (x['percentage'] / 100), reverse=True)
-
+    
     # Display sorted tasks
     for idx, task in enumerate(sorted_tasks):
         st.write(f"{idx + 1}. Description: {task['description']}, ECTS: {task['ects']}, Percentage: {task['percentage']}%, Grade Relevance: {task['ects'] * (task['percentage'] / 100)}, Due Date: {task['due_date']}")
@@ -38,7 +30,7 @@ def display_task_manager():
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_description = st.text_input("Enter Task Description", key="task_description")
-
+    
     # New input fields for ECTS and Percentage
     task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
@@ -156,8 +148,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 """
 
 #just some basic things to import that would be useful for our program:
