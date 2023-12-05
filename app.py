@@ -194,9 +194,10 @@ def load_tasks_from_csv():
 def display_task_overview():
     st.title("To Do List")
 
-    # Load tasks from CSV
-    if 'tasks' not in st.session_state or 'update_tasks' in st.session_state:
+    # Initialize session state variables if not already set
+    if 'tasks' not in st.session_state:
         st.session_state.tasks = load_tasks_from_csv()
+    if 'update_tasks' not in st.session_state:
         st.session_state.update_tasks = False
 
     # Function to update task status
