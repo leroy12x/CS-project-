@@ -231,5 +231,5 @@ def main():
     elif app_mode == "Edit Tasks":
         edit_tasks()
 
-if _name_ == "_main_":
+if __name__ == "_main_":
     main()
