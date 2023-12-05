@@ -50,8 +50,8 @@ def display_task_manager():
             'description': task_description,
             'ects': task_ects,
             'percentage': task_percentage,
-            'due_date': task_due_date  # Use 'due_date' instead of 'end_time' for the due date
-            'completed': False
+            'due_date': task_due_date.strftime('%Y-%m-%d'),  # Format the date
+            'completed': False  # Correctly placed inside task_info
         }
 
         date_key = (start_date_time.year, start_date_time.month, start_date_time.day)
