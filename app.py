@@ -7,7 +7,7 @@ import math
 st.set_page_config(
     initial_sidebar_state="auto",
     layout="wide",
-    page_icon"📅"
+    #page_icon"kalander"
     page_title="HSG Task Manager"
     )
 
