@@ -221,9 +221,26 @@ def display_task_overview():
     # Update the session state after any changes
     st.session_state.tasks = tasks
 # Modify the main function to include the edit tasks option
+def display_weekly_calendar():
+    st.title("Weekly Calendar")
+    tasks = load_tasks_from_csv()
+
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_week = start_of_week + timedelta(days=6)
+
+    for i in range(7):
+        current_day = start_of_week + timedelta(days=i)
+        st.subheader(f"{current_day.strftime('%A, %b %d, %Y')}")
+        if (current_day.year, current_day.month, current_day.day) in tasks:
+            day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
+            for task in day_tasks:
+                st.write(f"- {task['description']} (Due: {task['due_date']})")
+
+# Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
     st.sidebar.title("Navigation")
-    app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks"])
+    app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar"])
 
     if app_mode == "Create Tasks":
         display_task_manager()
@@ -231,6 +248,8 @@ def main():
         display_task_overview()
     elif app_mode == "Edit Tasks":
         edit_tasks()
+    elif app_mode == "Weekly Calendar":
+        display_weekly_calendar()
 
 if __name__ == "__main__":
     main()
