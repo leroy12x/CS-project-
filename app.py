@@ -196,8 +196,9 @@ def display_task_overview():
     tasks = load_tasks_from_csv()
 
     # Filter tasks into pending and completed
-    pending_tasks = [task for day_tasks in tasks.values() for task in day_tasks if not task['completed']]
-    completed_tasks = [task for day_tasks in tasks.values() for task in day_tasks if task['completed']]
+pending_tasks = [task for day_tasks in tasks.values() for task in day_tasks if not task.get('completed', False)]
+    completed_tasks = [task for day_tasks in tasks.values() for task in day_tasks if task.get('completed', False)]
+
 
     # Display pending tasks
     st.subheader("Pending Tasks")
