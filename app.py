@@ -194,53 +194,29 @@ def load_tasks_from_csv():
 def display_task_overview():
     st.title("To Do List")
 
-    # Load tasks into session state if not already loaded
     if 'tasks' not in st.session_state:
         st.session_state.tasks = load_tasks_from_csv()
 
-    def update_tasks_in_state_and_csv():
-        # This inner function updates the CSV and then reloads the tasks into the session state
+    def mark_as_completed(task_description, day):
+        # Update the 'completed' status in the session state
+        for task in st.session_state.tasks[day]:
+            if task['description'] == task_description:
+                task['completed'] = True
+                break
+        # Save the updated tasks to CSV
         save_tasks_to_csv(st.session_state.tasks)
-        st.session_state.tasks = load_tasks_from_csv()
 
-    # Iterate over a copy of the list to avoid 'dictionary changed size during iteration' error
-    for day, day_tasks in st.session_state.tasks.copy().items():
+    # Display tasks
+    for day, day_tasks in st.session_state.tasks.items():
         st.subheader(f"Tasks for {day}")
-        for task in day_tasks.copy():
-            task_due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-            overdue = task_due_date < datetime.now()
-            task_info = f"{task['description']} - Due: {task_due_date.strftime('%Y-%m-%d')} {'(Overdue)' if overdue else ''}"
+        for task in day_tasks:
+            overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
+            status = "Completed" if task.get('completed', False) else "Pending"
+            task_info = f"{task['description']} - Due: {task['due_date']} - Status: {status} {'(Overdue)' if overdue else ''}"
             st.write(task_info)
             if not task.get('completed', False):
-                if st.button("Mark as Completed", key=f"complete_{task['description']}"):
-                    task['completed'] = True
-                    update_tasks_in_state_and_csv()
-
-    # Filter tasks into pending and completed
-    pending_tasks = [task for day_tasks in tasks.values() for task in day_tasks if not task.get('completed', False)]
-    completed_tasks = [task for day_tasks in tasks.values() for task in day_tasks if task.get('completed', False)]
-
-    # Display pending tasks
-    st.subheader("Pending Tasks")
-    for task in pending_tasks:
-        due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-        overdue = due_date < datetime.now()
-        task_info = f"{task['description']} - Due: {due_date.strftime('%Y-%m-%d')} {'(Overdue)' if overdue else ''}"
-        st.write(task_info)
-        if st.button("Mark as Completed", key=f"complete_{task['description']}"):
-            task['completed'] = True
-            save_tasks_to_csv(tasks)
-            # Force a refresh of the task lists
-            st.session_state.tasks = load_tasks_from_csv()
-
-    # Display completed tasks
-    st.subheader("Completed Tasks")
-    for task in completed_tasks:
-        due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-        st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {due_date.strftime('%Y-%m-%d')}</span>", unsafe_allow_html=True)
-
-    # Update the session state after any changes
-    st.session_state.tasks = tasks
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
+                    mark_as_completed(task['description'], day)
 # Modify the main function to include the edit tasks option
 def display_weekly_calendar():
     st.title("Weekly Calendar")
