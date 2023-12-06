@@ -193,7 +193,28 @@ def load_tasks_from_csv():
         return {}
 def display_task_overview():
     st.title("To Do List")
-    tasks = load_tasks_from_csv()
+
+    # Load tasks into session state if not already loaded
+    if 'tasks' not in st.session_state:
+        st.session_state.tasks = load_tasks_from_csv()
+
+    # Display tasks and buttons to mark them as completed
+    for day, day_tasks in st.session_state.tasks.items():
+        st.subheader(f"Tasks for {day}")
+        for task in day_tasks:
+            if task.get('completed', False):
+                # Display completed tasks in green
+                st.markdown(f"<span style='color: green;'>{task['description']} - Completed</span>", unsafe_allow_html=True)
+            else:
+                # Display pending tasks and add a button to mark as completed
+                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
+                task_info = f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}"
+                st.write(task_info)
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
+                    # Update the task's 'completed' status and refresh the task list
+                    task['completed'] = True
+                    save_tasks_to_csv(st.session_state.tasks)
+                    st.session_state.tasks = load_tasks_from_csv()  # Reload tasks to reflect the changes
 
     # Filter tasks into pending and completed
     pending_tasks = [task for day_tasks in tasks.values() for task in day_tasks if not task.get('completed', False)]
