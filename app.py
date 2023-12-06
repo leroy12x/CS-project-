@@ -263,17 +263,17 @@ def display_weekly_calendar():
     )
 
     cols = st.columns(7)
-    for i, col in enumerate(cols):
-        with col:
-            st.markdown(f"##### {days[i]} {start_of_week.strftime('%b %d')}", unsafe_allow_html=True)
-            current_day = start_of_week + timedelta(days=i)
-            current_tasks = [task for task in tasks if task['due_date'] == current_day.strftime('%Y-%m-%d')]
-            if current_tasks:
-                for task in current_tasks:
-                    # Check if task is overdue
-                    overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < today
-                    # Check if task is completed
-                    completed = task.get('completed', False)
+for i, day in enumerate(days):
+    with cols[i]:
+        st.subheader(day)
+        current_day = start_of_week + timedelta(days=i)
+        st.write(current_day.strftime('%b %d'))
+
+        # Convert current_day to string for comparison
+        current_day_str = current_day.strftime('%Y-%m-%d')
+
+        # List comprehension to get tasks for the current day
+        current_tasks = [task for task in tasks if task['due_date'] == current_day_str]
 
                     # Style tasks based on status
                     if completed:
