@@ -262,7 +262,8 @@ def display_weekly_calendar():
         unsafe_allow_html=True
     )
 
-    cols = st.columns(7)
+   
+cols = st.columns(7)
 for i, day in enumerate(days):
     with cols[i]:
         st.subheader(day)
@@ -274,6 +275,13 @@ for i, day in enumerate(days):
 
         # List comprehension to get tasks for the current day
         current_tasks = [task for task in tasks if task['due_date'] == current_day_str]
+        
+            if current_tasks:
+                for task in current_tasks:
+                    # Check if task is overdue
+                    overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < today
+                    # Check if task is completed
+                    completed = task.get('completed', False)
 
                     # Style tasks based on status
                     if completed:
@@ -284,7 +292,6 @@ for i, day in enumerate(days):
                         col.markdown(f"<span style='color: yellow;'>{task['description']}</span>", unsafe_allow_html=True)
             else:
                 col.write("No tasks")
-
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
     st.sidebar.title("Navigation")
