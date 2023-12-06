@@ -217,6 +217,24 @@ def display_task_overview():
             if not task.get('completed', False):
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
                     mark_as_completed(task['description'], day)
+
+    for day, day_tasks in tasks.items():
+        st.subheader(f"Tasks for {day}")
+        for task in day_tasks:
+            due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+            overdue = due_date < datetime.now()
+            if task.get('completed', False):
+                # Completed tasks in green
+                st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
+            else:
+                # Pending tasks in default color or red if overdue
+                color = "red" if overdue else "black"
+                st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                    task['completed'] = True
+                    save_tasks_to_csv(tasks)
+                    st.experimental_rerun()
+
 # Modify the main function to include the edit tasks option
 def display_weekly_calendar():
     st.title("Weekly Calendar")
@@ -228,12 +246,18 @@ def display_weekly_calendar():
 
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-    for i in range(7):
-        current_day = start_of_week + timedelta(days=i)
-        st.subheader(f"{days[i]} - {current_day.strftime('%b %d')}")
+    row1_col1, row1_col2, row1_col3, row1_col4, row1_col5, row1_col6, row1_col7 = st.beta_columns(7)
 
-        if (current_day.year, current_day.month, current_day.day) in tasks:
-            day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
+    with row1_col1:
+        st.subheader(f"{days[0]} - {start_of_week.strftime('%b %d')}")
+        if (start_of_week.year, start_of_week.month, start_of_week.day) in tasks:
+            day_tasks = tasks[(start_of_week.year, start_of_week.month, start_of_week.day)]
+            for task in day_tasks:
+                st.write(f"- {task['description']} (Due: {task['due_date']})")
+    with row1_col2:
+        st.subheader(f"{days[1]} - {(start_of_week + timedelta(days=1)).strftime('%b %d')}")
+        if ((start_of_week + timedelta(days=1)).year, (start_of_week + timedelta(days=1)).month, (start_of_week + timedelta(days=1)).day) in tasks:
+            day_tasks = tasks[((start_of_week + timedelta(days=1)).year, (start_of_week + timedelta(days=1)).month, (start_of_week + timedelta(days=1)).day)]
             for task in day_tasks:
                 st.write(f"- {task['description']} (Due: {task['due_date']})")
 
