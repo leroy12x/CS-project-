@@ -171,7 +171,7 @@ def save_tasks_to_csv(tasks):
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
     try:
-        df = pd.read_csv('tasks.csv')
+        df = pd.read_csv('tasks.csv') 
         tasks = {}
         for _, row in df.iterrows():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
@@ -248,25 +248,18 @@ def display_weekly_calendar():
     cols = st.columns(7)
     for i, col in enumerate(cols):
         with col:
-            st.subheader(days[i])
-            current_day = start_of_week + timedelta(days=i)
-            st.write(current_day.strftime('%b %d'))
-
-            if i < 6:
-                st.markdown(
-                    f"<style>.separator-line-vertical {{ border-right: 1px solid #ccc; }}</style>",
-                    unsafe_allow_html=True
-                )
+            # Use subheader for day names
+            st.markdown(f"#### {days[i]}")
+            st.markdown(f"**{current_day.strftime('%b %d')}**")
 
             if week_tasks[days[i]]:
                 for task in week_tasks[days[i]]:
                     due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
                     overdue = due_date < today
 
-                    if overdue:
-                        st.markdown(f"<span style='background-color: #FF6347; padding: 5px; border-radius: 5px; color: white;'>{task['description']}</span>", unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"<span style='background-color: #90EE90; padding: 5px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
+                    # Style tasks based on status
+                    style = "background-color: #FF6347; color: white;" if overdue else "background-color: #90EE90;"
+                    st.markdown(f"<span style='{style} padding: 3px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
             else:
                 st.write("No tasks")
 
