@@ -258,7 +258,7 @@ def display_weekly_calendar():
                     else:
                         st.write(f"- {task['description']} (Due: {task['due_date']})")
             else:
-                st.write("No tasks")S
+                st.write("No tasks")
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
