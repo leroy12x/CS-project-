@@ -260,7 +260,7 @@ def display_weekly_calendar():
                     if overdue:
                         st.markdown(f"<span style='color: red;'>- {task['description']}</span>", unsafe_allow_html=True)
                     else:
-                        st.write(f"- {task['description']} ")
+                        st.write(f"{task['description']} ")
             else:
                 st.write("No tasks")
 
