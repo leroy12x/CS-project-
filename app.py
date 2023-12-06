@@ -263,6 +263,18 @@ def display_weekly_calendar():
                         st.markdown(f"<span style='background-color: #90EE90; padding: 5px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
             else:
                 st.write("No tasks")
+    cols = st.columns(7)
+    for i, col in enumerate(cols):
+        with col:
+            st.subheader(days[i])
+            current_day = start_of_week + timedelta(days=i)
+            st.write(current_day.strftime('%b %d'))
+
+            if i < 6:
+                st.markdown(
+                    f"<style>.separator-line-vertical {{ border-right: 1px solid #ccc; }}</style>",
+                    unsafe_allow_html=True
+                )           
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
