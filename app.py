@@ -225,6 +225,9 @@ def display_task_overview():
 import streamlit as st
 from datetime import datetime, timedelta
 
+import streamlit as st
+from datetime import datetime, timedelta
+
 def display_weekly_calendar():
     st.title("Weekly Calendar")
     tasks = load_tasks_from_csv()
@@ -242,15 +245,15 @@ def display_weekly_calendar():
             week_tasks[days[i]] = day_tasks
 
     # Display the calendar
-    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns(7)
-    for i, day in enumerate(days):
-        with eval(f"col{i + 1}"):
-            st.subheader(day)
+    cols = st.beta_columns(7)
+    for i, col in enumerate(cols):
+        with col:
+            st.subheader(days[i])
             current_day = start_of_week + timedelta(days=i)
             st.write(current_day.strftime('%b %d'))
 
-            if week_tasks[day]:
-                for task in week_tasks[day]:
+            if week_tasks[days[i]]:
+                for task in week_tasks[days[i]]:
                     due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
                     overdue = due_date < today
 
