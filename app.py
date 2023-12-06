@@ -239,7 +239,15 @@ def display_weekly_calendar():
         if (current_day.year, current_day.month, current_day.day) in tasks:
             day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
             for task in day_tasks:
-                st.write(f"- {task['description']} (Due: {task['due_date']})")
+                due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                overdue = due_date < today
+                # Apply color styling based on the task status
+                if overdue:
+                    # Overdue tasks in red
+                    st.markdown(f"<span style='color: red;'>- {task['description']} (Due: {task['due_date']})</span>", unsafe_allow_html=True)
+                else:
+                    # On-time tasks in default color
+                    st.write(f"- {task['description']} (Due: {task['due_date']})")
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
