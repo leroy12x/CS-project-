@@ -244,18 +244,21 @@ def display_weekly_calendar():
             st.write(day_date.strftime('%b %d'))
 
             day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
-            for task in day_tasks:
-                due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-                overdue = due_date < today
-                completed = task.get('completed', False)  # Access the completed status
-                
-                # Apply color styling based on the task status
-                if completed:
-                    st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
-                elif overdue:
-                    st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"<span style='color: yellow;'>{task['description']}</span>", unsafe_allow_html=True)
+            if day_tasks:
+                 for task in day_tasks:
+                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                    overdue = due_date < today
+                    completed = task.get('completed', False)  # Access the completed status
+                    
+                    # Apply color styling based on the task status
+                    if completed:
+                        st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
+                    elif overdue:
+                        st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"<span style='color: yellow;'>{task['description']}</span>", unsafe_allow_html=True)
+            else:
+                st.write("No tasks")
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
     st.sidebar.title("Navigation")
