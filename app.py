@@ -228,7 +228,7 @@ from datetime import datetime, timedelta
 import streamlit as st
 from datetime import datetime, timedelta
 
-def display_weekly_calendar():
+ddef display_weekly_calendar():
     st.title("Weekly Calendar")
     tasks = load_tasks_from_csv()
 
@@ -251,11 +251,12 @@ def display_weekly_calendar():
             st.subheader(days[i])
             current_day = start_of_week + timedelta(days=i)
             st.write(current_day.strftime('%b %d'))
-             if i < 6:
+
+            if i < 6:
                 st.markdown(
                     f"<style>.separator-line-vertical {{ border-right: 1px solid #ccc; }}</style>",
                     unsafe_allow_html=True
-                )  
+                )
 
             if week_tasks[days[i]]:
                 for task in week_tasks[days[i]]:
@@ -268,18 +269,6 @@ def display_weekly_calendar():
                         st.markdown(f"<span style='background-color: #90EE90; padding: 5px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
             else:
                 st.write("No tasks")
-    cols = st.columns(7)
-    for i, col in enumerate(cols):
-        with col:
-            st.subheader(days[i])
-            current_day = start_of_week + timedelta(days=i)
-            st.write(current_day.strftime('%b %d'))
-
-            if i < 6:
-                st.markdown(
-                    f"<style>.separator-line-vertical {{ border-right: 1px solid #ccc; }}</style>",
-                    unsafe_allow_html=True
-                )           
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
