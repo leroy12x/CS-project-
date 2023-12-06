@@ -245,30 +245,20 @@ def display_weekly_calendar():
             current_day = start_of_week + timedelta(days=i)
             st.write(current_day.strftime('%b %d'))
 
-            # Check condition to apply CSS class
-            css_class = 'overdue' if datetime.strptime(task['due_date'], '%Y-%m-%d') < today else 'normal'
-
-            # Use Markdown with HTML and CSS classes
-            st.markdown(
-                f"""
-                <div class="{css_class}">
-                    {task['description']} (Due: {task['due_date']})
-                </div>
-                """
-            )
             if week_tasks[day]:
                 for task in week_tasks[day]:
                     due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
                     overdue = due_date < today
-                    css_class = 'overdue' if overdue else 'normal'
 
-                    st.markdown(
-                        f"""
-                        <div class="{css_class}">- {task['description']} (Due: {task['due_date']})</div>
-                        """
-                    )
+                    if overdue:
+                        st.markdown(
+                            f"<span style='color: red;'>- {task['description']} (Due: {task['due_date']})</span>",
+                            unsafe_allow_html=True
+                        )
+                    else:
+                        st.write(f"- {task['description']} (Due: {task['due_date']})")
             else:
-                st.write("No tasks")
+                st.write("No tasks")S
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
