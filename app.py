@@ -250,13 +250,21 @@ def display_weekly_calendar():
     start_of_week = today - timedelta(days=today.weekday())
     end_of_week = start_of_week + timedelta(days=6)
 
+    # Wochentage in einer Zeile horizontal anordnen
+    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns(7)
+
+    cols = [col1, col2, col3, col4, col5, col6, col7]
+    weekday_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
     for i in range(7):
         current_day = start_of_week + timedelta(days=i)
-        st.subheader(f"{current_day.strftime('%A, %b %d, %Y')}")
-        if (current_day.year, current_day.month, current_day.day) in tasks:
-            day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
-            for task in day_tasks:
-                st.write(f"- {task['description']} (Due: {task['due_date']})")
+        with cols[i]:
+            st.subheader(f"{weekday_names[i]} - {current_day.strftime('%b %d')}")
+
+            if (current_day.year, current_day.month, current_day.day) in tasks:
+                day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
+                for task in day_tasks:
+                    st.write(f"- {task['description']} (Due: {task['due_date']})")
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
@@ -273,4 +281,5 @@ def main():
         display_weekly_calendar()
 
 if __name__ == "__main__":
+    main()
     main()
