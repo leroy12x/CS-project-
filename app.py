@@ -244,16 +244,26 @@ def display_weekly_calendar():
             st.subheader(day)
             current_day = start_of_week + timedelta(days=i)
             st.write(current_day.strftime('%b %d'))
+
+            # Use Markdown with HTML and inline CSS for styling
+            st.markdown(
+                f"""
+                <div style="color: {'red' if datetime.strptime(task['due_date'], '%Y-%m-%d') < today else 'black'};">
+                    {task['description']} (Due: {task['due_date']})
+                </div>
+                """
+            )
             if week_tasks[day]:
                 for task in week_tasks[day]:
                     due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
                     overdue = due_date < today
-                    # Apply color styling based on the task status
                     if overdue:
-                        # Overdue tasks in red
-                        st.markdown(f"<span style='color: red;'>- {task['description']} (Due: {task['due_date']})</span>", unsafe_allow_html=True)
+                        st.markdown(
+                            f"""
+                            <div style="color: red;">- {task['description']} (Due: {task['due_date']})</div>
+                            """
+                        )
                     else:
-                        # On-time tasks in default color
                         st.write(f"- {task['description']} (Due: {task['due_date']})")
             else:
                 st.write("No tasks")
