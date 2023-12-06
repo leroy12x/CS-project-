@@ -222,6 +222,9 @@ def display_task_overview():
                     mark_as_completed(task['description'], day)
 
 # Modify the main function to include the edit tasks option
+import streamlit as st
+from datetime import datetime, timedelta
+
 def display_weekly_calendar():
     st.title("Weekly Calendar")
     tasks = load_tasks_from_csv()
@@ -239,8 +242,9 @@ def display_weekly_calendar():
             week_tasks[days[i]] = day_tasks
 
     # Display the calendar
+    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns(7)
     for i, day in enumerate(days):
-        with st.container():
+        with eval(f"col{i + 1}"):
             st.subheader(day)
             current_day = start_of_week + timedelta(days=i)
             st.write(current_day.strftime('%b %d'))
@@ -251,10 +255,7 @@ def display_weekly_calendar():
                     overdue = due_date < today
 
                     if overdue:
-                        st.markdown(
-                            f"<span style='color: red;'>- {task['description']} (Due: {task['due_date']})</span>",
-                            unsafe_allow_html=True
-                        )
+                        st.markdown(f"<span style='color: red;'>- {task['description']} (Due: {task['due_date']})</span>", unsafe_allow_html=True)
                     else:
                         st.write(f"- {task['description']} (Due: {task['due_date']})")
             else:
