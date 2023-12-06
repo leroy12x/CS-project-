@@ -201,7 +201,7 @@ completed_tasks = [task for day_tasks in tasks.values() for task in day_tasks if
 
 
     # Display pending tasks
-    st.subheader("Pending Tasks")
+ st.subheader("Pending Tasks")
     for task in pending_tasks:
         due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
         overdue = due_date < datetime.now()
