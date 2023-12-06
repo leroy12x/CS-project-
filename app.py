@@ -228,17 +228,25 @@ from datetime import datetime, timedelta
 import streamlit as st
 from datetime import datetime, timedelta
 
+import streamlit as st
+from datetime import datetime, timedelta
+
+# Assuming this function is defined and returns a list of task dictionaries
+# Each task dictionary should have at least 'due_date' and 'completed' keys
+def load_tasks_from_csv():
+    # Placeholder for your actual task loading logic
+    return []
+
 def display_weekly_calendar():
     st.title("Weekly Calendar")
-    tasks = load_tasks_from_csv()  # Ensure this function returns the correct structure
+    tasks = load_tasks_from_csv()
 
     today = datetime.today()
     start_of_week = today - timedelta(days=today.weekday())
     days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
     # Custom CSS to create grid lines between columns
-    st.markdown(
-        """
+    st.markdown("""
         <style>
         .reportview-container .main .block-container {
             display: grid;
@@ -258,32 +266,24 @@ def display_weekly_calendar():
             padding: 10px;
         }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+        """, unsafe_allow_html=True)
 
-   
-cols = st.columns(7)
-for i, day in enumerate(days):
-    with cols[i]:
-        st.subheader(day)
-        current_day = start_of_week + timedelta(days=i)
-        st.write(current_day.strftime('%b %d'))
+    cols = st.columns(7)
+    for i, col in enumerate(cols):
+        with col:
+            st.markdown(f"#### {days[i]}")
+            st.markdown(f"**{start_of_week.strftime('%b %d')}**")
 
-        # Convert current_day to string for comparison
-        current_day_str = current_day.strftime('%Y-%m-%d')
+            current_day_str = (start_of_week + timedelta(days=i)).strftime('%Y-%m-%d')
 
-        # List comprehension to get tasks for the current day
-        current_tasks = [task for task in tasks if task['due_date'] == current_day_str]
-        
+            current_tasks = [task for task in tasks if task['due_date'] == current_day_str]
+            
             if current_tasks:
                 for task in current_tasks:
-                    # Check if task is overdue
-                    overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < today
-                    # Check if task is completed
+                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                    overdue = due_date < today
                     completed = task.get('completed', False)
 
-                    # Style tasks based on status
                     if completed:
                         col.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
                     elif overdue:
@@ -292,6 +292,7 @@ for i, day in enumerate(days):
                         col.markdown(f"<span style='color: yellow;'>{task['description']}</span>", unsafe_allow_html=True)
             else:
                 col.write("No tasks")
+
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
     st.sidebar.title("Navigation")
