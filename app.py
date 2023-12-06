@@ -256,7 +256,7 @@ def display_weekly_calendar():
                     elif overdue:
                         st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
                     else:
-                        st.markdown(f"<span style='color: yellow;'>{task['description']}</span>", unsafe_allow_html=True)
+                        st.markdown(f"<span style='color: orange;'>{task['description']}</span>", unsafe_allow_html=True)
             else:
                 st.write("No tasks")
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
