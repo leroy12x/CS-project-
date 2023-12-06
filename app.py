@@ -228,7 +228,7 @@ from datetime import datetime, timedelta
 import streamlit as st
 from datetime import datetime, timedelta
 
-ddef display_weekly_calendar():
+def display_weekly_calendar():
     st.title("Weekly Calendar")
     tasks = load_tasks_from_csv()
 
