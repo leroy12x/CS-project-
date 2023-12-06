@@ -228,26 +228,35 @@ def display_weekly_calendar():
 
     today = datetime.today()
     start_of_week = today - timedelta(days=today.weekday())
-    end_of_week = start_of_week + timedelta(days=6)
-
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+    # Create a dictionary to hold tasks for each day
+    week_tasks = {day: [] for day in days}
     for i in range(7):
         current_day = start_of_week + timedelta(days=i)
-        st.subheader(f"{days[i]} - {current_day.strftime('%b %d')}")
-
         if (current_day.year, current_day.month, current_day.day) in tasks:
             day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
-            for task in day_tasks:
-                due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-                overdue = due_date < today
-                # Apply color styling based on the task status
-                if overdue:
-                    # Overdue tasks in red
-                    st.markdown(f"<span style='color: red;'>- {task['description']} (Due: {task['due_date']})</span>", unsafe_allow_html=True)
-                else:
-                    # On-time tasks in default color
-                    st.write(f"- {task['description']} (Due: {task['due_date']})")
+            week_tasks[days[i]] = day_tasks
+
+    # Display the calendar
+    for i, day in enumerate(days):
+        with st.container():
+            st.subheader(day)
+            current_day = start_of_week + timedelta(days=i)
+            st.write(current_day.strftime('%b %d'))
+            if week_tasks[day]:
+                for task in week_tasks[day]:
+                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                    overdue = due_date < today
+                    # Apply color styling based on the task status
+                    if overdue:
+                        # Overdue tasks in red
+                        st.markdown(f"<span style='color: red;'>- {task['description']} (Due: {task['due_date']})</span>", unsafe_allow_html=True)
+                    else:
+                        # On-time tasks in default color
+                        st.write(f"- {task['description']} (Due: {task['due_date']})")
+            else:
+                st.write("No tasks")
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
