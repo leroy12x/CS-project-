@@ -251,23 +251,24 @@ def display_weekly_calendar():
             st.subheader(days[i])
             current_day = start_of_week + timedelta(days=i)
             st.write(current_day.strftime('%b %d'))
-             if i < 6:
-                st.markdown(
-                    f"<style>.separator-line-vertical {{ border-right: 1px solid #ccc; }}</style>",
-                    unsafe_allow_html=True
-                )  
 
-            if week_tasks[days[i]]:
-                for task in week_tasks[days[i]]:
-                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-                    overdue = due_date < today
+        if i < 6:
+            st.markdown(
+                f"<style>.separator-line-vertical {{ border-right: 1px solid #ccc; }}</style>",
+                unsafe_allow_html=True
+            )  
 
-                    if overdue:
-                        st.markdown(f"<span style='background-color: #FF6347; padding: 5px; border-radius: 5px; color: white;'>{task['description']}</span>", unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"<span style='background-color: #90EE90; padding: 5px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
-            else:
-                st.write("No tasks")
+        if week_tasks[days[i]]:
+            for task in week_tasks[days[i]]:
+                due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                overdue = due_date < today
+
+                if overdue:
+                    st.markdown(f"<span style='background-color: #FF6347; padding: 5px; border-radius: 5px; color: white;'>{task['description']}</span>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"<span style='background-color: #90EE90; padding: 5px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
+        else:
+            st.write("No tasks")
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
