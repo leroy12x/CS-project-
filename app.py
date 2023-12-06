@@ -191,35 +191,48 @@ def load_tasks_from_csv():
         return tasks
     except FileNotFoundError:
         return {}
+import streamlit as st
+from datetime import datetime
+import pandas as pd
+
+def load_tasks_from_csv():
+    # Replace with the actual path to your CSV file
+    try:
+        return pd.read_csv('tasks.csv').to_dict(orient='records')
+    except FileNotFoundError:
+        return []
+
+def save_tasks_to_csv(tasks):
+    pd.DataFrame(tasks).to_csv('tasks.csv', index=False)
+
 def display_task_overview():
     st.title("To Do List")
 
     if 'tasks' not in st.session_state:
         st.session_state.tasks = load_tasks_from_csv()
 
-    # Function to handle marking tasks as completed
-    def mark_as_completed(task_description, day):
-        for task in st.session_state.tasks[day]:
+    def mark_as_completed(task_description):
+        # Update the 'completed' status in the session state
+        for task in st.session_state.tasks:
             if task['description'] == task_description:
                 task['completed'] = True
                 break
         save_tasks_to_csv(st.session_state.tasks)
+        st.experimental_rerun()
 
     # Display tasks with color coding
-    for day, day_tasks in st.session_state.tasks.items():
-        st.subheader(f"Tasks for {day}")
-        for task in day_tasks:
-            due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-            overdue = due_date < datetime.now()
-            if task.get('completed', False):
-                # Completed tasks in green
-                st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
-            else:
-                # Pending tasks in default color or red if overdue
-                color = "red" if overdue else "black"
-                st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
-                    mark_as_completed(task['description'], day)
+    for task in st.session_state.tasks:
+        due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+        overdue = due_date < datetime.now()
+        color = "green" if task.get('completed', False) else "red" if overdue else "black"
+        task_display = f"{task['description']} - Due: {task['due_date']}"
+        task_display += " (Overdue)" if overdue else ""
+        task_display += " - Completed" if task.get('completed', False) else ""
+        st.markdown(f"<span style='color: {color};'>{task_display}</span>", unsafe_allow_html=True)
+
+        if not task.get('completed', False):
+            if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                mark_as_completed(task['description'])
 
 # Modify the main function to include the edit tasks option
 import streamlit as st
