@@ -245,7 +245,7 @@ def display_weekly_calendar():
             week_tasks[days[i]] = day_tasks
 
     # Display the calendar
-    cols = st.beta_columns(7)
+    cols = st.columns(7)
     for i, col in enumerate(cols):
         with col:
             st.subheader(days[i])
