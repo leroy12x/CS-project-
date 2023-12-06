@@ -197,28 +197,16 @@ def display_task_overview():
     if 'tasks' not in st.session_state:
         st.session_state.tasks = load_tasks_from_csv()
 
+    # Function to handle marking tasks as completed
     def mark_as_completed(task_description, day):
-        # Update the 'completed' status in the session state
         for task in st.session_state.tasks[day]:
             if task['description'] == task_description:
                 task['completed'] = True
                 break
-        # Save the updated tasks to CSV
         save_tasks_to_csv(st.session_state.tasks)
 
-    # Display tasks
+    # Display tasks with color coding
     for day, day_tasks in st.session_state.tasks.items():
-        st.subheader(f"Tasks for {day}")
-        for task in day_tasks:
-            overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-            status = "Completed" if task.get('completed', False) else "Pending"
-            task_info = f"{task['description']} - Due: {task['due_date']} - Status: {status} {'(Overdue)' if overdue else ''}"
-            st.write(task_info)
-            if not task.get('completed', False):
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
-                    mark_as_completed(task['description'], day)
-
-    for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
             due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
@@ -230,10 +218,8 @@ def display_task_overview():
                 # Pending tasks in default color or red if overdue
                 color = "red" if overdue else "black"
                 st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
-                    task['completed'] = True
-                    save_tasks_to_csv(tasks)
-                    st.experimental_rerun()
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
+                    mark_as_completed(task['description'], day)
 
 # Modify the main function to include the edit tasks option
 def display_weekly_calendar():
@@ -246,18 +232,12 @@ def display_weekly_calendar():
 
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-    row1_col1, row1_col2, row1_col3, row1_col4, row1_col5, row1_col6, row1_col7 = st.beta_columns(7)
+    for i in range(7):
+        current_day = start_of_week + timedelta(days=i)
+        st.subheader(f"{days[i]} - {current_day.strftime('%b %d')}")
 
-    with row1_col1:
-        st.subheader(f"{days[0]} - {start_of_week.strftime('%b %d')}")
-        if (start_of_week.year, start_of_week.month, start_of_week.day) in tasks:
-            day_tasks = tasks[(start_of_week.year, start_of_week.month, start_of_week.day)]
-            for task in day_tasks:
-                st.write(f"- {task['description']} (Due: {task['due_date']})")
-    with row1_col2:
-        st.subheader(f"{days[1]} - {(start_of_week + timedelta(days=1)).strftime('%b %d')}")
-        if ((start_of_week + timedelta(days=1)).year, (start_of_week + timedelta(days=1)).month, (start_of_week + timedelta(days=1)).day) in tasks:
-            day_tasks = tasks[((start_of_week + timedelta(days=1)).year, (start_of_week + timedelta(days=1)).month, (start_of_week + timedelta(days=1)).day)]
+        if (current_day.year, current_day.month, current_day.day) in tasks:
+            day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
             for task in day_tasks:
                 st.write(f"- {task['description']} (Due: {task['due_date']})")
 
