@@ -198,23 +198,23 @@ def display_task_overview():
     if 'tasks' not in st.session_state:
         st.session_state.tasks = load_tasks_from_csv()
 
-    # Display tasks and buttons to mark them as completed
-    for day, day_tasks in st.session_state.tasks.items():
+    def update_tasks_in_state_and_csv():
+        # This inner function updates the CSV and then reloads the tasks into the session state
+        save_tasks_to_csv(st.session_state.tasks)
+        st.session_state.tasks = load_tasks_from_csv()
+
+    # Iterate over a copy of the list to avoid 'dictionary changed size during iteration' error
+    for day, day_tasks in st.session_state.tasks.copy().items():
         st.subheader(f"Tasks for {day}")
-        for task in day_tasks:
-            if task.get('completed', False):
-                # Display completed tasks in green
-                st.markdown(f"<span style='color: green;'>{task['description']} - Completed</span>", unsafe_allow_html=True)
-            else:
-                # Display pending tasks and add a button to mark as completed
-                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                task_info = f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}"
-                st.write(task_info)
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
-                    # Update the task's 'completed' status and refresh the task list
+        for task in day_tasks.copy():
+            task_due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+            overdue = task_due_date < datetime.now()
+            task_info = f"{task['description']} - Due: {task_due_date.strftime('%Y-%m-%d')} {'(Overdue)' if overdue else ''}"
+            st.write(task_info)
+            if not task.get('completed', False):
+                if st.button("Mark as Completed", key=f"complete_{task['description']}"):
                     task['completed'] = True
-                    save_tasks_to_csv(st.session_state.tasks)
-                    st.session_state.tasks = load_tasks_from_csv()  # Reload tasks to reflect the changes
+                    update_tasks_in_state_and_csv()
 
     # Filter tasks into pending and completed
     pending_tasks = [task for day_tasks in tasks.values() for task in day_tasks if not task.get('completed', False)]
