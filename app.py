@@ -234,6 +234,45 @@ def display_task_overview():
             st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
             if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
                 mark_as_completed(task['description'])
+
+# Modify the main function to include the edit tasks option
+import streamlit as st
+from datetime import datetime, timedelta
+
+import streamlit as st
+from datetime import datetime, timedelta
+
+def display_weekly_calendar():
+    st.title("Weekly Calendar")
+    tasks = load_tasks_from_csv()  # Ensure this function returns a dictionary of tasks
+
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())
+    days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+
+    cols = st.columns(7)
+    for i, day in enumerate(days):
+        with cols[i]:
+            st.subheader(day)
+            day_date = start_of_week + timedelta(days=i)
+            st.write(day_date.strftime('%b %d'))
+
+            day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
+            if day_tasks:
+                 for task in day_tasks:
+                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                    overdue = due_date < today
+                    completed = task.get('completed', False)  # Access the completed status
+                    
+                    # Apply color styling based on the task status
+                    if completed:
+                        st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
+                    elif overdue:
+                        st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"<span style='color: orange;'>{task['description']}</span>", unsafe_allow_html=True)
+            else:
+                st.write("No tasks")
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
     st.sidebar.title("Navigation")
