@@ -234,7 +234,7 @@ def display_weekly_calendar():
 
     today = datetime.today()
     start_of_week = today - timedelta(days=today.weekday())
-    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    days = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"]
 
     # Create a dictionary to hold tasks for each day
     week_tasks = {day: [] for day in days}
