@@ -196,30 +196,27 @@ def display_task_overview():
     tasks = load_tasks_from_csv()
 
     # Filter tasks into pending and completed
-    pending_tasks = {k: [t for t in v if not t.get('completed', False)] for k, v in tasks.items()}
-    completed_tasks = {k: [t for t in v if t.get('completed', False)] for k, v in tasks.items()}
+    pending_tasks = [task for day_tasks in tasks.values() for task in day_tasks if not task['completed']]
+    completed_tasks = [task for day_tasks in tasks.values() for task in day_tasks if task['completed']]
 
     # Display pending tasks
     st.subheader("Pending Tasks")
-    for day, day_tasks in pending_tasks.items():
-        st.subheader(f"Tasks for {day}")
-        for task in day_tasks:
-            overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-            task_info = f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}"
-            st.write(task_info)
-            if st.button("Mark as Completed", key=f"complete_{task['description']}"):
-                task['completed'] = True
-                save_tasks_to_csv(tasks)
+    for task in pending_tasks:
+        due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+        overdue = due_date < datetime.now()
+        task_info = f"{task['description']} - Due: {due_date.strftime('%Y-%m-%d')} {'(Overdue)' if overdue else ''}"
+        st.write(task_info)
+        if st.button("Mark as Completed", key=f"complete_{task['description']}"):
+            task['completed'] = True
+            save_tasks_to_csv(tasks)
+            # Force a refresh of the task lists
+            st.session_state.tasks = load_tasks_from_csv()
 
     # Display completed tasks
     st.subheader("Completed Tasks")
-    for day, day_tasks in completed_tasks.items():
-        st.subheader(f"Tasks for {day}")
-        for task in day_tasks:
-            st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
-            if st.button("Revert to Not Completed", key=f"revert_{task['description']}"):
-                task['completed'] = False
-                save_tasks_to_csv(tasks)
+    for task in completed_tasks:
+        due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+        st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {due_date.strftime('%Y-%m-%d')}</span>", unsafe_allow_html=True)
 
     # Update the session state after any changes
     st.session_state.tasks = tasks
