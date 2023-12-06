@@ -236,54 +236,39 @@ def display_weekly_calendar():
     start_of_week = today - timedelta(days=today.weekday())
     days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-    # Use custom CSS to create vertical lines between columns
-    st.markdown(
-        """
-        <style>
-        .reportview-container .main .block-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            gap: 10px;
-        }
-        .reportview-container .main .block-container .element-container {
-            border-right: 1px solid #ddd;
-        }
-        .reportview-container .main .block-container .element-container:last-child {
-            border-right: none;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    # Create a dictionary to hold tasks for each day
+    week_tasks = {day: [] for day in days}
+    for i in range(7):
+        current_day = start_of_week + timedelta(days=i)
+        if (current_day.year, current_day.month, current_day.day) in tasks:
+            week_tasks[days[current_day.weekday()]].extend(tasks[(current_day.year, current_day.month, current_day.day)])
 
+    # Display the calendar
     cols = st.columns(7)
-    for i, col in enumerate(cols):
-        with col:
-            st.subheader(days[i])
-            st.write(start_of_week + timedelta(days=i))
+    for i, day in enumerate(days):
+        with cols[i]:
+            st.subheader(day)
+            # Display the date
+            day_date = start_of_week + timedelta(days=i)
+            st.write(day_date.strftime('%b %d'))
 
-            # Get tasks for the current day
-            current_day_tasks = tasks.get((current_day.year, current_day.month, current_day.day), [])
-            for task in current_day_tasks:
-                due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-                overdue = due_date < today
-                style = "background-color: #FF6347; color: white;" if overdue else "background-color: #90EE90;"
-                col.markdown(f"<span style='{style} padding: 3px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
-
-            # If the last column, don't add a right border
-            if i == len(cols) - 1:
-                st.markdown(
-                    """
-                    <style>
-                    .reportview-container .main .block-container .element-container:last-child {
-                        border-right: none;
-                    }
-                    </style>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
+            # Display tasks for that day
+            day_tasks = week_tasks[day]
+            if day_tasks:
+                for task in day_tasks:
+                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                    overdue = due_date < today
+                    # Styling based on task completion
+                    if overdue:
+                        st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
+                    elif completed:
+                        st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"<span style='color: yellow;'>{task['description']}</span>", unsafe_allow_html=True)
+                    
+                    
+            else:
+                st.write("No tasks")
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 def main():
     st.sidebar.title("Navigation")
