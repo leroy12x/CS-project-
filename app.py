@@ -234,7 +234,7 @@ def display_weekly_calendar():
 
     today = datetime.today()
     start_of_week = today - timedelta(days=today.weekday())
-    days = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"]
+    days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
     # Create a dictionary to hold tasks for each day
     week_tasks = {day: [] for day in days}
@@ -242,24 +242,26 @@ def display_weekly_calendar():
         current_day = start_of_week + timedelta(days=i)
         if (current_day.year, current_day.month, current_day.day) in tasks:
             day_tasks = tasks[(current_day.year, current_day.month, current_day.day)]
-            week_tasks[days[i]] = day_tasks
+            week_tasks[days[(current_day.weekday() + 1) % 7]] = day_tasks
 
-    # Display the calendar
+    # Create columns for each day of the week
     cols = st.columns(7)
-    for i, col in enumerate(cols):
-        with col:
-            # Use subheader for day names
-            st.markdown(f"#### {days[i]}")
-            st.markdown(f"**{current_day.strftime('%b %d')}**")
-
-            if week_tasks[days[i]]:
-                for task in week_tasks[days[i]]:
+    for i, day in enumerate(days):
+        with cols[i]:
+            st.subheader(day)
+            # Display the date
+            day_date = start_of_week + timedelta(days=(i - start_of_week.weekday()) % 7)
+            st.write(day_date.strftime('%b %d'))
+            # Display tasks for that day
+            if week_tasks[day]:
+                for task in week_tasks[day]:
                     due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
                     overdue = due_date < today
-
-                    # Style tasks based on status
-                    style = "background-color: #FF6347; color: white;" if overdue else "background-color: #90EE90;"
-                    st.markdown(f"<span style='{style} padding: 3px; border-radius: 5px;'>{task['description']}</span>", unsafe_allow_html=True)
+                    # Styling based on task completion
+                    if overdue:
+                        st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
             else:
                 st.write("No tasks")
 
