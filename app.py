@@ -137,16 +137,18 @@ def edit_tasks():
     tasks = load_tasks_from_csv()
     task_list = [f"{task['description']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
 
-    selected_task = st.selectbox("Select a Task to Edit", task_list)
+    selected_task_description = st.selectbox("Select a Task to Edit", task_list)
+    selected_task_details = None
 
     # Find the task in the tasks dictionary
-    for day_tasks in tasks.values():
+    for date_key, day_tasks in tasks.items():
         for task in day_tasks:
-            if selected_task.startswith(task['description']):
+            if selected_task_description == f"{task['description']} (Due: {task['due_date']})":
                 selected_task_details = task
+                selected_date_key = date_key  # Keep track of the date key where the task is found
                 break
 
-    if 'selected_task_details' in locals():
+    if selected_task_details:
         new_description = st.text_input("Task Description", value=selected_task_details['description'])
         new_due_date = st.date_input("Due Date", value=datetime.strptime(selected_task_details['due_date'], '%Y-%m-%d'))
         new_ects = st.number_input("ECTS Points", value=selected_task_details['ects'], min_value=0)
