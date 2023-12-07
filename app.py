@@ -327,17 +327,31 @@ st.title('Course Events Information')
 # Input field for course ID
 course_id = st.text_input('Enter Course ID')
 
+# Überprüfe, ob die Eingabe eine Zahl ist
+if course_id.isdigit():
+    # Wandle den Eingabewert in eine Ganzzahl um, wenn es sich um eine Zahl handelt
+    course_id = int(course_id)
+else:
+    st.warning('Please enter a valid Course ID (numeric value).')
+
 # Button to fetch events
 if st.button('Get Events'):
-     df = pd.DataFrame(response.json())
+    if course_id:
+        # Assuming the term_id is known and constant as per your example
+        term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
+        events_df = get_events_by_term(term_id)
 
-    # Suche nach der ID in der Spalte 'id' und erhalte den zugehörigen Titel
-    title = df.loc[df['id'] == input_id, 'title'].values
-
-    if len(title) > 0:
-        return title[0]  # Gib den Titel zurück, wenn die ID gefunden wurde
+        # Filter events by the provided course ID
+        if not events_df.empty:
+            course_events = events_df[events_df['id'] == course_id]
+            if not course_events.empty:
+                st.write(course_events)
+            else:
+                st.write(f"No events found for Course ID: {course_id}")
+        else:
+            st.write("No events data available.")
     else:
-        return 'ID nicht gefunden'
+        st.warning('Please enter a Course ID.')
 
 def main():
     st.sidebar.title("Navigation")
