@@ -321,9 +321,15 @@ def get_events_by_term(term_id):
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
 
-def get_title_by_id(input_id):
-    # Lade die CSV-Datei in ein Pandas DataFrame
-    df = pd.DataFrame(response.json())
+# Streamlit app setup
+st.title('Course Events Information')
+
+# Input field for course ID
+course_id = st.text_input('Enter Course ID')
+
+# Button to fetch events
+if st.button('Get Events'):
+     df = pd.DataFrame(response.json())
 
     # Suche nach der ID in der Spalte 'id' und erhalte den zugehörigen Titel
     title = df.loc[df['id'] == input_id, 'title'].values
@@ -332,6 +338,7 @@ def get_title_by_id(input_id):
         return title[0]  # Gib den Titel zurück, wenn die ID gefunden wurde
     else:
         return 'ID nicht gefunden'
+
 def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar"])
