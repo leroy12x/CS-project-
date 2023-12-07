@@ -161,7 +161,7 @@ def edit_tasks():
             selected_task_details['percentage'] = new_percentage
             save_tasks_to_csv(tasks)
             st.success("Task updated successfully!")
-             st.experimental_rerun() 
+            st.experimental_rerun() 
 
         if st.button("Delete Task"):
             # Remove the selected task from the list of tasks for that day
@@ -171,7 +171,7 @@ def edit_tasks():
                 del tasks[selected_date_key]
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
-             st.experimental_rerun() 
+            st.experimental_rerun() 
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
