@@ -321,31 +321,6 @@ def get_events_by_term(term_id):
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
 
-# Streamlit app setup
-st.title('Course Events Information')
-
-# Input field for course ID
-course_id = st.text_input('Enter Course ID')
-
-# Button to fetch events
-if st.button('Get Events'):
-    if course_id:
-        # Assuming the term_id is known and constant as per your example
-        term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
-        events_df = get_events_by_term(term_id)
-
-        # Filter events by the provided course ID
-        if not events_df.empty:
-            course_events = events_df[events_df['id'] == course_id]
-            if not course_events.empty:
-                st.write(course_events)
-            else:
-                st.write(f"No events found for Course ID: {course_id}")
-        else:
-            st.write("No events data available.")
-    else:
-        st.warning('Please enter a Course ID.')
-
 def get_title_by_id(input_id):
     # Lade die CSV-Datei in ein Pandas DataFrame
     df = pd.DataFrame(response.json())
