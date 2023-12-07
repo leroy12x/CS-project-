@@ -198,11 +198,16 @@ def load_tasks_from_csv():
         return {}
 def display_task_overview():
     st.title("To Do List")
-    tasks = load_tasks_from_csv()
 
-    for day, day_tasks in tasks.items():
+    # Initialize 'tasks' in session state if it's not already set
+    if 'tasks' not in st.session_state:
+        st.session_state.tasks = load_tasks_from_csv()
+
+    # Now you can safely iterate over st.session_state.tasks
+    for day, day_tasks in st.session_state.tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
+
             if task['completed']:
                 st.write(f"Completed: {task['description']}")
             else:
