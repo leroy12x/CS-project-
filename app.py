@@ -250,7 +250,7 @@ def display_weekly_calendar():
 
     today = datetime.today()
     start_of_week = today - timedelta(days=today.weekday())
-    days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
     cols = st.columns(7)
     for i, day in enumerate(days):
