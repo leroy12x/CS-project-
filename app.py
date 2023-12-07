@@ -170,10 +170,9 @@ def save_tasks_to_csv(tasks):
     df.to_csv('tasks.csv', index=False)
     print("Tasks saved to CSV.")  # Debugging line
 
-# Function to load tasks from a CSV file
 def load_tasks_from_csv():
     try:
-        df = pd.read_csv('tasks.csv') 
+        df = pd.read_csv('tasks.csv')
         tasks = {}
         for _, row in df.iterrows():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
@@ -184,8 +183,8 @@ def load_tasks_from_csv():
                 'description': row['Description'],
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
-                'due_date': row['Due Date']
-                'completed': row.get['completed', False]
+                'due_date': row['Due Date'],
+                'completed': row.get('Completed', False)  # Correct use of the get method
             }
             if date_key in tasks:
                 tasks[date_key].append(task_info)
@@ -196,9 +195,22 @@ def load_tasks_from_csv():
         return {}
 def display_task_overview():
     st.title("To Do List")
+    tasks = load_tasks_from_csv()
 
-    if 'tasks' not in st.session_state:
-        st.session_state.tasks = load_tasks_from_csv()
+    for day, day_tasks in tasks.items():
+        st.subheader(f"Tasks for {day}")
+        for task in day_tasks:
+            if task['completed']:
+                st.write(f"Completed: {task['description']}")
+            else:
+                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
+                st.write(f"Task: {task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
+                st.write(f"Time: {task['time']} to {task['end_time']} | Duration: {task['duration']}")
+                st.write(f"ECTS: {task['ects']} | Percentage: {task['percentage']}")
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                    task['completed'] = True
+                    save_tasks_to_csv(tasks)
+                    st.experimental_rerun()
 
     # Function to handle marking tasks as completed
     def mark_as_completed(task_description, day):
@@ -223,13 +235,6 @@ def display_task_overview():
                 st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
                     mark_as_completed(task['description'], day)
-
-# Modify the main function to include the edit tasks option
-import streamlit as st
-from datetime import datetime, timedelta
-
-import streamlit as st
-from datetime import datetime, timedelta
 
 def display_weekly_calendar():
     st.title("Weekly Calendar")
