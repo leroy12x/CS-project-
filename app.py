@@ -331,19 +331,31 @@ if st.button('Get Events'):
         term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
         events_df = get_events_by_term(term_id)
 
+        # Debug: Print the DataFrame to the console (visible in server logs)
+        st.write("DataFrame:", events_df)
+
         # Filter events by the provided course ID
         if not events_df.empty:
+            # Ensure the course_id is a string and remove any leading/trailing whitespace
+            course_id = str(course_id).strip()
+
+            # Attempt to match the course ID as an integer if it is numeric
+            if course_id.isdigit():
+                course_id = int(course_id)
+            
             course_events = events_df[events_df['id'] == course_id]
+
             if not course_events.empty:
-                # Select only maxCredits and title columns to display
                 course_events = course_events[['maxCredits', 'title']]
                 st.write(course_events)
             else:
-                st.write(f"No events found for Course ID: {course_id}")
+                st.error(f"No events found for Course ID: {course_id}")
         else:
-            st.write("No events data available.")
+            st.error("No events data available.")
     else:
         st.warning('Please enter a Course ID.')
+
+
 
 def main():
     st.sidebar.title("Navigation")
