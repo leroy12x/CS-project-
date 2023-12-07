@@ -315,7 +315,8 @@ def get_events_by_term(term_id):
     response = requests.get(url, headers=headers)
 
     if response.ok:
-        return pd.DataFrame(response.json())
+        df = pd.DataFrame(response.json())
+        return df
     else:
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
@@ -345,7 +346,17 @@ if st.button('Get Events'):
     else:
         st.warning('Please enter a Course ID.')
 
+def get_title_by_id(input_id):
+    # Lade die CSV-Datei in ein Pandas DataFrame
+    df = pd.DataFrame(response.json())
 
+    # Suche nach der ID in der Spalte 'id' und erhalte den zugehörigen Titel
+    title = df.loc[df['id'] == input_id, 'title'].values
+
+    if len(title) > 0:
+        return title[0]  # Gib den Titel zurück, wenn die ID gefunden wurde
+    else:
+        return 'ID nicht gefunden'
 def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar"])
