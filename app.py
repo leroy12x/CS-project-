@@ -288,6 +288,33 @@ def get_current_semester():
     response = requests.get(url, headers=headers)
 
     if response.ok:
+        return response.json()
+    else:
+        print("Error calling API: ", response.status_code)
+        return None
+
+
+# Fetch and display the current semester
+semester_info = get_current_semester()
+if semester_info:
+    # Extract and display the description from the semester information
+    semester_description = semester_info.get('description', 'No description available')
+    st.write(f" {semester_description}")
+else:
+    st.error("Failed to fetch current semester information.")
+
+
+# Function to fetch events by term
+def get_current_semester():
+    url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "de"
+    }
+    response = requests.get(url, headers=headers)
+
+    if response.ok:
         # If the response was successful, no Exception will be raised
         json_data = response.json()
         return json_data
@@ -305,27 +332,6 @@ else:
     # Handle the error case
     st.error("Failed to retrieve data.")
 
-
-
-# Function to fetch events by term
-def get_events_by_term(term_id):
-    url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
-
-    headers = {
-        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
-        "API-Version": "1",
-        "X-RequestedLanguage": "en"
-    }
-
-    response = requests.get(url, headers=headers)
-
-    if response.ok:
-        events_df = pd.DataFrame(response.json())
-        print(events_df.columns)  # This line will print the column names
-        return events_df
-    else:
-        st.error(f"Error calling API: {response.status_code}")
-        return pd.DataFrame()
 
 
 # Streamlit app setup
