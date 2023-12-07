@@ -318,7 +318,6 @@ def get_events_by_term(term_id):
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
 
-# Streamlit app setup
 st.title('Course Events Information')
 
 # Input field for course ID
@@ -331,15 +330,21 @@ if st.button('Get Events'):
         term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
         events_df = get_events_by_term(term_id)
 
+        # Debug: Print the DataFrame to the console (visible in server logs)
+        st.write("DataFrame:", events_df)
+
         # Filter events by the provided course ID
         if not events_df.empty:
-            course_events = events_df[events_df['id'].astype(int) == int(course_id)]
+            # Convert the 'id' column to string if it's not already
+            events_df['id'] = events_df['id'].astype(str)
+            course_events = events_df[events_df['id'] == course_id.strip()]
+
             if not course_events.empty:
                 st.write(course_events)
             else:
-                st.write(f"No events found for Course ID: {course_id}")
+                st.error(f"No events found for Course ID: {course_id}")
         else:
-            st.write("No events data available.")
+            st.error("No events data available.")
     else:
         st.warning('Please enter a Course ID.')
 
