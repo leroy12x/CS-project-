@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 import math
+#fuer API
+import requests
+
 
 # Function to display the calendar for the selected month
 def display_weekly_calendar(year, month, week, tasks):
@@ -268,6 +271,35 @@ def display_weekly_calendar():
             else:
                 st.write("No tasks")
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
+
+# Function to fetch current semester information
+def get_current_semester():
+    url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "de"
+    }
+    response = requests.get(url, headers=headers)
+
+    if response.ok:
+        return response.json()
+    else:
+        print("Error calling API: ", response.status_code)
+        return None
+
+# Streamlit app setup
+st.title('Current Semester Information')
+
+# Fetch and display the current semester
+semester_info = get_current_semester()
+if semester_info:
+    st.write("Current Semester Details:")
+    semester_series = pd.Series(semester_info)
+    st.write(semester_series)
+else:
+    st.error("Failed to fetch current semester information.")
+
 def main():
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar"])
