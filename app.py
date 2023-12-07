@@ -164,10 +164,11 @@ def edit_tasks():
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'], task['end_time'], task['duration'], task['description'], task['ects'], task['percentage'], task['due_date'])
+    df = pd.DataFrame([(key[0], key[1], key[2], task['time'], task['end_time'], task['duration'], task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration', 'Description', 'ECTS', 'Percentage', 'Due Date'])
+                      columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration', 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
     df.to_csv('tasks.csv', index=False)
+    print("Tasks saved to CSV.")  # Debugging line
 
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
@@ -184,6 +185,7 @@ def load_tasks_from_csv():
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
                 'due_date': row['Due Date']
+                'completed': row.get['completed', False]
             }
             if date_key in tasks:
                 tasks[date_key].append(task_info)
