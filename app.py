@@ -294,14 +294,14 @@ def get_current_semester():
         return None
 
 
-# Fetch and display the current semester
-semester_info = get_current_semester()
-if semester_info:
-    # Extract and display the description from the semester information
-    semester_description = semester_info.get('description', 'No description available')
-    st.write(f" {semester_description}")
-else:
-    st.error("Failed to fetch current semester information.")
+        # Fetch and display the current semester
+        semester_info = get_current_semester()
+        if semester_info:
+            # Extract and display the description from the semester information
+            semester_description = semester_info.get('description', 'No description available')
+            st.write(f" {semester_description}")
+        else:
+            st.error("Failed to fetch current semester information.")
 
 def get_current_semester():
     url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
