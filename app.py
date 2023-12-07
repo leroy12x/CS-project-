@@ -311,12 +311,7 @@ def get_events_by_term(term_id):
         "X-RequestedLanguage": "en"
     }
     response = requests.get(url, headers=headers)
-    if response.ok:
-        df = pd.DataFrame(response.json())
-        return df
-    else:
-        st.error(f"Error calling API: {response.status_code}")
-        return pd.DataFrame()
+   
 
 # Streamlit app setup
 st.title('Course Events Information')
