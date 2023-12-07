@@ -213,7 +213,7 @@ def display_task_overview():
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 st.write(f"Task: {task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
-                st.write(f"Time: {task['time']}")
+                st.write(f"Duration: {task['duration']}")
                 st.write(f"ECTS: {task['ects']} | Percentage: {task['percentage']}")
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
                     task['completed'] = True
