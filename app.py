@@ -333,8 +333,7 @@ if st.button('Get Events'):
         term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
         events_df = get_events_by_term(term_id)
 
-        # Debug: Print the DataFrame to the console (visible in server logs)
-        st.write("DataFrame:", events_df)
+
 
         # Filter events by the provided course ID
         if not events_df.empty:
