@@ -293,8 +293,6 @@ def get_current_semester():
         print("Error calling API: ", response.status_code)
         return None
 
-# Streamlit app setup
-st.title('Current Semester Information')
 
 # Fetch and display the current semester
 semester_info = get_current_semester()
