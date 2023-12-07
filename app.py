@@ -336,7 +336,7 @@ if st.button('Get Events'):
 
         # Filter events by the provided course ID
         if not events_df.empty:
-            course_events = events_df[events_df['courseId'] == course_id]
+            course_events = events_df[events_df['id'] == course_id]
             if not course_events.empty:
                 st.write(course_events)
             else:
