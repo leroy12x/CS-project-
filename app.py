@@ -160,8 +160,12 @@ def edit_tasks():
             save_tasks_to_csv(tasks)
             st.success("Task updated successfully!")
 
-        if st.button("Delete Task"):
-            day_tasksremove(selected_task_details)
+         if st.button("Delete Task"):
+            # Remove the selected task from the list of tasks for that day
+            tasks[selected_date_key].remove(selected_task_details)
+            # If the day has no more tasks, remove the day from the tasks dictionary
+            if not tasks[selected_date_key]:
+                del tasks[selected_date_key]
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
 
