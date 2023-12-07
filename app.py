@@ -299,11 +299,9 @@ st.title('Current Semester Information')
 # Fetch and display the current semester
 semester_info = get_current_semester()
 if semester_info:
-# Iterate over the list of semester information if the API returns a list
-for semester_info in json_response:
-    semester_description = semester_info['description']
-    st.write(semester_description)
-
+    st.write("Current Semester Details:")
+    semester_series = pd.Series(semester_info)
+    st.write(semester_series)
 else:
     st.error("Failed to fetch current semester information.")
 
