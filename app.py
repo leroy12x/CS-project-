@@ -305,6 +305,7 @@ else:
 
 def get_events_by_term(term_id):
     url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+
     headers = {
         "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
         "API-Version": "1",
@@ -314,18 +315,35 @@ def get_events_by_term(term_id):
     response = requests.get(url, headers=headers)
 
     if response.ok:
-        json_response = response.json()
-        # If the response contains the events data directly as a list of dictionaries:
-        events_df = pd.DataFrame(json_response)
-        
-        # If the response contains the events data under a specific key:
-        # events_df = pd.DataFrame(json_response['the_key_where_data_is_stored'])
-
-        # Now you can return the DataFrame or perform other operations on it
-        return events_df
+        return pd.DataFrame(response.json())
     else:
-        print("Error calling API: ", response.status_code)
-        return None
+        st.error(f"Error calling API: {response.status_code}")
+        return pd.DataFrame()
+
+# Streamlit app setup
+st.title('Course Events Information')
+
+# Input field for course ID
+course_id = st.text_input('Enter Course ID')
+
+# Button to fetch events
+if st.button('Get Events'):
+    if course_id:
+        # Assuming the term_id is known and constant as per your example
+        term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
+        events_df = get_events_by_term(term_id)
+
+        # Filter events by the provided course ID
+        if not events_df.empty:
+            course_events = events_df[events_df['courseId'] == course_id]
+            if not course_events.empty:
+                st.write(course_events)
+            else:
+                st.write(f"No events found for Course ID: {course_id}")
+        else:
+            st.write("No events data available.")
+    else:
+        st.warning('Please enter a Course ID.')
 
 
 def main():
