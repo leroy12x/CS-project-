@@ -317,10 +317,14 @@ def get_events_by_term(term_id):
     response = requests.get(url, headers=headers)
 
     if response.ok:
-        return pd.DataFrame(response.json())
+        events_df = pd.DataFrame(response.json())
+        # Debugging line to print all column names in the DataFrame
+        print("DataFrame Columns:", events_df.columns.tolist())
+        return events_df
     else:
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
+
 
 # Streamlit app setup
 st.title('Course Events Information')
