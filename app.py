@@ -303,7 +303,7 @@ if semester_info:
 else:
     st.error("Failed to fetch current semester information.")
 
-def get_events_by_course_id(term_id, course_id):
+def get_events_by_term(term_id):
     url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
 
     headers = {
@@ -315,46 +315,40 @@ def get_events_by_course_id(term_id, course_id):
     response = requests.get(url, headers=headers)
 
     if response.ok:
-        events = response.json()
-        # Filter events by the provided course ID
-        for event in events:
-            if event['courseId'] == course_id:
-                return event
-        return None
+        return pd.DataFrame(response.json())
     else:
         st.error(f"Error calling API: {response.status_code}")
-        return None
+        return pd.DataFrame()
 
-# Streamlit app setup for fetching and displaying course title
-def display_course_title():
-    st.title('Course Title Information')
+# Streamlit app setup
+st.title('Course Events Information')
 
-    # Input field for course ID
-    course_id = st.text_input('Enter Course ID')
+# Input field for course ID
+course_id = st.text_input('Enter Course ID')
 
-    # Button to fetch course title
-    if st.button('Get Course Title'):
-        if course_id:
-            # Assuming the term_id is known and constant as per your example
-            term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
-            event = get_events_by_course_id(term_id, course_id)
+# Button to fetch events
+if st.button('Get Events'):
+    if course_id:
+        # Assuming the term_id is known and constant as per your example
+        term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
+        events_df = get_events_by_term(term_id)
 
-            if event:
-                # Display the course title
-                st.write(f"Title: {event['title']}")
+        # Filter events by the provided course ID
+        if not events_df.empty:
+            course_events = events_df[events_df['courseId'] == course_id]
+            if not course_events.empty:
+                st.write(course_events)
             else:
-                st.write(f"No course found for Course ID: {course_id}")
+                st.write(f"No events found for Course ID: {course_id}")
         else:
-            st.warning('Please enter a Course ID.')
-
-# Add this function call in the main function under the appropriate condition
-if app_mode == "Course Title":
-    display_course_title()
+            st.write("No events data available.")
+    else:
+        st.warning('Please enter a Course ID.')
 
 
 def main():
     st.sidebar.title("Navigation")
-    app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar", "Course Title"])
+    app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar"])
 
     if app_mode == "Create Tasks":
         display_task_manager()
@@ -364,30 +358,8 @@ def main():
         edit_tasks()
     elif app_mode == "Weekly Calendar":
         display_weekly_calendar()
-    elif app_mode == "Course Title":
-        display_course_title()
-
-def display_course_title():
-    st.title('Course Title Information')
-
-    # Input field for course ID
-    course_id = st.text_input('Enter Course ID')
-
-    # Button to fetch course title
-    if st.button('Get Course Title'):
-        if course_id:
-            # Assuming the term_id is known and constant as per your example
-            term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
-            event = get_events_by_course_id(term_id, course_id)
-
-            if event:
-                # Display the course title
-                st.write(f"Title: {event['title']}")
-            else:
-                st.write(f"No course found for Course ID: {course_id}")
-        else:
-            st.warning('Please enter a Course ID.')
 
 if __name__ == "__main__":
     main()
+    #a
 
