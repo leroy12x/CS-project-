@@ -303,6 +303,30 @@ if semester_info:
 else:
     st.error("Failed to fetch current semester information.")
 
+def get_events_by_term(term_id):
+    url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "en"
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.ok:
+        json_response = response.json()
+        # If the response contains the events data directly as a list of dictionaries:
+        events_df = pd.DataFrame(json_response)
+        
+        # If the response contains the events data under a specific key:
+        # events_df = pd.DataFrame(json_response['the_key_where_data_is_stored'])
+
+        # Now you can return the DataFrame or perform other operations on it
+        return events_df
+    else:
+        print("Error calling API: ", response.status_code)
+        return None
+
 
 def main():
     st.sidebar.title("Navigation")
