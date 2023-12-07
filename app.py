@@ -161,7 +161,7 @@ def edit_tasks():
             st.success("Task updated successfully!")
 
         if st.button("Delete Task"):
-            day_tasks.remove(selected_task_details)
+            day_tasks_remove(selected_task_details)
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
 
