@@ -336,7 +336,7 @@ if st.button('Get Events'):
         # Filter events by the provided course ID
         if not events_df.empty:
             # Convert the 'id' column to string if it's not already
-            events_df['id'] = events_df['id'].astype(str)
+            events_df['id'] = events_df['id'].astype(int)
             course_events = events_df[events_df['id'] == course_id.strip()]
 
             if not course_events.empty:
