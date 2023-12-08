@@ -271,24 +271,20 @@ def edit_tasks():
             
 def display_task_overview():
     st.title("To Do List")
+    tasks = load_tasks_from_csv()
 
-    # Initialize 'tasks' in session state if it's not already set
-    if 'tasks' not in st.session_state:
-        st.session_state.tasks = load_tasks_from_csv()
-
-    # Now you can safely iterate over st.session_state.tasks
-    for day, day_tasks in st.session_state.tasks.items():
+    for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
+            task_description = task['description']
+            task_key = f"complete_{task_description}"
 
             if task['completed']:
-                st.write(f"Completed: {task['description']}")
+                st.write(f"Completed: {task_description}")
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                st.write(f"Task: {task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
-                st.write(f"Duration: {task['duration']}")
-                st.write(f"ECTS: {task['ects']} | Percentage: {task['percentage']}")
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                st.write(f"Task: {task_description} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
+                if st.button(f"Mark as Completed", key=task_key):
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
                     
