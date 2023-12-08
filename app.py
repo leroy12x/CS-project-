@@ -347,11 +347,10 @@ if st.button('Get Events'):
             # Attempt to match the course ID as an integer if it is numeric
             if course_id.isdigit():
                 course_id = int(course_id)
-            
-            course_events = events_df[events_df['id'] == course_id]
+                course_events = events_df[events_df['id'] == course_id]
 
-            if not course_events.empty:
-                course_events = course_events[['maxCredits', 'title']]
+            #if not course_events.empty:
+                #course_events = course_events[['maxCredits', 'title']]
                 st.write(course_events)
             else:
                 st.error(f"No events found for Course ID: {course_id}")
