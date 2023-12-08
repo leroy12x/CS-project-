@@ -325,7 +325,7 @@ def get_events_by_term(term_id):
         return pd.DataFrame()
 
 # Input field for course ID
-course_id = st.text_input('Enter Course ID', value="").strip()
+course_id = st.text_input('Enter Course ID', value="")
 # Button to fetch events
 if st.button('Get Events'):
     if course_id:
