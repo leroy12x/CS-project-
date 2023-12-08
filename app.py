@@ -74,7 +74,7 @@ if st.button('Get Events'):
                 course_events = events_df[events_df['id'] == course_id]
                 course_events['maxCredits'] = pd.to_numeric(course_events['maxCredits'], errors='coerce')
                 title = course_events.get('title')
-                max_credits_object = course_events.get('maxCredits')
+                max_credits = course_events.get('maxCredits')
                 st.write(title, max_credits)
             else:
                 st.error(f"No events found for Course ID: {course_id}")
