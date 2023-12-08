@@ -122,12 +122,15 @@ def display_task_manager():
         # Handle den Fall, wenn course_description nicht definiert ist
         task_description = st.text_input("Enter Task Description", key="task_description")
         
-    # Show Enter ECTS Points if course_ects is empty
-    if course_ects is None:
+    try:
+        if course_ects: 
+    # Überprüfen, ob course_description vorhanden ist
+            task_ects = course_ects/100
+            st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
+    except NameError:
+        # Handle den Fall, wenn course_description nicht definiert ist
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
-    else: 
-        task_ects = course_ects/100
-        st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
+        
            
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
             
