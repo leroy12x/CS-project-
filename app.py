@@ -116,6 +116,7 @@ def display_task_manager():
     
     
     # Set default allocated time to 1 hour
+    course_id = st.text_input('Enter Course ID').strip()
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_description = st.text_input("Enter Task Description", key="task_description")
