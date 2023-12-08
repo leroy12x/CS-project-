@@ -315,6 +315,18 @@ def display_task_overview():
 
 def display_weekly_calendar():
     st.title("Weekly Calendar")
+    # Buttons für die vorherige und nächste Woche
+    col1, col2, col3 = st.columns([1, 8, 1])
+    with col2:
+        if st.button("◄ Previous Week"):
+            st.session_state.current_week -= timedelta(weeks=1)
+        st.write(f"Current Week: {st.session_state.current_week.strftime('%Y-%m-%d')}")
+
+        if st.button("Next Week ►"):
+            st.session_state.current_week += timedelta(weeks=1)
+        st.write(f"Current Week: {st.session_state.current_week.strftime('%Y-%m-%d')}")
+
+
     tasks = load_tasks_from_csv()  # Ensure this function returns a dictionary of tasks
 
     today = datetime.today()
