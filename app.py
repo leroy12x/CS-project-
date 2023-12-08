@@ -102,11 +102,11 @@ def display_task_manager():
                     course_events = events_df[events_df['id'] == course_id]
                     title_list = course_events['title'].tolist()
                     if title_list and isinstance(title_list[0], str):
-                        title = title_list[0]
+                        task_description = title_list[0]  # Set the title as task description
                     max_credits_list = course_events['maxCredits'].tolist()
                     if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
-                        max_credits = int(max_credits_list[0][0])
-                        st.write(max_credits, title)
+                        task_ects = int(max_credits_list[0][0])  # Set maxCredits as ECTS
+                        st.write(task_ects, task_description)  # Display ECTS and description
                     else:
                         st.error(f"No maxCredits found for Course ID: {course_id}")
                 else:
