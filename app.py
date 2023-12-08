@@ -74,9 +74,8 @@ def display_task_overview():
                     st.experimental_rerun()
                     
                     
-course_description = ""
-course_ects = ""                 
-# Function to display the task manager (now renamed to Create Tasks)
+course_description = ""  # Initialisiere die Variable vor dem Versuch, darauf zuzugreifen
+
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
     
@@ -116,10 +115,12 @@ def display_task_manager():
     # Set default allocated time to 1 hour
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
-    if not course_description:
+    
+    # Check if task_description is empty and display input field accordingly
+    if not course_description:  # Check if course_description is empty
         task_description = st.text_input("Enter Task Description", key="task_description")
 
-    # Show Enter ECTS Points if task_ects is empty
+    # Show Enter ECTS Points if course_ects is empty
     if course_ects is None:
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
         
