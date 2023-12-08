@@ -70,6 +70,7 @@ if st.button('Get Events'):
                 course_events = events_df[events_df['id'] == course_id]
                 course_events_info = course_events[['maxCredits', 'title']]
                 st.write(course_events_info)
+                return course_id
             else:
                 st.error(f"No events found for Course ID: {course_id}")
         else:
