@@ -112,7 +112,7 @@ def display_task_manager():
 
     # Set default allocated time to 1 hour
     if 'task_allocated_time' not in st.session_state:
-    st.session_state.task_allocated_time = datetime.strptime("01:00", "%H:%M").time()
+        st.session_state.task_allocated_time = datetime.strptime("01:00", "%H:%M").time()
 
     if 'task_due_date' not in st.session_state:
         st.session_state.task_due_date = datetime.now().date()
