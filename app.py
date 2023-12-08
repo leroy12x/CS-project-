@@ -110,6 +110,10 @@ def display_task_overview():
 # Function to display the task manager (now renamed to Create Tasks)
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
+    
+    # Input field for course ID
+    course_id = st.text_input('Enter Course ID').strip()
+
     # Set default allocated time to 1 hour
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
@@ -148,7 +152,7 @@ def display_task_manager():
 
         st.success(f"Task added from {start_date_time} to {end_date_time}!")
 
-        st.experimental_rerun()
+        st.experimental_rerun()S
 
 # Function to compute the start time for the task
 def compute_start_time(tasks, due_date):
