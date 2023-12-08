@@ -102,11 +102,11 @@ def display_task_manager():
                     course_events = events_df[events_df['id'] == course_id]
                     title_list = course_events['title'].tolist()
                     if title_list and isinstance(title_list[0], str):
-                        task_description = title_list[0]  # Set the title as task description
+                        course_description = title_list[0]  # Set the title as task description
                     max_credits_list = course_events['maxCredits'].tolist()
                     if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
-                        task_ects = int(max_credits_list[0][0])  # Set maxCredits as ECTS
-                        st.write(task_ects, task_description)  # Display ECTS and description
+                        course_ects = int(max_credits_list[0][0])  # Set maxCredits as ECTS
+                        st.write(course_ects, course_description)  # Display ECTS and description
                     else:
                         st.error(f"No maxCredits found for Course ID: {course_id}")
                 else:
@@ -119,12 +119,13 @@ def display_task_manager():
     # Set default allocated time to 1 hour
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
-    if not task_description:
+    if not course_description:
         task_description = st.text_input("Enter Task Description", key="task_description")
 
     # Show Enter ECTS Points if task_ects is empty
-    if task_ects is None:
+    if course_ects is None:
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
+        
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
             
     if st.button("Add Task"):
