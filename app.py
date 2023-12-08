@@ -143,6 +143,41 @@ def display_task_manager():
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
     if st.button("Add Task"):
+        
+        
+        
+        
+        if course_id:
+            # Assuming the term_id is known and constant as per your example
+            term_id = semester_id
+            events_df = get_events_by_term(term_id)
+            # Filter events by the provided course ID
+            if not events_df.empty:
+                # Ensure the course_id is a string and remove any leading/trailing whitespace
+                course_id = str(course_id).strip()
+
+                # Attempt to match the course ID as an integer if it is numeric
+                if course_id.isdigit():
+                    course_id = int(course_id)
+                    course_events = events_df[events_df['id'] == course_id]
+                    title_list = course_events['title'].tolist()
+                    if title_list and isinstance(title_list[0], str):
+                        course_description = title_list[0]  # Set the title as task description
+                    max_credits_list = course_events['maxCredits'].tolist()
+                    if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
+                        course_ects = int(max_credits_list[0][0])  # Set maxCredits as ECTS
+                    else:
+                        st.error(f"No maxCredits found for Course ID: {course_id}")
+                else:
+                    st.error(f"No events found for Course ID: {course_id}")
+            else:
+                st.error("No events data available.")
+        else:
+            st.warning('Please enter a Course ID.')
+            
+            
+            
+            
         tasks = load_tasks_from_csv()
         start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Nur die Zeitkomponente
         start_date_time = get_datetime_on_date(task_due_date, start_time)
