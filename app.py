@@ -340,7 +340,6 @@ if st.button('Get Events'):
         # Assuming the term_id is known and constant as per your example
         term_id = semester_id
         events_df = get_events_by_term(term_id)
-        st.write(events_df)
         # Filter events by the provided course ID
         if not events_df.empty:
             # Ensure the course_id is a string and remove any leading/trailing whitespace
