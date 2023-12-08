@@ -90,7 +90,7 @@ def display_task_manager():
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_name = st.text_input("Enter Task Name", key="task_name")
     task_description = st.text_input("Enter Task Description", key="task_description")
-    task_ects = st.text_input("Enter ECTS Points", min_value=0, key="task_ects")
+    task_ects = st.text_input("Enter ECTS Points", key="task_ects")
     task_id = st.text_input("Enter COURSE ID ", min_value=0, key="task_id")         
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
