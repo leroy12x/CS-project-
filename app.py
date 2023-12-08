@@ -5,7 +5,7 @@ import math
 import csv
 #fuer API
 import requests
-
+st.experimental_singleton(hash_funcs={})
 
 def get_current_semester():
     url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
@@ -81,7 +81,6 @@ def display_task_manager():
     course_ects = None
     # Input field for course ID
     course_id = st.text_input('Enter Course ID').strip()
-    st.experimental_singleton(hash_funcs={})
 
     if st.button('Get Events'):
         if course_id:
@@ -113,6 +112,9 @@ def display_task_manager():
             st.warning('Please enter a Course ID.')
 
     # Set default allocated time to 1 hour
+    if 'loaded' not in st.session_state:
+    st.session_state.loaded = True
+    
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     
@@ -131,7 +133,8 @@ def display_task_manager():
         st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
            
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
-            
+     
+    st.session_state.loaded = not st.session_state.loaded       
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
         start_date_time = compute_start_time(tasks, task_due_date)
