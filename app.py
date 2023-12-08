@@ -163,6 +163,8 @@ def display_task_manager():
 
         st.success(f"Task added from {start_date_time} to {end_date_time}!")
 
+        st.experimental_rerun()
+
        
 
 # Function to compute the start time for the task
