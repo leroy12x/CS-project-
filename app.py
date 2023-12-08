@@ -126,7 +126,7 @@ def display_task_manager():
     if course_ects is None:
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
     else: 
-        task_ects = course_ects
+        task_ects = course_ects/100
         st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
            
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
