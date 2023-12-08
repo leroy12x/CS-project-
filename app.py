@@ -116,11 +116,11 @@ def display_task_manager():
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     
     # Check if task_description is empty and display input field accordingly
-    if course_description is None:  # Check if course_description is empty
-        task_description = st.text_input("Enter Task Description", key="task_description")
-    else: 
-        task_description = course_description 
-        st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
+    if course_description is not None:  # Check if course_description exists
+    task_description = course_description 
+    st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
+    else:
+    task_description = st.text_input("Enter Task Description", key="task_description")
         
     # Show Enter ECTS Points if course_ects is empty
     if course_ects is None:
