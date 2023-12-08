@@ -258,7 +258,7 @@ def edit_tasks():
             selected_task_details['percentage'] = new_percentage
             save_tasks_to_csv(tasks)
             st.success("Task updated successfully!")
-            st.experimental_rerun() 
+    
 
         if st.button("Delete Task"):
             # Remove the selected task from the list of tasks for that day
@@ -268,7 +268,7 @@ def edit_tasks():
                 del tasks[selected_date_key]
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
-            st.experimental_rerun() 
+
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
@@ -323,7 +323,7 @@ def display_task_overview():
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
-                    st.experimental_rerun()
+                
 
     # Function to handle marking tasks as completed
     def mark_as_completed(task_description, day):
