@@ -111,24 +111,45 @@ def display_task_manager():
             st.warning('Please enter a Course ID.')
 
     # Set default allocated time to 1 hour
-    task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
-    task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
-    
-    # Check if task_description is empty and display input field accordingly
-    if course_description is None:  # Check if course_description is empty
-        task_description = st.text_input("Enter Task Description", key="task_description")
-    else: 
-        task_description = course_description 
-        st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
-        
-    # Show Enter ECTS Points if course_ects is empty
-    if course_ects is None:
-        task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
-    else: 
-        task_ects = course_ects/100
-        st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
-           
-    task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
+    f 'task_allocated_time' not in st.session_state:
+    st.session_state.task_allocated_time = datetime.strptime("01:00", "%H:%M").time()
+
+if 'task_due_date' not in st.session_state:
+    st.session_state.task_due_date = datetime.now().date()
+
+if 'task_description' not in st.session_state:
+    st.session_state.task_description = None  # Or any default value
+
+if 'task_ects' not in st.session_state:
+    st.session_state.task_ects = 0  # Or any default value
+
+if 'task_percentage' not in st.session_state:
+    st.session_state.task_percentage = 0  # Or any default value
+
+# Use st.experimental_singleton to retain the values across sessions
+st.experimental_singleton(st.session_state.task_allocated_time)
+st.experimental_singleton(st.session_state.task_due_date)
+st.experimental_singleton(st.session_state.task_description)
+st.experimental_singleton(st.session_state.task_ects)
+st.experimental_singleton(st.session_state.task_percentage)
+
+# Display input fields with retained values
+task_allocated_time = st.time_input("Enter Allocated Time", value=st.session_state.task_allocated_time, key="task_allocated_time")
+task_due_date = st.date_input("Select Due Date", value=st.session_state.task_due_date, key="task_due_date")
+
+if st.session_state.task_description is None:  # Check if task_description is empty
+    task_description = st.text_input("Enter Task Description", key="task_description")
+else: 
+    task_description = st.session_state.task_description 
+    st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
+
+if st.session_state.task_ects is None:
+    task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
+else: 
+    task_ects = st.session_state.task_ects / 100
+    st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
+
+task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
             
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
