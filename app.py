@@ -5,12 +5,94 @@ import math
 #fuer API
 import requests
 
+def get_current_semester():
+    url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "de"}
+    
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        return response.json()
+    else:
+        print("Error calling API: ", response.status_code)
+        return None
 
-# Function to display the calendar for the selected month
-def display_weekly_calendar(year, month, week, tasks):
-    # Commented out for the To Do List version
-    pass
 
+# Fetch and display the current semester
+semester_info = get_current_semester()
+if semester_info:
+    # Extract and display the description from the semester information
+    semester_description = semester_info.get('description', 'No description available')
+    st.write(f"{semester_description}")
+else:
+    st.error("Failed to fetch current semester information.")
+
+semester_ids = get_current_semester()
+if semester_ids:
+    # Extract and display the description from the semester information
+    semester_id = semester_info.get('id')
+else:
+    st.error("Failed to fetch current semester id.")
+
+def get_events_by_term(term_id):
+    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "en"
+    }
+    response = requests.get(url2, headers=headers)
+    if response.ok:
+        return pd.DataFrame(response.json())
+    else:
+        st.error(f"Error calling API: {response.status_code}")
+        return pd.DataFrame()
+
+# Input field for course ID
+course_id = st.text_input('Enter Course ID').strip()
+# Button to fetch events
+if st.button('Get Events'):
+    if course_id:
+        
+        # Assuming the term_id is known and constant as per your example
+        term_id = semester_id
+        events_df = get_events_by_term(term_id)
+        # Filter events by the provided course ID
+        if not events_df.empty:
+            # Ensure the course_id is a string and remove any leading/trailing whitespace
+            course_id = str(course_id).strip()
+
+            # Attempt to match the course ID as an integer if it is numeric
+            if course_id.isdigit():
+                course_id = int(course_id)
+                course_events = events_df[events_df['id'] == course_id]
+                course_events_info = course_events[['maxCredits', 'title']]
+                st.write(course_events_info)
+            else:
+                st.error(f"No events found for Course ID: {course_id}")
+        else:
+            st.error("No events data available.")
+    else:
+        st.warning('Please enter a Course ID.')
+        
+ def get_events_by_term(course_id, term_id):
+    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "en"}
+    if response.ok:
+        events_data = response.json()
+        # Extract title and maxCredits
+        title = events_data.get('title')
+        max_credits = int(events_data.get('maxCredits'))
+        return title, max_credits
+    else:
+        st.error(f"Error calling API: {response.status_code}")
+        return None, None  
+         
 def display_task_overview():
     st.title("To Do List")
     tasks = load_tasks_from_csv()
@@ -69,6 +151,19 @@ def display_task_manager():
         st.success(f"Task added from {start_date_time} to {end_date_time}!")
 
         st.experimental_rerun()
+        
+    if st.button("Fetch Course Info"):
+        if course_id:
+            # Assuming the term_id is known and constant as per your example
+            term_id = semester_id  # Use the semester ID you fetched earlier
+            title, max_credits = get_events_by_term(course_id)
+
+            # Set the task description and task_ects based on API response
+            if title and max_credits is not None:
+                st.text_input("Enter Task Description", value=title, key="task_description")
+                st.number_input("Enter ECTS Points", value=max_credits, min_value=0, key="task_ects")
+            else:
+                st.error("Failed to fetch course information.")    
 
 # Function to compute the start time for the task
 def compute_start_time(tasks, due_date):
@@ -284,81 +379,6 @@ def display_weekly_calendar():
             else:
                 st.write("No tasks")
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
-
-# Function to fetch current semester information
-def get_current_semester():
-    url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
-    headers = {
-        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
-        "API-Version": "1",
-        "X-RequestedLanguage": "de"}
-    
-    response = requests.get(url, headers=headers)
-    if response.ok:
-        return response.json()
-    else:
-        print("Error calling API: ", response.status_code)
-        return None
-
-
-# Fetch and display the current semester
-semester_info = get_current_semester()
-if semester_info:
-    # Extract and display the description from the semester information
-    semester_description = semester_info.get('description', 'No description available')
-    st.write(f"{semester_description}")
-else:
-    st.error("Failed to fetch current semester information.")
-
-semester_ids = get_current_semester()
-if semester_ids:
-    # Extract and display the description from the semester information
-    semester_id = semester_info.get('id')
-else:
-    st.error("Failed to fetch current semester id.")
-
-def get_events_by_term(term_id):
-    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
-    headers = {
-        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
-        "API-Version": "1",
-        "X-RequestedLanguage": "en"
-    }
-    response = requests.get(url2, headers=headers)
-    if response.ok:
-        return pd.DataFrame(response.json())
-    else:
-        st.error(f"Error calling API: {response.status_code}")
-        return pd.DataFrame()
-
-# Input field for course ID
-course_id = st.text_input('Enter Course ID').strip()
-# Button to fetch events
-if st.button('Get Events'):
-    if course_id:
-        
-        # Assuming the term_id is known and constant as per your example
-        term_id = semester_id
-        events_df = get_events_by_term(term_id)
-        # Filter events by the provided course ID
-        if not events_df.empty:
-            # Ensure the course_id is a string and remove any leading/trailing whitespace
-            course_id = str(course_id).strip()
-
-            # Attempt to match the course ID as an integer if it is numeric
-            if course_id.isdigit():
-                course_id = int(course_id)
-                course_events = events_df[events_df['id'] == course_id]
-                course_events_info = course_events[['maxCredits', 'title']]
-                st.write(course_events_info)
-            else:
-                st.error(f"No events found for Course ID: {course_id}")
-        else:
-            st.error("No events data available.")
-    else:
-        st.warning('Please enter a Course ID.')
-
-
 
 def main():
     st.sidebar.title("Navigation")
