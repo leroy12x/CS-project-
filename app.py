@@ -6,10 +6,111 @@ import math
 import requests
 
 
-# Function to display the calendar for the selected month
-def display_weekly_calendar(year, month, week, tasks):
-    # Commented out for the To Do List version
-    pass
+def get_current_semester():
+    url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "de"}
+    
+    response = requests.get(url, headers=headers)
+    if response.ok:
+        return response.json()
+    else:
+        print("Error calling API: ", response.status_code)
+        return None
+    
+    
+    
+    
+    
+# Fetch and display the current semester
+semester_info = get_current_semester()
+if semester_info:
+    # Extract and display the description from the semester information
+    semester_description = semester_info.get('description', 'No description available')
+    st.write(f"{semester_description}")
+else:
+    st.error("Failed to fetch current semester information.")
+
+semester_ids = get_current_semester()
+if semester_ids:
+    # Extract and display the description from the semester information
+    semester_id = semester_info.get('id')
+else:
+    st.error("Failed to fetch current semester id.")
+
+
+
+
+def get_events_by_term():
+    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{semester_id}"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "en"
+    }
+    response = requests.get(url2, headers=headers)
+    if response.ok:
+        return pd.DataFrame(response.json())
+    else:
+        st.error(f"Error calling API: {response.status_code}")
+        return pd.DataFrame()
+
+
+
+
+
+
+# Input field for course ID
+
+# Button to fetch events
+if st.button('Get Events'):
+    if course_id:
+        # Assuming the term_id is known and constant as per your example
+        term_id = semester_id
+        events_df = get_events_by_term(term_id)
+        # Filter events by the provided course ID
+        if not events_df.empty:
+            # Ensure the course_id is a string and remove any leading/trailing whitespace
+            course_id = str(course_id).strip()
+            # Attempt to match the course ID as an integer if it is numeric
+            if course_id.isdigit():
+                course_id = int(course_id)
+                course_events = events_df[events_df['id'] == course_id]
+            else:
+                st.error(f"No events found for Course ID: {course_id}")
+        else:
+            st.error("No events data available.")
+    else:
+        st.warning('Please enter a Course ID.')
+
+
+
+
+def get_events_info_by_term(course_id):
+    
+    term_id = semester_id
+    events_df = get_events_by_term(term_id)
+        # Filter events by the provided course ID
+    if not events_df.empty:
+            # Ensure the course_id is a string and remove any leading/trailing whitespace
+        course_id = str(course_id).strip()
+            # Attempt to match the course ID as an integer if it is numeric
+         if course_id.isdigit():
+            course_id = int(course_id)
+            events_data = events_df[events_df['id'] == course_id]
+            title = events_data.get('title')
+            max_credits = events_data.get('maxCredits')
+        # Extract title and maxCredits
+        return title, max_credits
+    else:
+        return print(f'Now such course')
+        
+
+
+
+
 
 def display_task_overview():
     st.title("To Do List")
@@ -27,10 +128,17 @@ def display_task_overview():
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
                     st.experimental_rerun()
+                    
+                    
+                    
+                    
+                    
+                    
 # Function to display the task manager (now renamed to Create Tasks)
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
     # Set default allocated time to 1 hour
+    course_id = st.text_input('Enter Course ID',key="course_id").strip()
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_description = st.text_input("Enter Task Description", key="task_description")
@@ -45,8 +153,12 @@ def display_task_manager():
 
         end_date_time = start_date_time + timedelta(hours=task_allocated_time.hour, minutes=task_allocated_time.minute)
         duration = end_date_time - start_date_time
+        
+        
 
         task_info = {
+            
+            'id': str(course_id),
             'time': start_date_time.strftime("%H:%M"),
             'end_time': end_date_time.strftime("%H:%M"),
             'duration': str(duration),
@@ -69,6 +181,11 @@ def display_task_manager():
         st.success(f"Task added from {start_date_time} to {end_date_time}!")
 
         st.experimental_rerun()
+
+
+
+
+
 
 # Function to compute the start time for the task
 def compute_start_time(tasks, due_date):
@@ -95,6 +212,11 @@ def compute_start_time(tasks, due_date):
 
     return start_time
 
+
+
+
+
+
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
     # Use .get('completed', False) to safely access the 'completed' status with a default of False
@@ -102,6 +224,11 @@ def save_tasks_to_csv(tasks):
                        for key, tasks_list in tasks.items() for task in tasks_list],
                       columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration', 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
     df.to_csv('tasks.csv', index=False)
+
+
+
+
+
 
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
@@ -173,6 +300,11 @@ def edit_tasks():
             st.success("Task deleted successfully!")
             st.experimental_rerun() 
 
+
+
+
+
+
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
     df = pd.DataFrame([(key[0], key[1], key[2], task['time'], task['end_time'], task['duration'], task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
@@ -180,6 +312,10 @@ def save_tasks_to_csv(tasks):
                       columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration', 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
     df.to_csv('tasks.csv', index=False)
     print("Tasks saved to CSV.")  # Debugging line
+
+
+
+
 
 def load_tasks_from_csv():
     try:
@@ -204,6 +340,11 @@ def load_tasks_from_csv():
         return tasks
     except FileNotFoundError:
         return {}
+    
+    
+    
+    
+    
 def display_task_overview():
     st.title("To Do List")
 
@@ -252,6 +393,11 @@ def display_task_overview():
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
                     mark_as_completed(task['description'], day)
 
+
+
+
+
+
 def display_weekly_calendar():
     st.title("Weekly Calendar")
     tasks = load_tasks_from_csv()  # Ensure this function returns a dictionary of tasks
@@ -286,77 +432,7 @@ def display_weekly_calendar():
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 
 # Function to fetch current semester information
-def get_current_semester():
-    url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
-    headers = {
-        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
-        "API-Version": "1",
-        "X-RequestedLanguage": "de"}
-    
-    response = requests.get(url, headers=headers)
-    if response.ok:
-        return response.json()
-    else:
-        print("Error calling API: ", response.status_code)
-        return None
 
-
-# Fetch and display the current semester
-semester_info = get_current_semester()
-if semester_info:
-    # Extract and display the description from the semester information
-    semester_description = semester_info.get('description', 'No description available')
-    st.write(f"{semester_description}")
-else:
-    st.error("Failed to fetch current semester information.")
-
-semester_ids = get_current_semester()
-if semester_ids:
-    # Extract and display the description from the semester information
-    semester_id = semester_info.get('id')
-else:
-    st.error("Failed to fetch current semester id.")
-
-def get_events_by_term(term_id):
-    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
-    headers = {
-        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
-        "API-Version": "1",
-        "X-RequestedLanguage": "en"
-    }
-    response = requests.get(url2, headers=headers)
-    if response.ok:
-        return pd.DataFrame(response.json())
-    else:
-        st.error(f"Error calling API: {response.status_code}")
-        return pd.DataFrame()
-
-# Input field for course ID
-course_id = st.text_input('Enter Course ID').strip()
-# Button to fetch events
-if st.button('Get Events'):
-    if course_id:
-        
-        # Assuming the term_id is known and constant as per your example
-        term_id = semester_id
-        events_df = get_events_by_term(term_id)
-        # Filter events by the provided course ID
-        if not events_df.empty:
-            # Ensure the course_id is a string and remove any leading/trailing whitespace
-            course_id = str(course_id).strip()
-
-            # Attempt to match the course ID as an integer if it is numeric
-            if course_id.isdigit():
-                course_id = int(course_id)
-                course_events = events_df[events_df['id'] == course_id]
-                course_events_info = course_events[['maxCredits', 'title']]
-                st.write(course_events_info)
-            else:
-                st.error(f"No events found for Course ID: {course_id}")
-        else:
-            st.error("No events data available.")
-    else:
-        st.warning('Please enter a Course ID.')
 
 
 
