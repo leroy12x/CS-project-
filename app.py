@@ -120,7 +120,7 @@ def display_task_manager():
         task_description = st.text_input("Enter Task Description", key="task_description")
     else: 
         task_description = course_description 
-        st.write print(f'Enter Task Description\n {task_description}') 
+        st.write(f'Enter Task Description\n{task_description}')
         
 
     # Show Enter ECTS Points if course_ects is empty
@@ -128,7 +128,7 @@ def display_task_manager():
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
     else: 
         task_ects = course_ects
-        st.write print(f'Enter ECTS Points\n {task_ects}') 
+        st.write(f'Enter Task Description\n{task_ects}')
            
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
             
