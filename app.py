@@ -56,10 +56,10 @@ def get_events_by_term(term_id):
 
 # Input field for course ID
 course_id = st.text_input('Enter Course ID').strip()
+
 # Button to fetch events
 if st.button('Get Events'):
     if course_id:
-        
         # Assuming the term_id is known and constant as per your example
         term_id = semester_id
         events_df = get_events_by_term(term_id)
@@ -74,15 +74,17 @@ if st.button('Get Events'):
                 course_events = events_df[events_df['id'] == course_id]
                 title = course_events.get('title')
                 max_credits_list = course_events['maxCredits'].tolist()
-                max_credits =max_credits_list[0]
-                st.write(max_credits,title)
+                if max_credits_list:  # Check if the list is not empty
+                    max_credits = int(max_credits_list[0])
+                    st.write(max_credits, title)
+                else:
+                    st.error(f"No maxCredits found for Course ID: {course_id}")
             else:
                 st.error(f"No events found for Course ID: {course_id}")
         else:
             st.error("No events data available.")
     else:
         st.warning('Please enter a Course ID.')
-    pass
 
 
 
