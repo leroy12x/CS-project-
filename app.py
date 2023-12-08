@@ -56,10 +56,6 @@ def get_events_by_term(term_id):
 
 # Input field for course ID
 
-
-
-
-
 def display_task_overview():
     st.title("To Do List")
     tasks = load_tasks_from_csv()
@@ -78,7 +74,8 @@ def display_task_overview():
                     st.experimental_rerun()
                     
                     
-                    
+course_description = ""
+course_ects = ""                 
 # Function to display the task manager (now renamed to Create Tasks)
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
