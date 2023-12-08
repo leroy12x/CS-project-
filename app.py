@@ -86,15 +86,6 @@ def display_task_manager():
 
     # Set default allocated time to 1 hour
     course_id = st.text_input('Enter Course ID').strip()
-    task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
-    task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
-    task_description = st.text_input("Enter Task Description", key="task_description")
-    # New input fields for ECTS and Percentage
-    task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
-    task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
-    course_id = st.text_input('Enter Course ID').strip()
-
-# Button to fetch events
     if st.button('Get Events'):
         if course_id:
             # Assuming the term_id is known and constant as per your example
@@ -125,6 +116,13 @@ def display_task_manager():
         else:
             st.warning('Please enter a Course ID.')
             
+    task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
+    task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
+    task_description = st.text_input("Enter Task Description", key="task_description")
+    # New input fields for ECTS and Percentage
+    task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
+    task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
+    course_id = st.text_input('Enter Course ID').strip()
             
             
     if st.button("Add Task"):
