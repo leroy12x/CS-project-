@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 import math
+import csv
 #fuer API
 import requests
 
@@ -126,7 +127,7 @@ def display_task_manager():
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
     else: 
         task_ects = course_ects/100
-        st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True, key="task_ects")
+        st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
            
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
             
@@ -155,9 +156,9 @@ def display_task_manager():
             tasks[date_key] = [task_info]
         
         # Save tasks to the CSV file
-        save_tasks_to_csv(tasks)
+        save_task_info_to_csv(task_info)
 
-        st.success(f"The added from {task_description}!")
+        st.success(f"Task added from {start_date_time} to {end_date_time}!")
 
         st.experimental_rerun()
 
@@ -185,6 +186,11 @@ def compute_start_time(tasks, due_date):
             break
 
     return start_time
+
+def save_task_info_to_csv(task_info):
+    with open('task_info.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(task_info.values())
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
