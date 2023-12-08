@@ -67,32 +67,15 @@ if st.button('Get Events'):
             # Attempt to match the course ID as an integer if it is numeric
             if course_id.isdigit():
                 course_id = int(course_id)
-                course_events = events_df[events_df['id'] == course_id]
-                course_events_info = course_events[['maxCredits', 'title']]
-                st.write(course_events_info)
-                return course_id
+                title = events_data.get('title')
+                max_credits = int(events_data.get('maxCredits'))
+                return title, max_credits 
             else:
                 st.error(f"No events found for Course ID: {course_id}")
         else:
             st.error("No events data available.")
     else:
         st.warning('Please enter a Course ID.')
-        
- def get_events_by_term(course_id, term_id):
-    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
-    headers = {
-        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
-        "API-Version": "1",
-        "X-RequestedLanguage": "en"}
-    if response.ok:
-        events_data = response.json()
-        # Extract title and maxCredits
-        title = events_data.get('title')
-        max_credits = int(events_data.get('maxCredits'))
-        return title, max_credits
-    else:
-        st.error(f"Error calling API: {response.status_code}")
-        return None, None  
          
 def display_task_overview():
     st.title("To Do List")
