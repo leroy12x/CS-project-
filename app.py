@@ -335,7 +335,7 @@ if st.button('Get Events'):
         # Filter events by the provided course ID
         if not events_df.empty:
             # Ensure the course_id is a string and remove any leading/trailing whitespace
-            course_id = str(course_id).strip()
+            course_id = int(course_id).strip()
 
             # Attempt to match the course ID as an integer if it is numeric
             #if course_id.isdigit():
