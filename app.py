@@ -2,10 +2,9 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 import math
-import csv
 #fuer API
 import requests
-st.experimental_singleton(hash_funcs={})
+
 
 def get_current_semester():
     url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
@@ -72,7 +71,7 @@ def display_task_overview():
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
-                    
+                    st.experimental_rerun()
                     
                 
 def display_task_manager():
@@ -111,26 +110,26 @@ def display_task_manager():
         else:
             st.warning('Please enter a Course ID.')
 
-    
-    if 'loaded' not in st.session_state:
-        st.session_state.loaded = True
-    
+    # Set default allocated time to 1 hour
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     
     # Check if task_description is empty and display input field accordingly
-
-    default_task_description = course_description 
-    task_description = st.number_input("Enter Task Description", value= default_task_description , min_value=0, key="task_description")
+    if course_description is None:  # Check if course_description is empty
+        task_description = st.text_input("Enter Task Description", key="task_description")
+    else: 
+        task_description = course_description 
+        st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
         
     # Show Enter ECTS Points if course_ects is empty
-    default_task_ects = course_ects / 100
-    task_ects = st.number_input("Enter ECTS Points", value=default_task_ects, min_value=0, key="task_ects")
+    if course_ects is None:
+        task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
+    else: 
+        task_ects = course_ects/100
+        st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
            
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
-     
-    st.session_state.loaded = not st.session_state.loaded 
-          
+            
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
         start_date_time = compute_start_time(tasks, task_due_date)
@@ -156,11 +155,11 @@ def display_task_manager():
             tasks[date_key] = [task_info]
         
         # Save tasks to the CSV file
-        save_task_info_to_csv(task_info)
+        save_tasks_to_csv(tasks)
 
         st.success(f"Task added from {start_date_time} to {end_date_time}!")
 
-    
+        st.experimental_rerun()
 
 # Function to compute the start time for the task
 def compute_start_time(tasks, due_date):
@@ -186,11 +185,6 @@ def compute_start_time(tasks, due_date):
             break
 
     return start_time
-
-def save_task_info_to_csv(task_info):
-    with open('task_info.csv', mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(task_info.values())
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
@@ -258,7 +252,7 @@ def edit_tasks():
             selected_task_details['percentage'] = new_percentage
             save_tasks_to_csv(tasks)
             st.success("Task updated successfully!")
-    
+            st.experimental_rerun() 
 
         if st.button("Delete Task"):
             # Remove the selected task from the list of tasks for that day
@@ -268,7 +262,7 @@ def edit_tasks():
                 del tasks[selected_date_key]
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
-
+            st.experimental_rerun() 
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
@@ -323,7 +317,7 @@ def display_task_overview():
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
-                
+                    st.experimental_rerun()
 
     # Function to handle marking tasks as completed
     def mark_as_completed(task_description, day):
