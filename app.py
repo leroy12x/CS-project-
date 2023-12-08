@@ -315,9 +315,10 @@ def display_task_overview():
 
 def display_weekly_calendar():
     st.title("Weekly Calendar")
+    st.session_state.current_week = datetime.today()
     # Buttons für die vorherige und nächste Woche
     if 'current_week' not in st.session_state:
-    st.session_state.current_week = datetime.today()
+   
     col1, col2, col3 = st.columns([1, 8, 1])
     with col2:
         if st.button("◄ Previous Week"):
