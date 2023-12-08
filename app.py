@@ -101,6 +101,7 @@ def display_task_manager():
         start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Nur die Zeitkomponente
         start_date_time = get_datetime_on_date(task_due_date, start_time)
         task_percentage = int(task_percentage)
+        task_ects = int(task_ects)
         if task_id is not None:
             term_id = semester_id
             events_df = get_events_by_term(term_id)
