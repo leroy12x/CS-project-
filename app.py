@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, time
 import math
 #fuer API
 import requests
@@ -144,8 +144,8 @@ def display_task_manager():
             
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
-        start_time = datetime.strptime(task_allocated_time, "%H:%M")
-        start_date_time = get_datetime_on_date(task_due_date,start_time)
+        start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Nur die Zeitkomponente
+        start_date_time = get_datetime_on_date(task_due_date, start_time)
         task_percentage = int(task_percentage)
         task_info = {
             'time': start_date_time.strftime("%H:%M"),
