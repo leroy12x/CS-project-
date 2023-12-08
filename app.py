@@ -74,14 +74,9 @@ if st.button('Get Events'):
                 course_events = events_df[events_df['id'] == course_id]
                 title = course_events.get('title')
                 max_credits_list = course_events['maxCredits'].tolist()
-                if max_credits_list:  # Check if the list is not empty
-                    st.write(f"Content of max_credits_list[0]: {max_credits_list[0]}")
-                    # Versuche maxCredits in eine Ganzzahl umzuwandeln
-                    try:
-                        max_credits = int(max_credits_list[0])
-                        st.write(max_credits, title)
-                    except (ValueError, TypeError) as e:
-                        st.error(f"Error converting maxCredits to integer: {e}")
+                if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
+                    max_credits = int(max_credits_list[0][0])
+                    st.write(max_credits, title)
                 else:
                     st.error(f"No maxCredits found for Course ID: {course_id}")
             else:
