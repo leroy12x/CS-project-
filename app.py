@@ -6,6 +6,7 @@ import math
 import requests
 
 
+
 def get_current_semester():
     url = "https://integration.preprod.unisg.ch/eventapi/timeLines/currentTerm"
     headers = {
@@ -19,6 +20,8 @@ def get_current_semester():
     else:
         print("Error calling API: ", response.status_code)
         return None
+
+
 
 
 # Fetch and display the current semester
@@ -40,6 +43,8 @@ else:
 
 
 
+
+
 def get_events_by_term(term_id):
     url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
     headers = {
@@ -54,7 +59,8 @@ def get_events_by_term(term_id):
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
 
-# Input field for course ID
+
+
 
 def display_task_overview():
     st.title("To Do List")
@@ -73,6 +79,8 @@ def display_task_overview():
                     save_tasks_to_csv(tasks)
                     
                     
+        
+        
                 
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
@@ -109,7 +117,7 @@ def display_task_manager():
             st.warning('Please enter a Course ID.')
 
     # Set default allocated time to 1 hour
-    task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
+    task_allocated_time = st.text_input("Enter Allocated Time", key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_name = st.text_input("Enter Task Name", key="task_name")
     # Check if task_description is empty and display input field accordingly
@@ -136,15 +144,11 @@ def display_task_manager():
             
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
-        start_date_time = compute_start_time(tasks, task_due_date)
-
-        end_date_time = start_date_time + timedelta(hours=task_allocated_time.hour, minutes=task_allocated_time.minute)
-        duration = end_date_time - start_date_time
+        start_time = datetime.strptime(task_allocated_time, "%H:%M")
+        start_date_time = get_datetime_on_date(task_due_date,start_time)
         task_percentage = int(task_percentage)
         task_info = {
             'time': start_date_time.strftime("%H:%M"),
-            'end_time': end_date_time.strftime("%H:%M"),
-            'duration': str(duration),
             'description': task_description,
             'name': task_name,
             'ects': task_ects,
@@ -162,44 +166,29 @@ def display_task_manager():
         # Save tasks to the CSV file
         save_tasks_to_csv(tasks)
 
-        st.success(f"Task added from {start_date_time} to {end_date_time}!")
+        st.success(f"Task added at {start_date_time} !")
 
         st.experimental_rerun()
 
        
+def get_datetime_on_date(date, time):
+    # Kombiniere das Datum mit der Uhrzeit, um ein kombiniertes datetime-Objekt zu erhalten
+    combined_datetime = datetime.combine(date, time)
+    return combined_datetime
 
-# Function to compute the start time for the task
-def compute_start_time(tasks, due_date):
-    # Filter out tasks with empty time values
-    tasks_with_time = [task for day_tasks in tasks.values() for task in day_tasks if pd.notna(task.get('end_time'))]
 
-    # Convert float values to string
-    for task in tasks_with_time:
-        if isinstance(task['end_time'], float) and not math.isnan(task['end_time']):
-            task['end_time'] = str(int(task['end_time']))
-
-    # Sort tasks by end time in ascending order
-    sorted_tasks = sorted(tasks_with_time, key=lambda x: datetime.strptime(x['end_time'], "%H:%M"))
-
-    current_time = datetime.now()
-    start_time = current_time
-
-    for task in sorted_tasks:
-        task_end_time = datetime.strptime(task['end_time'], "%H:%M")
-        task_due_date = datetime(due_date.year, due_date.month, due_date.day, task_end_time.hour, task_end_time.minute)
-        if task_due_date > current_time and task_due_date.date() <= due_date:
-            start_time = task_due_date
-            break
-
-    return start_time
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
     # Use .get('completed', False) to safely access the 'completed' status with a default of False
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'], task['end_time'], task['duration'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
+    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
+                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
     df.to_csv('tasks1.csv', index=False)
+
+
+
+
 
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
@@ -210,8 +199,6 @@ def load_tasks_from_csv():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
             task_info = {
                 'time': row['Time'],
-                'end_time': row['End Time'],
-                'duration': row['Duration'],
                 'name':row['Name'],
                 'description': row['Description'],
                 'ects': row['ECTS'],
@@ -226,6 +213,9 @@ def load_tasks_from_csv():
         return tasks
     except FileNotFoundError:
         return {}
+
+
+
 
 
 
@@ -270,6 +260,10 @@ def edit_tasks():
                 del tasks[selected_date_key]
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
+        
+        
+        
+        
             
 def display_task_overview():
     st.title("To Do List")
@@ -291,6 +285,8 @@ def display_task_overview():
                     save_tasks_to_csv(tasks)
                     
 
+
+
     # Function to handle marking tasks as completed
     def mark_as_completed(task_description, day):
         for task in st.session_state.tasks[day]:
@@ -298,6 +294,9 @@ def display_task_overview():
                 task['completed'] = True
                 break
         save_tasks_to_csv(st.session_state.tasks)
+
+
+
 
     # Display tasks with color coding
     for day, day_tasks in st.session_state.tasks.items():
@@ -315,23 +314,11 @@ def display_task_overview():
                 if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
                     mark_as_completed(task['description'], day)
 
+
+
+
 def display_weekly_calendar():
     st.title("Weekly Calendar")
-    st.session_state.current_week = datetime.today()
-    # Buttons für die vorherige und nächste Woche
-    if 'current_week' not in st.session_state:
-   
-        col1, col2, col3 = st.columns([1, 8, 1])
-        with col2:
-            if st.button("◄ Previous Week"):
-                st.session_state.current_week -= timedelta(weeks=1)
-            st.write(f"Current Week: {st.session_state.current_week.strftime('%Y-%m-%d')}")
-
-            if st.button("Next Week ►"):
-                st.session_state.current_week += timedelta(weeks=1)
-            st.write(f"Current Week: {st.session_state.current_week.strftime('%Y-%m-%d')}")
-
-
     tasks = load_tasks_from_csv()  # Ensure this function returns a dictionary of tasks
 
     today = datetime.today()
