@@ -117,8 +117,8 @@ def display_task_manager():
     
     # Check if task_description is empty and display input field accordingly
     if course_description is not None:  # Check if course_description exists
-    task_description = course_description 
-    st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
+        task_description = course_description 
+        st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
     else:
     task_description = st.text_input("Enter Task Description", key="task_description")
         
