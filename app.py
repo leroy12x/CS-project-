@@ -184,7 +184,7 @@ def save_tasks_to_csv(tasks):
     df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
                       columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
-    df.to_csv('tasks1.csv', index=False)
+    df.to_csv('tasks2.csv', index=False)
 
 
 
@@ -193,7 +193,7 @@ def save_tasks_to_csv(tasks):
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
     try:
-        df = pd.read_csv('tasks1.csv')
+        df = pd.read_csv('tasks2.csv')
         tasks = {}
         for _, row in df.iterrows():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
