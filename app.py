@@ -72,7 +72,9 @@ if st.button('Get Events'):
             if course_id.isdigit():
                 course_id = int(course_id)
                 course_events = events_df[events_df['id'] == course_id]
-                title = course_events.get('title')
+                title_list = course_events['title'].tolist()
+                if title_list and isinstance(title_list[0], str):
+                    title = title_list[0]
                 max_credits_list = course_events['maxCredits'].tolist()
                 if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
                     max_credits = int(max_credits_list[0][0])
