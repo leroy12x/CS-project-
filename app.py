@@ -291,10 +291,9 @@ def get_current_semester():
     headers = {
         "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
         "API-Version": "1",
-        "X-RequestedLanguage": "de"
-    }
+        "X-RequestedLanguage": "de"}
+    
     response = requests.get(url, headers=headers)
-
     if response.ok:
         return response.json()
     else:
@@ -312,45 +311,35 @@ else:
     st.error("Failed to fetch current semester information.")
 
 def get_events_by_term(term_id):
-    url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
     headers = {
         "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
         "API-Version": "1",
         "X-RequestedLanguage": "en"
     }
-    response = requests.get(url, headers=headers)
+    response = requests.get(url2, headers=headers)
     if response.ok:
-        df = pd.DataFrame(response.json())
-        return df
+        return pd.DataFrame(response.json())
     else:
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
 
-# Streamlit app setup
-
-
-st.title('Course Events Information')
-
 # Input field for course ID
 course_id = st.text_input('Enter Course ID', value="").strip()
-
 # Button to fetch events
 if st.button('Get Events'):
     if course_id:
         # Assuming the term_id is known and constant as per your example
         term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
         events_df = get_events_by_term(term_id)
-
-
-
         # Filter events by the provided course ID
         if not events_df.empty:
             # Ensure the course_id is a string and remove any leading/trailing whitespace
             course_id = str(course_id).strip()
 
             # Attempt to match the course ID as an integer if it is numeric
-            if course_id.isdigit():
-                course_id = int(course_id)
+            #if course_id.isdigit():
+                #course_id = int(course_id)
             
             course_events = events_df[events_df['id'] == course_id]
 
