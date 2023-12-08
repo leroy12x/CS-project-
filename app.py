@@ -120,9 +120,8 @@ def display_task_manager():
         task_description = st.text_input("Enter Task Description", key="task_description")
     else: 
         task_description = course_description 
-        st.write(f'Enter Task Description\n{task_description}')
+        st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
         
-
     # Show Enter ECTS Points if course_ects is empty
     if course_ects is None:
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
