@@ -111,7 +111,7 @@ def display_task_manager():
     # Set default allocated time to 1 hour
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
-    
+    task_name = st.text_input("Enter Task Name", key="task_name")
     # Check if task_description is empty and display input field accordingly
     try:
         if course_description: 
@@ -132,7 +132,7 @@ def display_task_manager():
         task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
         
            
-    task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
+    task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
@@ -140,12 +140,13 @@ def display_task_manager():
 
         end_date_time = start_date_time + timedelta(hours=task_allocated_time.hour, minutes=task_allocated_time.minute)
         duration = end_date_time - start_date_time
-
+        task_percentage = int(task_percentage)
         task_info = {
             'time': start_date_time.strftime("%H:%M"),
             'end_time': end_date_time.strftime("%H:%M"),
             'duration': str(duration),
             'description': task_description,
+            'name': task_name,
             'ects': task_ects,
             'percentage': task_percentage,
             'due_date': task_due_date.strftime('%Y-%m-%d'),  # Format the date
@@ -195,9 +196,9 @@ def compute_start_time(tasks, due_date):
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
     # Use .get('completed', False) to safely access the 'completed' status with a default of False
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'], task['end_time'], task['duration'], task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
+    df = pd.DataFrame([(key[0], key[1], key[2], task['time'], task['end_time'], task['duration'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration', 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
+                      columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration','Name' 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
     df.to_csv('tasks.csv', index=False)
 
 # Function to load tasks from a CSV file
@@ -211,6 +212,7 @@ def load_tasks_from_csv():
                 'time': row['Time'],
                 'end_time': row['End Time'],
                 'duration': row['Duration'],
+                'name':row['Name'],
                 'description': row['Description'],
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
