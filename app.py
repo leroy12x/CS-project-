@@ -75,9 +75,7 @@ if st.button('Get Events'):
                 title = course_events.get('title')
                 max_credits_list = course_events['maxCredits'].tolist()
                 max_credits =max_credits_list[0]
-                    st.write(max_credits.type(),title)
-                else:  
-                    st.error("No maxCredits found for Course ID")
+                st.write(max_credits.type(),title)
             else:
                 st.error(f"No events found for Course ID: {course_id}")
         else:
