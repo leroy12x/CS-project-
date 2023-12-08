@@ -111,7 +111,7 @@ def display_task_manager():
         else:
             st.warning('Please enter a Course ID.')
 
-    # Set default allocated time to 1 hour
+    
     if 'loaded' not in st.session_state:
         st.session_state.loaded = True
     
@@ -119,22 +119,18 @@ def display_task_manager():
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     
     # Check if task_description is empty and display input field accordingly
-    if course_description is not None:  # Check if course_description exists
-        task_description = course_description 
-        st.markdown(f'Enter Task Description<br>{task_description}', unsafe_allow_html=True)
-    else:
-        task_description = st.text_input("Enter Task Description", key="task_description")
+
+    default_task_description = course_description 
+    task_description = st.number_input("Enter Task Description", value= default_task_description , min_value=0, key="task_description")
         
     # Show Enter ECTS Points if course_ects is empty
-    if course_ects is None:
-        task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
-    else: 
-        task_ects = course_ects/100
-        st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
+    default_task_ects = course_ects / 100
+    task_ects = st.number_input("Enter ECTS Points", value=default_task_ects, min_value=0, key="task_ects")
            
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
      
-    st.session_state.loaded = not st.session_state.loaded       
+    st.session_state.loaded = not st.session_state.loaded 
+          
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
         start_date_time = compute_start_time(tasks, task_due_date)
