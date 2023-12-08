@@ -77,6 +77,8 @@ def display_task_overview():
                 
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
+    course_description = None  # Initialisiere die Variable vor dem Versuch, darauf zuzugreifen
+    course_ects = None
     # Input field for course ID
     course_id = st.text_input('Enter Course ID').strip()
 
