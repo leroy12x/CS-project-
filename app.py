@@ -75,8 +75,13 @@ if st.button('Get Events'):
                 title = course_events.get('title')
                 max_credits_list = course_events['maxCredits'].tolist()
                 if max_credits_list:  # Check if the list is not empty
-                    max_credits = int(max_credits_list[0])
-                    st.write(max_credits, title)
+                    st.write(f"Content of max_credits_list[0]: {max_credits_list[0]}")
+                    # Versuche maxCredits in eine Ganzzahl umzuwandeln
+                    try:
+                        max_credits = int(max_credits_list[0])
+                        st.write(max_credits, title)
+                    except (ValueError, TypeError) as e:
+                        st.error(f"Error converting maxCredits to integer: {e}")
                 else:
                     st.error(f"No maxCredits found for Course ID: {course_id}")
             else:
