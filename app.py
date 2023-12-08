@@ -74,9 +74,7 @@ if st.button('Get Events'):
                 course_events = events_df[events_df['id'] == course_id]
                 title = course_events.get('title')
                 max_credits_list = course_events['maxCredits'].tolist()
-
-                if max_credits_list:  # Überprüfe, ob die Liste nicht leer ist
-                    max_credits = int(max_credits_list[0])
+                max_credits =max_credits_list[0]
                     st.write(max_credits.type(),title)
                 else:  
                     st.error("No maxCredits found for Course ID")
