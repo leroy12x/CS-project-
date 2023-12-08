@@ -72,9 +72,9 @@ if st.button('Get Events'):
             if course_id.isdigit():
                 course_id = int(course_id)
                 course_events = events_df[events_df['id'] == course_id]
-                course_events['maxCredits'] = pd.to_numeric(course_events['maxCredits'], errors='coerce')
+                max_credits_list = course_events['maxCredits'].tolist()
                 title = course_events.get('title')
-                max_credits = course_events.get('maxCredits')
+                max_credits = max_credits_list[0]
                 st.write(title, max_credits)
             else:
                 st.error(f"No events found for Course ID: {course_id}")
