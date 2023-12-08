@@ -311,7 +311,7 @@ else:
     st.error("Failed to fetch current semester information.")
 
 semester_ids = get_current_semester()
-if semester_id:
+if semester_ids:
     # Extract and display the description from the semester information
     semester_id = semester_info.get('id')
 else:
