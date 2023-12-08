@@ -111,6 +111,7 @@ def display_task_manager():
             st.warning('Please enter a Course ID.')
 
     # Set default allocated time to 1 hour
+   # Set initial values if not present
     if 'task_allocated_time' not in st.session_state:
         st.session_state.task_allocated_time = datetime.strptime("01:00", "%H:%M").time()
 
@@ -125,13 +126,6 @@ def display_task_manager():
 
     if 'task_percentage' not in st.session_state:
         st.session_state.task_percentage = 0  # Or any default value
-
-    # Use st.experimental_singleton to retain the values across sessions
-    st.experimental_singleton(st.session_state.task_allocated_time)
-    st.experimental_singleton(st.session_state.task_due_date)
-    st.experimental_singleton(st.session_state.task_description)
-    st.experimental_singleton(st.session_state.task_ects)
-    st.experimental_singleton(st.session_state.task_percentage)
 
     # Display input fields with retained values
     task_allocated_time = st.time_input("Enter Allocated Time", value=st.session_state.task_allocated_time, key="task_allocated_time")
@@ -150,7 +144,7 @@ def display_task_manager():
         st.markdown(f'Enter ECTS Points<br>{task_ects}', unsafe_allow_html=True)
 
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
-                
+                    
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
         start_date_time = compute_start_time(tasks, task_due_date)
