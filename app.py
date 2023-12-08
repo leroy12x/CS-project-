@@ -55,38 +55,7 @@ def get_events_by_term(term_id):
         return pd.DataFrame()
 
 # Input field for course ID
-course_id = st.text_input('Enter Course ID').strip()
 
-# Button to fetch events
-if st.button('Get Events'):
-    if course_id:
-        # Assuming the term_id is known and constant as per your example
-        term_id = semester_id
-        events_df = get_events_by_term(term_id)
-        # Filter events by the provided course ID
-        if not events_df.empty:
-            # Ensure the course_id is a string and remove any leading/trailing whitespace
-            course_id = str(course_id).strip()
-
-            # Attempt to match the course ID as an integer if it is numeric
-            if course_id.isdigit():
-                course_id = int(course_id)
-                course_events = events_df[events_df['id'] == course_id]
-                title_list = course_events['title'].tolist()
-                if title_list and isinstance(title_list[0], str):
-                    title = title_list[0]
-                max_credits_list = course_events['maxCredits'].tolist()
-                if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
-                    max_credits = int(max_credits_list[0][0])
-                    st.write(max_credits, title)
-                else:
-                    st.error(f"No maxCredits found for Course ID: {course_id}")
-            else:
-                st.error(f"No events found for Course ID: {course_id}")
-        else:
-            st.error("No events data available.")
-    else:
-        st.warning('Please enter a Course ID.')
 
 
 
@@ -107,22 +76,51 @@ def display_task_overview():
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
                     st.experimental_rerun()
+                    
+                    
+                    
 # Function to display the task manager (now renamed to Create Tasks)
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
-    
-    # Input field for course ID
-    course_id = st.text_input('Enter Course ID').strip()
-
     # Set default allocated time to 1 hour
     task_allocated_time = st.time_input("Enter Allocated Time", value=datetime.strptime("01:00", "%H:%M").time(), key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_description = st.text_input("Enter Task Description", key="task_description")
-
     # New input fields for ECTS and Percentage
     task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
     task_percentage = st.number_input("Enter Percentage of Grade", min_value=0, max_value=100, key="task_percentage")
+    course_id = st.text_input('Enter Course ID').strip()
 
+# Button to fetch events
+    if st.button('Get Events'):
+        if course_id:
+            # Assuming the term_id is known and constant as per your example
+            term_id = semester_id
+            events_df = get_events_by_term(term_id)
+            # Filter events by the provided course ID
+            if not events_df.empty:
+                # Ensure the course_id is a string and remove any leading/trailing whitespace
+                course_id = str(course_id).strip()
+
+                # Attempt to match the course ID as an integer if it is numeric
+                if course_id.isdigit():
+                    course_id = int(course_id)
+                    course_events = events_df[events_df['id'] == course_id]
+                    title_list = course_events['title'].tolist()
+                    if title_list and isinstance(title_list[0], str):
+                        title = title_list[0]
+                    max_credits_list = course_events['maxCredits'].tolist()
+                    if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
+                        max_credits = int(max_credits_list[0][0])
+                        st.write(max_credits, title)
+                    else:
+                        st.error(f"No maxCredits found for Course ID: {course_id}")
+                else:
+                    st.error(f"No events found for Course ID: {course_id}")
+            else:
+                st.error("No events data available.")
+        else:
+            st.warning('Please enter a Course ID.')
     if st.button("Add Task"):
         tasks = load_tasks_from_csv()
         start_date_time = compute_start_time(tasks, task_due_date)
@@ -146,7 +144,7 @@ def display_task_manager():
             tasks[date_key].append(task_info)
         else:
             tasks[date_key] = [task_info]
-
+        
         # Save tasks to the CSV file
         save_tasks_to_csv(tasks)
 
