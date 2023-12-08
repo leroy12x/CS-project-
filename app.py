@@ -85,6 +85,8 @@ def display_task_manager():
     
     # Input field for course ID
     course_id = st.text_input('Enter Course ID').strip()
+    task_description = st.text_input("Enter Task Description", key="task_description")
+    task_ects = st.number_input("Enter ECTS Points", min_value=0, key="task_ects")
 
     if st.button('Get Events'):
         if course_id:
