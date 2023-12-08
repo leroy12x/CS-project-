@@ -81,6 +81,7 @@ def display_task_manager():
     course_ects = None
     # Input field for course ID
     course_id = st.text_input('Enter Course ID').strip()
+    st.experimental_singleton(hash_funcs={})
 
     if st.button('Get Events'):
         if course_id:
