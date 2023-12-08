@@ -269,38 +269,6 @@ def edit_tasks():
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
             
-
-# Function to save tasks to a CSV file
-def save_tasks_to_csv(tasks):
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'], task['end_time'], task['duration'], task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
-                       for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'End Time', 'Duration', 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
-    df.to_csv('tasks.csv', index=False)
-    print("Tasks saved to CSV.")  # Debugging line
-
-def load_tasks_from_csv():
-    try:
-        df = pd.read_csv('tasks.csv')
-        tasks = {}
-        for _, row in df.iterrows():
-            date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
-            task_info = {
-                'time': row['Time'],
-                'end_time': row['End Time'],
-                'duration': row['Duration'],
-                'description': row['Description'],
-                'ects': row['ECTS'],
-                'percentage': row['Percentage'],
-                'due_date': row['Due Date'],
-                'completed': row.get('Completed', False)  # Correct use of the get method
-            }
-            if date_key in tasks:
-                tasks[date_key].append(task_info)
-            else:
-                tasks[date_key] = [task_info]
-        return tasks
-    except FileNotFoundError:
-        return {}
 def display_task_overview():
     st.title("To Do List")
 
