@@ -120,7 +120,7 @@ def display_task_manager():
                         task_name = title_list[0]  # Set the title as task description
                     max_credits_list = course_events['maxCredits'].tolist()
                     if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
-                        task_ects = int(max_credits_list[0][0])  # Set maxCredits as ECTS
+                        task_ects = (int(max_credits_list[0][0])/100) # Set maxCredits as ECTS
                     else:
                         st.error(f"No maxCredits found for Course ID: {course_id}")
                 else:
@@ -207,7 +207,7 @@ def edit_tasks():
     st.title("Edit Tasks")
 
     tasks = load_tasks_from_csv()
-    task_list = [f"{task['description']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
+    task_list = [f"{task['name']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
 
     selected_task_description = st.selectbox("Select a Task to Edit", task_list)
     selected_task_details = None
@@ -215,19 +215,19 @@ def edit_tasks():
     # Find the task in the tasks dictionary
     for date_key, day_tasks in tasks.items():
         for task in day_tasks:
-            if selected_task_description == f"{task['description']} (Due: {task['due_date']})":
+            if selected_task_description == f"{task['name']} (Due: {task['due_date']})":
                 selected_task_details = task
                 selected_date_key = date_key  # Keep track of the date key where the task is found
                 break
 
     if selected_task_details:
-        new_description = st.text_input("Task Description", value=selected_task_details['description'])
+        new_description = st.text_input("Task Name", value=selected_task_details['name'])
         new_due_date = st.date_input("Due Date", value=datetime.strptime(selected_task_details['due_date'], '%Y-%m-%d'))
         new_ects = st.number_input("ECTS Points", value=selected_task_details['ects'], min_value=0)
         new_percentage = st.number_input("Percentage of Grade", value=selected_task_details['percentage'], min_value=0, max_value=100)
 
         if st.button("Update Task"):
-            selected_task_details['description'] = new_description
+            selected_task_details['name'] = new_description
             selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
             selected_task_details['ects'] = new_ects
             selected_task_details['percentage'] = new_percentage
@@ -255,14 +255,14 @@ def display_task_overview():
     for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
-            task_description = task['description']
-            task_key = f"complete_{task_description}"
+            task_name = task['name']
+            task_key = f"complete_{task_name}"
 
             if task['completed']:
-                st.write(f"Completed: {task_description}")
+                st.write(f"Completed: {task_name}")
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                st.write(f"Task: {task_description} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
+                st.write(f"Task: {task_name} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
                 if st.button(f"Mark as Completed", key=task_key):
                     task['completed'] = True
                     save_tasks_to_csv(tasks)
@@ -271,9 +271,9 @@ def display_task_overview():
 
 
     # Function to handle marking tasks as completed
-    def mark_as_completed(task_description, day):
+    def mark_as_completed(task_name, day):
         for task in st.session_state.tasks[day]:
-            if task['description'] == task_description:
+            if task['description'] == task_name:
                 task['completed'] = True
                 break
         save_tasks_to_csv(st.session_state.tasks)
