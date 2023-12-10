@@ -67,7 +67,7 @@ def display_task_ects_estimate():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = st.session_state.tasks
+    tasks = load_tasks_from_csv() 
     calculate_ects_percentage(tasks)
 
     for day, day_tasks in tasks.items():
