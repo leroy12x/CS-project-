@@ -76,7 +76,7 @@ def display_task_overview():
         st.subheader(f"Tasks for {day}") 
         for task in day_tasks:
             task_name = task['name']
-            task_ects = calculate_ects_percentage(tasks['ects'])
+            #task_ects = calculate_ects_percentage(tasks)
             task_key = f"complete_{task_name}_{day}"
 
             if task.get('completed', False):
