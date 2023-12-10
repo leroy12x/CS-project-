@@ -84,7 +84,7 @@ def display_task_ects_estimate():
             task_percentage = float(task['percentage'])
             task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
 
-            ects_task = task['total_ects'] * 20  # Multiply ECTS by 20 to estimate work hours
+            ects_task = task['total_ects'] * 30  # Multiply ECTS by 20 to estimate work hours
 
             # Check if task is completed
             if task.get('completed', False):
@@ -190,7 +190,7 @@ def save_tasks_to_csv(tasks):
     df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
                       columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
-    df.to_csv('tasks2.csv', index=False)
+    df.to_csv('tasks3.csv', index=False)
 
 
 
@@ -199,7 +199,7 @@ def save_tasks_to_csv(tasks):
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
     try:
-        df = pd.read_csv('tasks2.csv')
+        df = pd.read_csv('tasks3.csv')
         tasks = {}
         for _, row in df.iterrows():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
