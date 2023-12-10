@@ -67,7 +67,7 @@ def initialize_session_state():
 
 
 def display_task_overview():
-    initialize_session_state()  # Initialize session state
+    load_tasks_from_csv() # Initialize session state
 
     st.title("To Do List")
     tasks = st.session_state.tasks
