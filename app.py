@@ -274,12 +274,14 @@ def display_task_overview():
 
 
     # Function to handle marking tasks as completed
-    def mark_as_completed(task_name, day):
-        for task in st.session_state.tasks[day]:
-            if task['name'] == task_name:
+    def mark_as_completed(task_name, due_date):
+    for day, day_tasks in st.session_state.tasks.items():
+        for task in day_tasks:
+            if task['name'] == task_name and task['due_date'] == due_date:
                 task['completed'] = True
                 save_tasks_to_csv(st.session_state.tasks)  # Save the updated tasks
                 break
+
 
 
 
