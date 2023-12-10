@@ -76,6 +76,7 @@ def display_task_overview():
         st.subheader(f"Tasks for {day.strftime('%d.%m.%Y')}") 
         for task in day_tasks:
             task_name = task['name']
+            task_ects = calculate_ects_percentage(tasks['ects'])
             task_key = f"complete_{task_name}_{day}"
 
             if task.get('completed', False):
@@ -221,6 +222,7 @@ def calculate_ects_percentage(tasks):
 
 
 
+
 # Function to edit or delete tasks
 def edit_tasks():
     st.title("Edit Tasks")
@@ -324,7 +326,9 @@ def display_weekly_calendar():
             day_date = week_start + timedelta(days=i)
             cols = st.columns([2, 5])  # Adjust the ratio as needed
             with cols[0]:
-                st.markdown(f"**{day} - {day_date.strftime('%b %d')}**")
+                # Format the day and date for consistent alignment
+                day_str = f"{day} - {day_date.strftime('%b %d')}"
+                st.markdown(f"**{day_str:<10}**")  # Left align with fixed width
             with cols[1]:
                 day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
                 if day_tasks:
