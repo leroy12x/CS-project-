@@ -92,7 +92,7 @@ def display_task_ects_estimate():
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task_ects} ECTS) - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 
                 # Display ECTS and estimated remaining work hours
-                st.write(f"{task['name']}({task['describtion']})")
+                st.write(f"{task['name']}({task['description']})")
                 st.write(f"ECTS: {task['total_ects']}")
                 st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
                     
