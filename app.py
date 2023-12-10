@@ -63,34 +63,23 @@ def get_events_by_term(term_id):
 
 
 def display_task_overview():
-    tasks = load_tasks_from_csv()
     st.title("To Do List")
+    tasks = load_tasks_from_csv()
 
-    if 'tasks' not in st.session_state:
-        st.session_state.tasks = tasks  # Initialize session state with tasks
-
-    for day, day_tasks in st.session_state.tasks.items():
+    for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
-            task_name = task['name']
-            task_key = f"complete_{task_name}_{day}"  # Ensure unique button key
-
             if task['completed']:
-                st.write(f"Completed: {task_name}")
+                st.write(f"Completed: {task['description']}")
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                st.write(f"Task: {task_name} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
-                if st.button(f"Mark as Completed", key=task_key):
-                    mark_as_completed(task_name, day)  # Pass task_name and day for marking completion
-
+                st.write(f"{task['description']} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}"):
+                    task['completed'] = True
+                    save_tasks_to_csv(tasks)
                     
-def mark_as_completed(task_name, day):
-    for task in st.session_state.tasks[day]:
-        if task['name'] == task_name:
-            task['completed'] = True
-            save_tasks_to_csv(st.session_state.tasks)  # Save the updated tasks
-            break
-
+                    
+        
         
                 
 def display_task_manager():
@@ -281,6 +270,10 @@ def display_task_overview():
                     mark_as_completed(task_name, day)  # Pass task_name and day for marking completion
 
                     
+
+
+
+    # Function to handle marking tasks as completed
     def mark_as_completed(task_name, day):
         for task in st.session_state.tasks[day]:
             if task['name'] == task_name:
@@ -289,8 +282,6 @@ def display_task_overview():
                 break
 
 
-
-    
 
 
 
