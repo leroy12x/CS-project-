@@ -78,8 +78,13 @@ def display_task_ects_estimate():
 
         for task in day_tasks:
             task_name = task['name']
-            task_ects = calculate_ects_percentage(task)
-            ects_task = task_ects * 20  # Multiply ECTS by 20 to estimate work hours
+            
+            # Ensure 'ects' and 'percentage' are converted to numbers
+            task_ects = float(task['ects'])
+            task_percentage = float(task['percentage'])
+            task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
+
+            ects_task = task['total_ects'] * 20  # Multiply ECTS by 20 to estimate work hours
 
             # Check if task is completed
             if task.get('completed', False):
@@ -92,7 +97,6 @@ def display_task_ects_estimate():
                 # Display ECTS and estimated remaining work hours
                 st.write(f"ECTS: {task_ects}")
                 st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
-
                     
                     
         
