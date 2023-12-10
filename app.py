@@ -249,25 +249,26 @@ def edit_tasks():
         
             
 def display_task_overview():
-    tasks = load_tasks_from_csv()
     st.title("To Do List")
+    tasks = load_tasks_from_csv()
 
-    if 'tasks' not in st.session_state:
-        st.session_state.tasks = tasks  # Initialize session state with tasks
-
-    for day, day_tasks in st.session_state.tasks.items():
+    # Display tasks with color coding
+    for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
             task_name = task['name']
-            task_key = f"complete_{task_name}_{day}"  # Ensure unique button key
+            task_key = f"complete_{task_name}_{day}"
 
-            if task['completed']:
-                st.write(f"Completed: {task_name}")
+            if task.get('completed', False):
+                # Completed tasks in green
+                st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                st.write(f"Task: {task_name} - Due: {task['due_date']} {'(Overdue)' if overdue else ''}")
+                color = "red" if overdue else "black"
+                st.markdown(f"<span style='color: {color};'>{task_name} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 if st.button(f"Mark as Completed", key=task_key):
-                    mark_as_completed(task_name, day)  # Pass task_name and day for marking completion
+                    mark_as_completed(task_name, task['due_date'])  # Pass task_name and due_date for marking completion
+
 
                     
 
