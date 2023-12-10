@@ -259,26 +259,6 @@ def edit_tasks():
         
         
             
-def display_task_overview():
-    st.title("To Do List")
-    tasks = load_tasks_from_csv()
-
-    # Display tasks with color coding
-    for day, day_tasks in tasks.items():
-        st.subheader(f"Tasks for {day}")
-        for task in day_tasks:
-            task_name = task['name']
-            task_key = f"complete_{task_name}_{day}"
-
-            if task.get('completed', False):
-                # Completed tasks in green
-                st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
-            else:
-                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                color = "red" if overdue else "black"
-                st.markdown(f"<span style='color: {color};'>{task_name} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                if st.button(f"Mark as Completed", key=task_key):
-                    mark_as_completed(task_name, task['due_date'])  # Pass task_name and due_date for marking completion
 
 
                     
@@ -286,13 +266,13 @@ def display_task_overview():
 
 
     # Function to handle marking tasks as completed
-    def mark_as_completed(task_name, due_date):
-        for day, day_tasks in st.session_state.tasks.items():
-            for task in day_tasks:
-                if task['name'] == task_name and task['due_date'] == due_date:
-                    task['completed'] = True
-                    save_tasks_to_csv(st.session_state.tasks)  # Save the updated tasks
-                    break
+def mark_as_completed(task_name, due_date):
+    for day, day_tasks in st.session_state.tasks.items():
+        for task in day_tasks:
+           if task['name'] == task_name and task['due_date'] == due_date:
+                task['completed'] = True
+                save_tasks_to_csv(st.session_state.tasks)  # Save the updated tasks
+                break
 
 
 
