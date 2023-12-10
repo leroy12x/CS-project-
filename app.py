@@ -76,7 +76,7 @@ def display_task_overview():
         st.subheader(f"Tasks for {day}") 
         for task in day_tasks:
             task_name = task['name']
-            #task_ects = calculate_ects_percentage(tasks)
+            task_ects = calculate_ects_percentage(tasks)
             task_key = f"complete_{task_name}_{day}"
 
             if task.get('completed', False):
@@ -85,7 +85,7 @@ def display_task_overview():
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "black"
-                st.markdown(f"<span style='color: {color};'>{task_name} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
+                st.markdown(f"<span style='color: {color};'>{task_name} ({task_ects})- Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 if st.button(f"Mark as Completed", key=task_key):
                     mark_as_completed(task_name, task['due_date'])  # Pass task_name and due_date for marking completion
 
