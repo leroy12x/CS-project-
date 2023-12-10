@@ -95,7 +95,7 @@ def display_task_ects_estimate():
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task_ects} ECTS) - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 
                 # Display ECTS and estimated remaining work hours
-                st.write(f"ECTS: {task_ects}")
+                st.write(f"ECTS: {task['total_ects']}")
                 st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
                     
                     
@@ -332,12 +332,13 @@ def display_weekly_calendar():
 
         for i, day in enumerate(days):
             day_date = week_start + timedelta(days=i)
-            cols = st.columns([2, 5])  # Adjust the ratio as needed
-            with cols[0]:
-                # Format the day and date for consistent alignment
-                day_str = f"{day} - {day_date.strftime('%b %d')}"
-                st.markdown(f"**{day_str:<10}**")  # Left align with fixed width
-            with cols[1]:
+            # Create a row for each day
+            day_col, task_col = st.columns([1, 5])  # Adjust the ratio as needed
+
+            with day_col:
+                st.markdown(f"**{day} - {day_date.strftime('%b %d')}**", unsafe_allow_html=True)
+
+            with task_col:
                 day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
                 if day_tasks:
                     for task in day_tasks:
