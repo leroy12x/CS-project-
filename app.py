@@ -328,13 +328,16 @@ def display_weekly_calendar():
                         overdue = due_date < today
                         completed = task.get('completed', False)  # Access the completed status
                         
+                        # Task description with time, name, and other details
+                        task_display = f"{task['time']} - {task['name']}: {task['description']} (ECTS: {task['ects']}, Percentage: {task['percentage']})"
+                        
                         # Apply color styling based on the task status
                         if completed:
-                            st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
+                            st.markdown(f"<span style='color: green;'>{task_display}</span>", unsafe_allow_html=True)
                         elif overdue:
-                            st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
+                            st.markdown(f"<span style='color: red;'>{task_display}</span>", unsafe_allow_html=True)
                         else:
-                            st.markdown(f"<span style='color: orange;'>{task['description']}</span>", unsafe_allow_html=True)
+                            st.markdown(f"<span style='color: orange;'>{task_display}</span>", unsafe_allow_html=True)
                 else:
                     st.write("No tasks")
 
