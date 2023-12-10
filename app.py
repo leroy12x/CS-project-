@@ -234,7 +234,7 @@ def edit_tasks():
     if selected_task_details:
         new_description = st.text_input("Task Name", value=selected_task_details['name'])
         new_due_date = st.date_input("Due Date", value=datetime.strptime(selected_task_details['due_date'], '%Y-%m-%d'))
-        new_ects = st.number_input("ECTS Points", value=selected_task_details['ects'], min_value=0)
+        new_ects = st.text_input("ECTS Points", value=selected_task_details['ects'])
         new_percentage = st.number_input("Percentage of Grade", value=selected_task_details['percentage'], min_value=0, max_value=100)
 
         if st.button("Update Task"):
