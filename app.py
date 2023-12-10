@@ -66,28 +66,32 @@ def initialize_session_state():
         st.session_state.tasks = load_tasks_from_csv()  # Load tasks from CSV if they exist, else initialize as empty dictionary
 
 
-def display_task_overview():
-    load_tasks_from_csv() # Initialize session state
+def display_task_ects_estimate():
+    initialize_session_state()  # Initialize session state
 
-    st.title("To Do List")
+    st.title("Tasks with ECTS and Time Estimates")
     tasks = st.session_state.tasks
     calculate_ects_percentage(tasks)
+
     for day, day_tasks in tasks.items():
-        st.subheader(f"Tasks for {day}") 
+        st.subheader(f"Tasks for {day}")
+
         for task in day_tasks:
             task_name = task['name']
-            task_ects = calculate_ects_percentage(tasks)
-            task_key = f"complete_{task_name}_{day}_{datetime.now()}"
+            task_ects = calculate_ects_percentage(task)
+            ects_task = task_ects * 20  # Multiply ECTS by 20 to estimate work hours
 
+            # Check if task is completed
             if task.get('completed', False):
-                # Completed tasks in green
                 st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "black"
-                st.markdown(f"<span style='color: {color};'>{task_name} ({task_ects})- Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                if st.button(f"Mark as Completed", key=task_key):
-                    mark_as_completed(task_name, task['due_date'])  # Pass task_name and due_date for marking completion
+                st.markdown(f"<span style='color: {color};'>{task_name} ({task_ects} ECTS) - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
+                
+                # Display ECTS and estimated remaining work hours
+                st.write(f"ECTS: {task_ects}")
+                st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
 
                     
                     
@@ -365,7 +369,7 @@ def main():
     if app_mode == "Create Tasks":
         display_task_manager()
     elif app_mode == "To Do List":
-        display_task_overview()
+        display_task_ects_estimate()
     elif app_mode == "Edit Tasks":
         edit_tasks()
     elif app_mode == "Weekly Calendar":
