@@ -306,32 +306,38 @@ def display_weekly_calendar():
     tasks = load_tasks_from_csv()  # Ensure this function returns a dictionary of tasks
 
     today = datetime.today()
-    start_of_week = today - timedelta(days=today.weekday())
-    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
-    cols = st.columns(7)
-    for i, day in enumerate(days):
-        with cols[i]:
-            st.subheader(day)
-            day_date = start_of_week + timedelta(days=i)
-            st.write(day_date.strftime('%b %d'))
+    # Display last week, current week, and next week
+    for week in range(-1, 2):
+        week_start = today - timedelta(days=today.weekday()) + timedelta(weeks=week)
+        week_label = "Last Week" if week == -1 else "Next Week" if week == 1 else "Current Week"
+        st.subheader(week_label)
 
-            day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
-            if day_tasks:
-                 for task in day_tasks:
-                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-                    overdue = due_date < today
-                    completed = task.get('completed', False)  # Access the completed status
-                    
-                    # Apply color styling based on the task status
-                    if completed:
-                        st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
-                    elif overdue:
-                        st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"<span style='color: orange;'>{task['description']}</span>", unsafe_allow_html=True)
-            else:
-                st.write("No tasks")
+        cols = st.columns(7)
+        days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+        for i, day in enumerate(days):
+            with cols[i]:
+                day_date = week_start + timedelta(days=i)
+                st.write(day_date.strftime('%b %d'))
+
+                day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
+                if day_tasks:
+                    for task in day_tasks:
+                        due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                        overdue = due_date < today
+                        completed = task.get('completed', False)  # Access the completed status
+                        
+                        # Apply color styling based on the task status
+                        if completed:
+                            st.markdown(f"<span style='color: green;'>{task['description']}</span>", unsafe_allow_html=True)
+                        elif overdue:
+                            st.markdown(f"<span style='color: red;'>{task['description']}</span>", unsafe_allow_html=True)
+                        else:
+                            st.markdown(f"<span style='color: orange;'>{task['description']}</span>", unsafe_allow_html=True)
+                else:
+                    st.write("No tasks")
+
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 
 # Function to fetch current semester information
