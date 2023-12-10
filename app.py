@@ -73,7 +73,7 @@ def display_task_overview():
     tasks = st.session_state.tasks
     calculate_ects_percentage(tasks)
     for day, day_tasks in tasks.items():
-        st.subheader(f"Tasks for {day.strftime('%d.%m.%Y')}") 
+        st.subheader(f"Tasks for {day}") 
         for task in day_tasks:
             task_name = task['name']
             task_key = f"complete_{task_name}_{day}"
