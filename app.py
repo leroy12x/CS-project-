@@ -60,10 +60,7 @@ def get_events_by_term(term_id):
         return pd.DataFrame()
 
 
-def initialize_session_state():
-    # Initialize session state variables if not already present
-    if 'tasks' not in st.session_state:
-        st.session_state.tasks = load_tasks_from_csv()  # Load tasks from CSV if they exist, else initialize as empty dictionary
+  # Load tasks from CSV if they exist, else initialize as empty dictionary
 
 
 def display_task_ects_estimate():
