@@ -97,7 +97,8 @@ def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
     # Input field for course ID
     # Set default allocated time to 1 hour
-    task_allocated_time = st.text_input("Deadline", key="task_allocated_time")
+    placeholder_text_time = "Enter the Time in the formT 12:00"
+    task_allocated_time = st.text_input("Deadline", placeholder=placeholder_text_time,key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
     task_name = st.text_input("Enter Task Name", key="task_name")
     task_description = st.text_input("Enter Task Description", key="task_description")
