@@ -100,10 +100,10 @@ def display_task_manager():
     placeholder_text_time = "Enter the Time in the format 12:00"
     task_allocated_time = st.text_input("Deadline", placeholder=placeholder_text_time,key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date") 
-    placeholder_text_name = "Leef"
+    placeholder_text_name = "Leave blank when you have a COURSE ID"
     task_name = st.text_input("Enter Task Name",placeholder=placeholder_text_name, key="task_name")
     task_description = st.text_input("Enter Task Description", key="task_description")
-    placeholder_text_ects = "Enter the Time in the format 12:00"
+    placeholder_text_ects = "Leave blank when you have a COURSE ID"
     task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")
     task_id = st.text_input("Enter COURSE ID ", key="task_id")         
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
