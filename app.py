@@ -97,12 +97,14 @@ def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
     # Input field for course ID
     # Set default allocated time to 1 hour
-    placeholder_text_time = "Enter the Time in the formT 12:00"
+    placeholder_text_time = "Enter the Time in the format 12:00"
     task_allocated_time = st.text_input("Deadline", placeholder=placeholder_text_time,key="task_allocated_time")
-    task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
-    task_name = st.text_input("Enter Task Name", key="task_name")
+    task_due_date = st.date_input("Select Due Date", key="task_due_date") 
+    placeholder_text_name = "Leef"
+    task_name = st.text_input("Enter Task Name",placeholder=placeholder_text_name, key="task_name")
     task_description = st.text_input("Enter Task Description", key="task_description")
-    task_ects = st.text_input("Enter ECTS Points", key="task_ects")
+    placeholder_text_ects = "Enter the Time in the format 12:00"
+    task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")
     task_id = st.text_input("Enter COURSE ID ", key="task_id")         
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
