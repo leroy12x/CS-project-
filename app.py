@@ -324,7 +324,7 @@ def display_weekly_calendar():
 
         for i, day in enumerate(days):
             day_date = week_start + timedelta(days=i)
-            cols = st.columns([1, 5])  # Adjust the ratio as needed
+            cols = st.columns([1, 12])  # Adjust the ratio as needed
             with cols[0]:
                 # Format the day and date for consistent alignment
                 st.markdown(f"**{day}**")
