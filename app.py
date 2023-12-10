@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 import math
-#fuer API
+#API
 import requests
 
 
@@ -71,9 +71,9 @@ def display_task_overview():
 
     st.title("To Do List")
     tasks = st.session_state.tasks
-
+    calculate_ects_percentage(tasks)
     for day, day_tasks in tasks.items():
-        st.subheader(f"Tasks for {day}")
+        st.subheader(f"Tasks for {day.strftime('%A, %d. %B %Y')}") 
         for task in day_tasks:
             task_name = task['name']
             task_key = f"complete_{task_name}_{day}"
@@ -112,7 +112,7 @@ def display_task_manager():
         
            
         tasks = load_tasks_from_csv()
-        start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Nur die Zeitkomponente
+        start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Just time component
         start_date_time = get_datetime_on_date(task_due_date, start_time)
         task_percentage = int(task_percentage)
         if task_ects and task_ects.strip():
@@ -213,6 +213,11 @@ def load_tasks_from_csv():
 
 
 
+
+def calculate_ects_percentage(tasks):
+    for day_tasks in tasks.values():
+        for task in day_tasks:
+            task['total_ects'] = round(task['ects'] * (task['percentage'] / 100), 2)
 
 
 
