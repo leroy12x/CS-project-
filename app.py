@@ -66,7 +66,103 @@ def initialize_session_state():
         st.session_state.tasks = load_tasks_from_csv()  # Load tasks from CSV if they exist, else initialize as empty dictionary
 
 
+def display_task_overview():
+    initialize_session_state()  # Initialize session state
 
+    st.title("To Do List")
+    tasks = st.session_state.tasks
+
+    for day, day_tasks in tasks.items():
+        st.subheader(f"Tasks for {day}")
+        for task in day_tasks:
+            task_name = task['name']
+            task_key = f"complete_{task_name}_{day}"
+
+            if task.get('completed', False):
+                # Completed tasks in green
+                st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
+            else:
+                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
+                color = "red" if overdue else "black"
+                st.markdown(f"<span style='color: {color};'>{task_name} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
+                if st.button(f"Mark as Completed", key=task_key):
+                    mark_as_completed(task_name, task['due_date'])  # Pass task_name and due_date for marking completion
+
+                    
+                    
+        
+        
+                
+def display_task_manager():
+    st.title("Create Tasks")  # Renamed from "Task Manager"
+    # Input field for course ID
+    # Set default allocated time to 1 hour
+    task_allocated_time = st.text_input("Enter Allocated Time", key="task_allocated_time")
+    task_due_date = st.date_input("Select Due Date", key="task_due_date")  # Renamed from "task_end_date"
+    task_name = st.text_input("Enter Task Name", key="task_name")
+    task_description = st.text_input("Enter Task Description", key="task_description")
+    task_ects = st.text_input("Enter ECTS Points", key="task_ects")
+    task_id = st.text_input("Enter COURSE ID ", key="task_id")         
+    task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
+            
+    if st.button("Add Task"):
+        
+           
+        tasks = load_tasks_from_csv()
+        start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Nur die Zeitkomponente
+        start_date_time = get_datetime_on_date(task_due_date, start_time)
+        task_percentage = int(task_percentage)
+        if task_ects and task_ects.strip():
+            task_ects = int(task_ects)
+        if task_id is not None:
+            term_id = semester_id
+            events_df = get_events_by_term(term_id)
+            # Filter events by the provided course ID
+            if not events_df.empty:
+                # Ensure the course_id is a string and remove any leading/trailing whitespace
+                course_id = str(task_id).strip()
+
+                # Attempt to match the course ID as an integer if it is numeric
+                if course_id.isdigit():
+                    course_id = int(course_id)
+                    course_events = events_df[events_df['id'] == course_id]
+                    title_list = course_events['title'].tolist()
+                    if title_list and isinstance(title_list[0], str):
+                        task_name = title_list[0]  # Set the title as task description
+                    max_credits_list = course_events['maxCredits'].tolist()
+                    if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
+                        task_ects = (int(max_credits_list[0][0])/100) # Set maxCredits as ECTS
+                    else:
+                        st.error(f"No maxCredits found for Course ID: {course_id}")
+                else:
+                    st.error(f"No events found for Course ID: {course_id}")
+            else:
+                st.error("No events data available.")
+        else:
+            st.warning('Please enter a Course ID.') 
+            
+        task_info = {
+            'time': start_date_time.strftime("%H:%M"),
+            'description': task_description,
+            'name': task_name,
+            'ects': task_ects,
+            'percentage': task_percentage,
+            'due_date': task_due_date.strftime('%Y-%m-%d'),  # Format the date
+            'completed': False  # Correctly placed inside task_info
+        }
+
+        date_key = (start_date_time.year, start_date_time.month, start_date_time.day)
+        if date_key in tasks:
+            tasks[date_key].append(task_info)
+        else:
+            tasks[date_key] = [task_info]
+        
+        # Save tasks to the CSV file
+        save_tasks_to_csv(tasks)
+
+        st.success(f"Task added at {start_date_time} !")
+
+        st.experimental_rerun()
 
        
 def get_datetime_on_date(date, time):
@@ -164,11 +260,10 @@ def edit_tasks():
         
             
 def display_task_overview():
-    initialize_session_state()  # Initialize session state
-
     st.title("To Do List")
-    tasks = st.session_state.tasks
+    tasks = load_tasks_from_csv()
 
+    # Display tasks with color coding
     for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
