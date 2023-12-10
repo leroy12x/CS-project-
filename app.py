@@ -73,7 +73,7 @@ def display_task_overview():
     tasks = st.session_state.tasks
     calculate_ects_percentage(tasks)
     for day, day_tasks in tasks.items():
-        st.subheader(f"Tasks for {day}") 
+        st.subheader(f"Tasks for {day.strftime('%d.%m.%Y')}") 
         for task in day_tasks:
             task_name = task['name']
             task_key = f"complete_{task_name}_{day}"
@@ -322,27 +322,29 @@ def display_weekly_calendar():
 
         for i, day in enumerate(days):
             day_date = week_start + timedelta(days=i)
-            st.markdown(f"### {day} - {day_date.strftime('%b %d')}")
-
-            day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
-            if day_tasks:
-                for task in day_tasks:
-                    due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-                    overdue = due_date < today
-                    completed = task.get('completed', False)  # Access the completed status
-                    
-                    # Task description with time, name, and other details
-                    task_display = f"{task['time']} - {task['name']}: {task['description']} (ECTS: {task['ects']}, Percentage: {task['percentage']})"
-                    
-                    # Apply color styling based on the task status
-                    if completed:
-                        st.markdown(f"<span style='color: green;'>{task_display}</span>", unsafe_allow_html=True)
-                    elif overdue:
-                        st.markdown(f"<span style='color: red;'>{task_display}</span>", unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"<span style='color: orange;'>{task_display}</span>", unsafe_allow_html=True)
-            else:
-                st.write("No tasks")
+            cols = st.columns([2, 5])  # Adjust the ratio as needed
+            with cols[0]:
+                st.markdown(f"**{day} - {day_date.strftime('%b %d')}**")
+            with cols[1]:
+                day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
+                if day_tasks:
+                    for task in day_tasks:
+                        due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
+                        overdue = due_date < today
+                        completed = task.get('completed', False)  # Access the completed status
+                        
+                        # Task description with time, name, and other details
+                        task_display = f"{task['time']} - {task['name']}: {task['description']} (ECTS: {task['ects']}, Percentage: {task['percentage']})"
+                        
+                        # Apply color styling based on the task status
+                        if completed:
+                            st.markdown(f"<span style='color: green;'>{task_display}</span>", unsafe_allow_html=True)
+                        elif overdue:
+                            st.markdown(f"<span style='color: red;'>{task_display}</span>", unsafe_allow_html=True)
+                        else:
+                            st.markdown(f"<span style='color: orange;'>{task_display}</span>", unsafe_allow_html=True)
+                else:
+                    st.write("No tasks")
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 
