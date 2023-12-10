@@ -60,6 +60,10 @@ def get_events_by_term(term_id):
         return pd.DataFrame()
 
 
+def initialize_session_state():
+    # Initialize session state variables if not already present
+    if 'tasks' not in st.session_state:
+        st.session_state.tasks = load_tasks_from_csv()  # Load tasks from CSV if they exist, else initialize as empty dictionary
 
 
 def display_task_overview():
@@ -249,10 +253,11 @@ def edit_tasks():
         
             
 def display_task_overview():
-    st.title("To Do List")
-    tasks = load_tasks_from_csv()
+    initialize_session_state()  # Initialize session state
 
-    # Display tasks with color coding
+    st.title("To Do List")
+    tasks = st.session_state.tasks
+
     for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
         for task in day_tasks:
