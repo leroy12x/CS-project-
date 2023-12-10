@@ -77,7 +77,7 @@ def display_task_overview():
         for task in day_tasks:
             task_name = task['name']
             task_ects = calculate_ects_percentage(tasks)
-            task_key = f"complete_{task_name}_{day}"
+            task_key = f"complete_{task_name}_{day}_{datetime.now()}"
 
             if task.get('completed', False):
                 # Completed tasks in green
