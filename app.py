@@ -45,28 +45,26 @@ else:
 
 
 
-import streamlit as st
-import requests
-import pandas as pd
-
-@st.cache(ttl=600)  # Cache for 10 minutes
-def get_api_data(url, headers):
-    response = requests.get(url, headers=headers)
+def get_events_by_term(term_id):
+    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    headers = {
+        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
+        "API-Version": "1",
+        "X-RequestedLanguage": "en"
+    }
+    response = requests.get(url2, headers=headers)
     if response.ok:
-        return response.json()
-    return None
-
-def display_data():
-    url = "https://api.example.com/data"
-    headers = {"Authorization": "Bearer YOUR_TOKEN"}
-    data = get_api_data(url, headers)
-    if data:
-        st.write(data)
+        json_response = response.json()
+        st.write("API Response JSON:", json_response)  # Debugging line to print the JSON response
+        return pd.DataFrame(json_response)
     else:
-        st.error("Failed to retrieve data.")
+        st.error(f"Error calling API: {response.status_code}")
+        st.write("API Error Response:", response.text)  # Additional debugging for error response
+        return pd.DataFrame()
 
-if st.button('Fetch Data'):
-    display_data()
+
+  # Load tasks from CSV if they exist, else initialize as empty dictionary
+
 
 def display_task_ects_estimate():
     load_tasks_from_csv()  # Initialize session state
