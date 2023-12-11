@@ -67,7 +67,7 @@ def display_task_ects_estimate():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = st.session_state.tasks
+    tasks = load_tasks_from_csv() 
     calculate_ects_percentage(tasks)
 
     for day, day_tasks in tasks.items():
@@ -92,6 +92,7 @@ def display_task_ects_estimate():
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task_ects} ECTS) - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 
                 # Display ECTS and estimated remaining work hours
+                st.write(f"{task['name']}({task['description']})")
                 st.write(f"ECTS: {task['total_ects']}")
                 st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
                     
