@@ -45,42 +45,28 @@ else:
 
 
 
+import streamlit as st
 import requests
 import pandas as pd
 
-def get_events_by_term(term_id):
-    url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
-    headers = {
-        "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
-        "API-Version": "1",
-        "X-RequestedLanguage": "en"
-    }
-    
+@st.cache(ttl=600)  # Cache for 10 minutes
+def get_api_data(url, headers):
     response = requests.get(url, headers=headers)
-    
     if response.ok:
-        data = response.json()
-        # Ensure that the data is in the expected format
-        if isinstance(data, list):  # Assuming the response is a list of events
-            return pd.DataFrame(data)
-        else:
-            print("Unexpected JSON structure:", data)
-            return pd.DataFrame()  # Return an empty DataFrame if structure is unexpected
+        return response.json()
+    return None
+
+def display_data():
+    url = "https://api.example.com/data"
+    headers = {"Authorization": "Bearer YOUR_TOKEN"}
+    data = get_api_data(url, headers)
+    if data:
+        st.write(data)
     else:
-        print(f"Error calling API: {response.status_code}")
-        return pd.DataFrame()  # Return an empty DataFrame on API error
+        st.error("Failed to retrieve data.")
 
-# Usage example
-term_id = "some-term-id"  # Replace with the actual term ID
-events_df = get_events_by_term(term_id)
-
-if not events_df.empty:
-    # Process and display the events data
-    print(events_df.head())  # For example, print the first few rows
-else:
-    # Handle the case where no events are found or an error occurred
-    print("No events data available.")
-
+if st.button('Fetch Data'):
+    display_data()
 
 def display_task_ects_estimate():
     load_tasks_from_csv()  # Initialize session state
