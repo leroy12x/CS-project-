@@ -46,19 +46,22 @@ else:
 
 
 def get_events_by_term(term_id):
-    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
     headers = {
         "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
         "API-Version": "1",
         "X-RequestedLanguage": "en"
     }
-    response = requests.get(url2, headers=headers)
+    response = requests.get(url, headers=headers)
     if response.ok:
-        return pd.DataFrame(response.json())
+        data = response.json()
+        df = pd.DataFrame(data)
+        # Select only the 'maxCredits' and 'title' columns for display
+        df = df[['maxCredits', 'title']]
+        return df
     else:
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
-
 
   # Load tasks from CSV if they exist, else initialize as empty dictionary
 
@@ -262,16 +265,16 @@ def edit_tasks():
         st.success("Task updated successfully!")
         st.rerun()  # Replacing st.experimental_rerun with st.rerun
 
-    if st.button("Delete Task"):
-        # Remove the selected task from the list of tasks for that day
+     if st.button("Delete Task"):
         tasks[selected_date_key].remove(selected_task_details)
-        # If the day has no more tasks, remove the day from the tasks dictionary
         if not tasks[selected_date_key]:
             del tasks[selected_date_key]
         save_tasks_to_csv(tasks)
         st.success("Task deleted successfully!")
-        st.rerun() 
-        
+        # Update the session state or the variable holding the tasks
+        st.session_state.tasks = load_tasks_from_csv()
+        # Use st.rerun() to refresh the display
+        st.rerun()
         
         
         
