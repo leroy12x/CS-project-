@@ -54,12 +54,12 @@ def get_events_by_term(term_id):
     }
     response = requests.get(url2, headers=headers)
     if response.ok:
-    print(response.text)  # Add this line to debug
-    return pd.DataFrame(response.json())
-else:
-    print(response.text)  # Add this line to debug
-    st.error(f"Error calling API: {response.status_code}")
-    return pd.DataFrame()
+        print(response.text)  # Add this line to debug
+        return pd.DataFrame(response.json())
+    else:
+        print(response.text)  # Add this line to debug
+        st.error(f"Error calling API: {response.status_code}")
+        return pd.DataFrame()
 
 
   # Load tasks from CSV if they exist, else initialize as empty dictionary
