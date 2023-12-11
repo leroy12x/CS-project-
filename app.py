@@ -81,7 +81,7 @@ def display_task_ects_estimate():
             task_percentage = float(task['percentage'])
             task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
 
-            ects_task = task['total_ects'] * 30  # Multiply ECTS by 20 to estimate work hours
+            ects_task = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
 
             # Check if task is completed
             if task.get('completed', False):
@@ -126,7 +126,7 @@ def display_task_manager():
             task_ects = int(task_ects)
         if task_id is not None:
             term_id = semester_id
-            events_df = get_events_by_term(term_id)
+            events_df = pd.DataFrame()
             # Filter events by the provided course ID
             if not events_df.empty:
                 # Ensure the course_id is a string and remove any leading/trailing whitespace
