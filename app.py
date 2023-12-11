@@ -46,23 +46,19 @@ else:
 
 
 def get_events_by_term(term_id):
-    url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
     headers = {
         "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
         "API-Version": "1",
         "X-RequestedLanguage": "en"
     }
-    response = requests.get(url, headers=headers)
+    response = requests.get(url2, headers=headers)
     if response.ok:
-        data = response.json()
-        df = pd.DataFrame(data)
-        # Filter the DataFrame to only include the necessary columns
-        if 'maxCredits' in df and 'title' in df:
-            df = df[['maxCredits', 'title']]
-        return df
+        return pd.DataFrame(response.json())
     else:
         st.error(f"Error calling API: {response.status_code}")
         return pd.DataFrame()
+
 
   # Load tasks from CSV if they exist, else initialize as empty dictionary
 
@@ -257,25 +253,24 @@ def edit_tasks():
         new_ects = st.text_input("ECTS Points", value=selected_task_details['ects'])
         new_percentage = st.number_input("Percentage of Grade", value=selected_task_details['percentage'], min_value=0, max_value=100)
 
-    if st.button("Update Task"):
-        selected_task_details['description'] = new_description
-        selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
-        selected_task_details['ects'] = new_ects
-        selected_task_details['percentage'] = new_percentage
-        save_tasks_to_csv(tasks)
-        st.success("Task updated successfully!")
-        st.rerun()  # Replacing st.experimental_rerun with st.rerun
+        if st.button("Update Task"):
+            selected_task_details['name'] = new_description
+            selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
+            selected_task_details['ects'] = new_ects
+            selected_task_details['percentage'] = new_percentage
+            save_tasks_to_csv(tasks)
+            st.success("Task updated successfully!")
+            
 
-    if st.button("Delete Task"):
-        tasks[selected_date_key].remove(selected_task_details)
-        if not tasks[selected_date_key]:
-            del tasks[selected_date_key]
-        save_tasks_to_csv(tasks)
-        st.success("Task deleted successfully!")
-        # Update the session state or the variable holding the tasks
-        st.session_state.tasks = load_tasks_from_csv()
-        # Use st.rerun() to refresh the display
-        st.rerun()
+        if st.button("Delete Task"):
+            # Remove the selected task from the list of tasks for that day
+            tasks[selected_date_key].remove(selected_task_details)
+            # If the day has no more tasks, remove the day from the tasks dictionary
+            if not tasks[selected_date_key]:
+                del tasks[selected_date_key]
+            save_tasks_to_csv(tasks)
+            st.success("Task deleted successfully!")
+        
         
         
         
