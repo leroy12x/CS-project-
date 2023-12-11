@@ -54,12 +54,9 @@ def get_events_by_term(term_id):
     }
     response = requests.get(url2, headers=headers)
     if response.ok:
-        json_response = response.json()
-        st.write("API Response JSON:", json_response)  # Debugging line to print the JSON response
-        return pd.DataFrame(json_response)
+        return pd.DataFrame(response.json())
     else:
         st.error(f"Error calling API: {response.status_code}")
-        st.write("API Error Response:", response.text)  # Additional debugging for error response
         return pd.DataFrame()
 
 
@@ -128,7 +125,7 @@ def display_task_manager():
         if task_ects and task_ects.strip():
             task_ects = int(task_ects)
         if task_id is not None:
-            term_id = "da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
+            term_id = semester_id
             events_df = get_events_by_term(term_id)
             # Filter events by the provided course ID
             if not events_df.empty:
