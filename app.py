@@ -46,7 +46,7 @@ else:
 
 
 def get_events_by_term(term_id):
-    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{semester_id}"
+    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/da0fc4f3-7942-4cac-85cd-d8a5f733fe97"
     headers = {
         "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
         "API-Version": "1",
