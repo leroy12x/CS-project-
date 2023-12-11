@@ -67,12 +67,19 @@ def display_task_ects_estimate():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = load_tasks_from_csv() 
-    calculate_ects_percentage(tasks)
+    tasks = load_tasks_from_csv()
 
-    for day, day_tasks in tasks.items():
+    # Sort tasks by date in ascending order
+    sorted_tasks = {}
+    for key in sorted(tasks.keys()):
+        sorted_tasks[key] = tasks[key]
+
+    for day, day_tasks in sorted_tasks.items():
         st.subheader(f"Tasks for {day}")
 
+        # Sort tasks for the day by time in ascending order
+        day_tasks = sorted(day_tasks, key=lambda x: (datetime.strptime(x['due_date'], '%Y-%m-%d'), datetime.strptime(x['time'], '%H:%M')))
+        
         for task in day_tasks:
             task_name = task['name']
             
@@ -107,10 +114,10 @@ def display_task_manager():
     placeholder_text_time = "Enter the Time in the format 12:00"
     task_allocated_time = st.text_input("Deadline", placeholder=placeholder_text_time,key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date") 
-    placeholder_text_name = "Leave blank when you have a COURSE ID"
+    placeholder_text_name = "Leave blank if you have a COURSE ID"
     task_name = st.text_input("Enter Task Name",placeholder=placeholder_text_name, key="task_name")
     task_description = st.text_input("Enter Task Description", key="task_description")
-    placeholder_text_ects = "Leave blank when you have a COURSE ID"
+    placeholder_text_ects = "Leave blank if you have a COURSE ID"
     task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")
     task_id = st.text_input("Enter COURSE ID ", key="task_id")         
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
@@ -261,7 +268,11 @@ def edit_tasks():
             save_tasks_to_csv(tasks)
             st.success("Task updated successfully!")
             
-
+        # Button to mark the task as completed
+        if not selected_task_details.get('completed', False):
+            if st.button("Mark as Completed"):
+                mark_task_as_completed(selected_task_details['name'], selected_task_details['due_date'])
+                
         if st.button("Delete Task"):
             # Remove the selected task from the list of tasks for that day
             tasks[selected_date_key].remove(selected_task_details)
@@ -270,57 +281,36 @@ def edit_tasks():
                 del tasks[selected_date_key]
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
-        
-        
-        
-        
             
+         
 
 
-                    
+def mark_task_as_completed(task_name, due_date):
+    # Load tasks from the CSV
+    tasks = load_tasks_from_csv()
 
-
-
-    # Function to handle marking tasks as completed
-def mark_as_completed(task_name, due_date):
-    for day, day_tasks in st.session_state.tasks.items():
+    # Iterate through tasks and find the specific task to mark as completed
+    for date_key, day_tasks in tasks.items():
         for task in day_tasks:
-           if task['name'] == task_name and task['due_date'] == due_date:
-                task['completed'] = True
-                save_tasks_to_csv(st.session_state.tasks)  # Save the updated tasks
-                break
+            if task['name'] == task_name and task['due_date'] == due_date:
+                task['completed'] = True  # Mark the task as completed
 
-
-
-
-
-
-    # Display tasks with color coding
-    for day, day_tasks in st.session_state.tasks.items():
-        st.subheader(f"Tasks for {day}")
-        for task in day_tasks:
-            due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
-            overdue = due_date < datetime.now()
-            if task.get('completed', False):
-                # Completed tasks in green
-                st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
-            else:
-                # Pending tasks in default color or red if overdue
-                color = "red" if overdue else "black"
-                st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
-                    mark_as_completed(task['description'], day)
-
+    # Save updated tasks to the CSV
+    save_tasks_to_csv(tasks)
 
 
 
 def display_weekly_calendar():
-    st.title("Weekly Calendar")
-    tasks = load_tasks_from_csv()  # Ensure this function returns a dictionary of tasks
-
+    tasks = load_tasks_from_csv()
     today = datetime.today()
 
-    # Display last week, current week, and next week
+    # Sort tasks by due date in ascending order
+    sorted_tasks = {}
+    for key in sorted(tasks.keys()):
+        sorted_tasks[key] = tasks[key]
+
+    st.title("Weekly Calendar")
+
     for week in range(-1, 2):
         week_start = today - timedelta(days=today.weekday()) + timedelta(weeks=week)
         week_label = "Last Week" if week == -1 else "Next Week" if week == 1 else "Current Week"
@@ -337,8 +327,10 @@ def display_weekly_calendar():
                 st.markdown(f"**{day} - {day_date.strftime('%b %d')}**", unsafe_allow_html=True)
 
             with task_col:
-                day_tasks = tasks.get((day_date.year, day_date.month, day_date.day), [])
+                day_tasks = sorted_tasks.get((day_date.year, day_date.month, day_date.day), [])
                 if day_tasks:
+                    # Sort tasks for the day by due date and time
+                    day_tasks = sorted(day_tasks, key=lambda x: (datetime.strptime(x['due_date'], '%Y-%m-%d'), datetime.strptime(x['time'], '%H:%M')))
                     for task in day_tasks:
                         due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
                         overdue = due_date < today
@@ -370,10 +362,10 @@ def main():
 
     if app_mode == "Create Tasks":
         display_task_manager()
+    elif app_mode == "Edit Tasks":
+        edit_tasks()    
     elif app_mode == "To Do List":
         display_task_ects_estimate()
-    elif app_mode == "Edit Tasks":
-        edit_tasks()
     elif app_mode == "Weekly Calendar":
         display_weekly_calendar()
 
