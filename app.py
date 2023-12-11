@@ -265,7 +265,7 @@ def edit_tasks():
         st.success("Task updated successfully!")
         st.rerun()  # Replacing st.experimental_rerun with st.rerun
 
-     if st.button("Delete Task"):
+    if st.button("Delete Task"):
         tasks[selected_date_key].remove(selected_task_details)
         if not tasks[selected_date_key]:
             del tasks[selected_date_key]
