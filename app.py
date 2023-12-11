@@ -253,23 +253,24 @@ def edit_tasks():
         new_ects = st.text_input("ECTS Points", value=selected_task_details['ects'])
         new_percentage = st.number_input("Percentage of Grade", value=selected_task_details['percentage'], min_value=0, max_value=100)
 
-        if st.button("Update Task"):
-            selected_task_details['name'] = new_description
-            selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
-            selected_task_details['ects'] = new_ects
-            selected_task_details['percentage'] = new_percentage
-            save_tasks_to_csv(tasks)
-            st.success("Task updated successfully!")
-            
+    if st.button("Update Task"):
+        selected_task_details['description'] = new_description
+        selected_task_details['due_date'] = new_due_date.strftime('%Y-%m-%d')
+        selected_task_details['ects'] = new_ects
+        selected_task_details['percentage'] = new_percentage
+        save_tasks_to_csv(tasks)
+        st.success("Task updated successfully!")
+        st.rerun()  # Replacing st.experimental_rerun with st.rerun
 
-        if st.button("Delete Task"):
-            # Remove the selected task from the list of tasks for that day
-            tasks[selected_date_key].remove(selected_task_details)
-            # If the day has no more tasks, remove the day from the tasks dictionary
-            if not tasks[selected_date_key]:
-                del tasks[selected_date_key]
-            save_tasks_to_csv(tasks)
-            st.success("Task deleted successfully!")
+    if st.button("Delete Task"):
+        # Remove the selected task from the list of tasks for that day
+        tasks[selected_date_key].remove(selected_task_details)
+        # If the day has no more tasks, remove the day from the tasks dictionary
+        if not tasks[selected_date_key]:
+            del tasks[selected_date_key]
+        save_tasks_to_csv(tasks)
+        st.success("Task deleted successfully!")
+        st.rerun() 
         
         
         
