@@ -45,22 +45,41 @@ else:
 
 
 
+import requests
+import pandas as pd
+
 def get_events_by_term(term_id):
-    url2 = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
+    url = f"https://integration.preprod.unisg.ch/eventapi/Events/byTerm/{term_id}"
     headers = {
         "X-ApplicationId": "587acf1c-24d0-4801-afda-c98f081c4678",
         "API-Version": "1",
         "X-RequestedLanguage": "en"
     }
-    response = requests.get(url2, headers=headers)
+    
+    response = requests.get(url, headers=headers)
+    
     if response.ok:
-        return pd.DataFrame(response.json())
+        data = response.json()
+        # Ensure that the data is in the expected format
+        if isinstance(data, list):  # Assuming the response is a list of events
+            return pd.DataFrame(data)
+        else:
+            print("Unexpected JSON structure:", data)
+            return pd.DataFrame()  # Return an empty DataFrame if structure is unexpected
     else:
-        st.error(f"Error calling API: {response.status_code}")
-        return pd.DataFrame()
+        print(f"Error calling API: {response.status_code}")
+        return pd.DataFrame()  # Return an empty DataFrame on API error
 
+# Usage example
+term_id = "some-term-id"  # Replace with the actual term ID
+events_df = get_events_by_term(term_id)
 
-  # Load tasks from CSV if they exist, else initialize as empty dictionary
+if not events_df.empty:
+    # Process and display the events data
+    print(events_df.head())  # For example, print the first few rows
+else:
+    # Handle the case where no events are found or an error occurred
+    print("No events data available.")
 
 
 def display_task_ects_estimate():
