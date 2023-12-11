@@ -56,8 +56,9 @@ def get_events_by_term(term_id):
     if response.ok:
         data = response.json()
         df = pd.DataFrame(data)
-        # Select only the 'maxCredits' and 'title' columns for display
-        df = df[['maxCredits', 'title']]
+        # Filter the DataFrame to only include the necessary columns
+        if 'maxCredits' in df and 'title' in df:
+            df = df[['maxCredits', 'title']]
         return df
     else:
         st.error(f"Error calling API: {response.status_code}")
