@@ -67,7 +67,7 @@ def display_task_ects_estimate():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = load_tasks_from_csv() 
+    tasks = st.session_state.tasks
     calculate_ects_percentage(tasks)
 
     for day, day_tasks in tasks.items():
@@ -81,7 +81,7 @@ def display_task_ects_estimate():
             task_percentage = float(task['percentage'])
             task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
 
-            ects_task = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
+            ects_task = task['total_ects'] * 30  # Multiply ECTS by 20 to estimate work hours
 
             # Check if task is completed
             if task.get('completed', False):
@@ -92,7 +92,6 @@ def display_task_ects_estimate():
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task_ects} ECTS) - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 
                 # Display ECTS and estimated remaining work hours
-                st.write(f"{task['name']}({task['description']})")
                 st.write(f"ECTS: {task['total_ects']}")
                 st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
                     
@@ -107,10 +106,10 @@ def display_task_manager():
     placeholder_text_time = "Enter the Time in the format 12:00"
     task_allocated_time = st.text_input("Deadline", placeholder=placeholder_text_time,key="task_allocated_time")
     task_due_date = st.date_input("Select Due Date", key="task_due_date") 
-    placeholder_text_name = "Leave blank if you have a COURSE ID"
+    placeholder_text_name = "Leave blank when you have a COURSE ID"
     task_name = st.text_input("Enter Task Name",placeholder=placeholder_text_name, key="task_name")
     task_description = st.text_input("Enter Task Description", key="task_description")
-    placeholder_text_ects = "Leave blank if you have a COURSE ID"
+    placeholder_text_ects = "Leave blank when you have a COURSE ID"
     task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")
     task_id = st.text_input("Enter COURSE ID ", key="task_id")         
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
@@ -379,4 +378,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
