@@ -72,43 +72,30 @@ def display_to_do():
 
     for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
-        
-        def mark_as_completed(task_description, day):
-        # Update the 'completed' status in the session state
-         for task in st.session_state.tasks[day]:
-            if task['description'] == task_description:
-                task['completed'] = True
-                break
-        # Save the updated tasks to CSV
-        save_tasks_to_csv(st.session_state.tasks)
-        if task.get('completed', False):
-                # Completed tasks in green
-                st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
-        else:
 
-            for task in day_tasks:
-                task_name = task['name']
-                task_time = task['time']
-                due_date_str = task['due_date']
+        for task in day_tasks:
+            task_name = task['name']
+            task_time = task['time']
+            due_date_str = task['due_date']
 
-                # Handle cases where remaining_hours might be None
-                remaining_hours = task.get('remaining_hours')
-                if remaining_hours is None:
-                    task_ects = float(task['ects'])
-                    task_percentage = float(task['percentage'])
-                    total_ects = round(task_ects * (task_percentage / 100), 2)
-                    remaining_hours = total_ects * 30  # Multiply ECTS by 30 to estimate work hours
+            # Handle cases where remaining_hours might be None
+            remaining_hours = task.get('remaining_hours')
+            if remaining_hours is None:
+                task_ects = float(task['ects'])
+                task_percentage = float(task['percentage'])
+                total_ects = round(task_ects * (task_percentage / 100), 2)
+                remaining_hours = total_ects * 30  # Multiply ECTS by 30 to estimate work hours
 
-                # Check if task is completed
-                if task.get('completed', False):
-                    st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task_time}</span>", unsafe_allow_html=True)
-                else:
-                    overdue = datetime.strptime(due_date_str, '%Y-%m-%d') < datetime.now()
-                    color = "red" if overdue else "orange"
-                    st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                    st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
+            # Check if task is completed
+            if task.get('completed', False):
+                st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task_time}</span>", unsafe_allow_html=True)
+            else:
+                overdue = datetime.strptime(due_date_str, '%Y-%m-%d') < datetime.now()
+                color = "red" if overdue else "orange"
+                st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
+                st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
 
-                    #
+                #
 
 
     
@@ -307,7 +294,7 @@ def mark_as_completed(task_description, day):
         if task['description'] == task_description:
               task['completed'] = True
               break
-    save_tasks_to_csv(st.session_state.tasks)
+        save_tasks_to_csv(st.session_state.tasks)
 
     # Display tasks with color coding
     for day, day_tasks in st.session_state.tasks.items():
