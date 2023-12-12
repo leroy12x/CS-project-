@@ -63,7 +63,7 @@ def get_events_by_term(term_id):
   # Load tasks from CSV if they exist, else initialize as empty dictionary
 
 
-def display_task_ects_estimate():
+def display_to_do():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
@@ -82,7 +82,7 @@ def display_task_ects_estimate():
             task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
 
             ects_task = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
-
+            remaining_hours = max(0, ects_task - hours_worked) 
             # Check if task is completed
             if task.get('completed', False):
                 st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task_time}</span>", unsafe_allow_html=True)
@@ -91,6 +91,41 @@ def display_task_ects_estimate():
                 color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
+    def display_work_done():
+    st.title("Record Work")
+
+    tasks = load_tasks_from_csv()  # Load existing tasks
+
+    # Create a list for task selection
+    task_list = [f"{task['name']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
+
+    selected_task_description = st.selectbox("Select a Task", task_list)
+    selected_task_details = None
+
+    # Find the selected task in the tasks dictionary
+    for date_key, day_tasks in tasks.items():
+        for task in day_tasks:
+            if selected_task_description == f"{task['name']} (Due: {task['due_date']})":
+                selected_task_details = task
+                break
+
+    if selected_task_details:
+        hours_worked = st.number_input("Enter hours worked", min_value=0.0, step=0.5)
+        
+        if st.button("Record Work"):
+            # Calculate and update the remaining hours
+            task_ects = float(selected_task_details['ects'])
+            task_percentage = float(selected_task_details['percentage'])
+            total_ects = round(task_ects * (task_percentage / 100), 2)
+            estimated_hours = total_ects * 30  # ECTS to hours
+            remaining_hours = max(0, estimated_hours - hours_worked)  # Ensure it doesn't go below zero
+
+            # Update task info
+            selected_task_details['remaining_hours'] = remaining_hours
+            
+            # Save the updated tasks
+            save_tasks_to_csv(tasks)
+            st.success(f"Updated remaining work hours for '{selected_task_details['name']}' to {remaining_hours} hours.")
                     
                     
         
@@ -337,7 +372,7 @@ def display_weekly_calendar():
                         task_percentage = float(task['percentage'])
                         task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
                         # Task description with time, name, and other details
-                        task_display = f"{task['time']} - {task['name']}: {task['description']} (ECTS: {task['total_ects']}, Percentage: {task['percentage']})"
+                        task_display = f"{task['time']} - {task['name']}: {task['description']} (ECTS: {task['ects']}, Percentage: {task['percentage']})"
                         
                         # Apply color styling based on the task status
                         if completed:
@@ -351,42 +386,7 @@ def display_weekly_calendar():
 
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 
-# Function to record hours worked and subtract them from the Estimated Remaining Work Hours
-def display_work_done():
-    st.title("Record Work")
 
-    tasks = load_tasks_from_csv()  # Load existing tasks
-
-    # Create a list for task selection
-    task_list = [f"{task['name']} (Due: {task['due_date']})" for day_tasks in tasks.values() for task in day_tasks]
-
-    selected_task_description = st.selectbox("Select a Task", task_list)
-    selected_task_details = None
-
-    # Find the selected task in the tasks dictionary
-    for date_key, day_tasks in tasks.items():
-        for task in day_tasks:
-            if selected_task_description == f"{task['name']} (Due: {task['due_date']})":
-                selected_task_details = task
-                break
-
-    if selected_task_details:
-        hours_worked = st.number_input("Enter hours worked", min_value=0.0, step=0.5)
-        
-        if st.button("Record Work"):
-            # Calculate and update the remaining hours
-            task_ects = float(selected_task_details['ects'])
-            task_percentage = float(selected_task_details['percentage'])
-            total_ects = round(task_ects * (task_percentage / 100), 2)
-            estimated_hours = total_ects * 30  # ECTS to hours
-            remaining_hours = max(0, estimated_hours - hours_worked)  # Ensure it doesn't go below zero
-
-            # Update task info
-            selected_task_details['remaining_hours'] = remaining_hours
-            
-            # Save the updated tasks
-            save_tasks_to_csv(tasks)
-            st.success(f"Updated remaining work hours for '{selected_task_details['name']}' to {remaining_hours} hours.")
 
 
 
@@ -397,7 +397,7 @@ def main():
     if app_mode == "Create Tasks":
         display_task_manager()
     elif app_mode == "To Do List":
-        display_task_ects_estimate()
+        display_to_do()
     elif app_mode == "Edit Tasks":
         edit_tasks()
     elif app_mode == "Weekly Calendar":
