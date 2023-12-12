@@ -88,7 +88,7 @@ def display_task_ects_estimate():
                 st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task_time}</span>", unsafe_allow_html=True)
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
-                color = "red" if overdue else "green"
+                color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
                     
@@ -353,7 +353,7 @@ def display_weekly_calendar():
 def work_done():
     st.title("record work")  # Renamed from "Task Manager"
 
-
+pass
 
 
 def main():
