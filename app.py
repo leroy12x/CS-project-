@@ -125,7 +125,7 @@ def display_task_manager():
         if task_ects and task_ects.strip():
             task_ects = int(task_ects)
         if task_id is not None: 
-            events_df = get_events_by_term(semester_id)
+            events_df = get_events_by_term(title)
             # Filter events by the provided course ID
             if not events_df.empty:
                 # Ensure the course_id is a string and remove any leading/trailing whitespace
