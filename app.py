@@ -67,31 +67,34 @@ def display_to_do():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = load_tasks_from_csv() 
+    tasks = load_tasks_from_csv()
     calculate_ects_percentage(tasks)
 
     for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
 
-           # Handle cases where remaining_hours might be None
-        remaining_hours = tasks.get('remaining_hours')
-        if remaining_hours is None:
-            task_name = tasks['name']
-            task_time = tasks['time']
+        for task in day_tasks:  # Make sure task is defined in this loop
+            task_name = task['name']
+            task_time = task['time']
+
+            # Handle cases where remaining_hours might be None
+            remaining_hours = task.get('remaining_hours')
+            if remaining_hours is None:
                 # Recalculate remaining hours if not available
-            task_ects = float(tasks['ects'])
-            task_percentage = float(tasks['percentage'])
-            total_ects = round(task_ects * (task_percentage / 100), 2)
-            remaining_hours = total_ects * 30  # Multiply ECTS by 30 to estimate work hours
- 
+                task_ects = float(task['ects'])
+                task_percentage = float(task['percentage'])
+                total_ects = round(task_ects * (task_percentage / 100), 2)
+                remaining_hours = total_ects * 30  # Multiply ECTS by 30 to estimate work hours
+
             # Check if task is completed
-        if tasks.get('completed', False):
+            if task.get('completed', False):
                 st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task_time}</span>", unsafe_allow_html=True)
-        else:
-                overdue = datetime.strptime(tasks['due_date'], '%Y-%m-%d') < datetime.now()
+            else:
+                overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
+
     
                     
                     
