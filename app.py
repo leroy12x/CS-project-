@@ -67,7 +67,7 @@ def display_to_do():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = load_tasks_from_csv() 
+    tasks = load_tasks_from_csv()
     calculate_ects_percentage(tasks)
 
     for day, day_tasks in tasks.items():
@@ -76,13 +76,17 @@ def display_to_do():
         for task in day_tasks:
             task_name = task['name']
             task_time = task['time']
-            # Ensure 'ects' and 'percentage' are converted to numbers
-            task_ects = float(task['ects'])
-            task_percentage = float(task['percentage'])
-            task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
 
-            ects_task = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
- 
+            # Check if 'remaining_hours' key exists in the task, otherwise calculate
+            if 'remaining_hours' in task:
+                remaining_hours = task['remaining_hours']
+            else:
+                # Ensure 'ects' and 'percentage' are converted to numbers
+                task_ects = float(task['ects'])
+                task_percentage = float(task['percentage'])
+                task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
+                remaining_hours = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
+
             # Check if task is completed
             if task.get('completed', False):
                 st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task_time}</span>", unsafe_allow_html=True)
@@ -90,7 +94,8 @@ def display_to_do():
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
+                st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
+
     
                     
                     
