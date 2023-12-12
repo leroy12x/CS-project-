@@ -124,12 +124,8 @@ def display_task_manager():
     task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")      
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
-    
-    if st.markdown(
-    f'<button style="background-color: green; color: white;">Add Task</button>',
-    unsafe_allow_html=True,
-    key="add_task_button"
-    ):    
+    if st.button("Add Task"):
+        
            
         tasks = load_tasks_from_csv()
         start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Just time component
@@ -400,7 +396,30 @@ def display_work_done():
             save_tasks_to_csv(tasks)
             st.success(f"Updated remaining work hours for '{selected_task_details['name']}' to {remaining_hours} hours.")
 
+# Function to create a styled button
+def styled_button(label):
+    return f"<button style='background-color: green; color: white;'>{label}</button>"
 
+# Use styled buttons in the UI
+if st.button(styled_button("Add Task")):
+    # Add Task logic
+    pass
+
+if st.button(styled_button("Mark as Completed")):
+    # Mark as Completed logic
+    pass
+
+if st.button(styled_button("Update Task")):
+    # Update Task logic
+    pass
+
+if st.button(styled_button("Delete Task")):
+    # Delete Task logic
+    pass
+
+if st.button(styled_button("Record Work")):
+    # Record Work logic
+    pass
 
 def initialize_session_state():
     if 'tasks' not in st.session_state:
