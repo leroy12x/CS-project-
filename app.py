@@ -98,7 +98,6 @@ def display_task_ects_estimate():
                     
                     
         
-        
                 
 def display_task_manager():
     st.title("Create Tasks")  # Renamed from "Task Manager"
@@ -111,8 +110,7 @@ def display_task_manager():
     task_name = st.text_input("Enter Task Name",placeholder=placeholder_text_name, key="task_name")
     task_description = st.text_input("Enter Task Description", key="task_description")
     placeholder_text_ects = "Leave blank when you have a COURSE ID"
-    task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")
-    task_id = st.text_input("Enter COURSE ID ", key="task_id")         
+    task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")      
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
     if st.button("Add Task"):
@@ -124,27 +122,29 @@ def display_task_manager():
         task_percentage = int(task_percentage)
         if task_ects and task_ects.strip():
             task_ects = int(task_ects)
+<<<s<<<< HEAD
+        if task_name is not None: 
+            events_df = get_events_by_term(semester_id)
+=======
         if task_id is not None: 
-            events_df = get_events_by_term(title)
+            events_df = get_events_by_term(semester_id)
+>>>>>>> d687c7a9d9ffaac3db703e3bb2db9c2d893b9f87
             # Filter events by the provided course ID
             if not events_df.empty:
                 # Ensure the course_id is a string and remove any leading/trailing whitespace
-                course_id = str(task_id).strip()
+                course_name = str(task_name).strip()
 
                 # Attempt to match the course ID as an integer if it is numeric
-                if course_id.isdigit():
-                    course_id = int(course_id)
-                    course_events = events_df[events_df['id'] == course_id]
-                    title_list = course_events['title'].tolist()
-                    if title_list and isinstance(title_list[0], str):
-                        task_name = title_list[0]  # Set the title as task name
+                if course_name:
+                    course_events = events_df[events_df['title'] == course_name]
+                     # Set the title as task name
                     max_credits_list = course_events['maxCredits'].tolist()
                     if max_credits_list: #and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
                         task_ects = (int(max_credits_list[0][0])/100) # Set maxCredits as ECTS
                     else:
-                        st.error(f"No maxCredits found for Course ID: {course_id}")
+                        st.error(f"No maxCredits found for Course name: {course_name}")
                 else:
-                    st.error(f"No events found for Course ID: {course_id}")
+                    st.error(f"No events found for Course name: {course_name}")
             else:
                 st.error("No events data available.")
         else:
