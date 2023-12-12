@@ -122,13 +122,8 @@ def display_task_manager():
         task_percentage = int(task_percentage)
         if task_ects and task_ects.strip():
             task_ects = int(task_ects)
-<<<s<<<< HEAD
         if task_name is not None: 
             events_df = get_events_by_term(semester_id)
-=======
-        if task_id is not None: 
-            events_df = get_events_by_term(semester_id)
->>>>>>> d687c7a9d9ffaac3db703e3bb2db9c2d893b9f87
             # Filter events by the provided course ID
             if not events_df.empty:
                 # Ensure the course_id is a string and remove any leading/trailing whitespace
