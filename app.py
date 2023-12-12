@@ -81,7 +81,7 @@ def display_task_ects_estimate():
             task_percentage = float(task['percentage'])
             task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
 
-            ects_task = task['total_ects'] * 30  # Multiply ECTS by 20 to estimate work hours
+            ects_task = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
 
             # Check if task is completed
             if task.get('completed', False):
@@ -90,7 +90,8 @@ def display_task_ects_estimate():
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
+                st.write(f"Estimated Remaining Work Hours: {remaining_hours
+                                                            } hours")
                     
                     
         
@@ -333,9 +334,11 @@ def display_weekly_calendar():
                         due_date = datetime.strptime(task['due_date'], '%Y-%m-%d')
                         overdue = due_date < today
                         completed = task.get('completed', False)  # Access the completed status
-                        
+                        task_ects = float(task['ects'])
+                        task_percentage = float(task['percentage'])
+                        task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
                         # Task description with time, name, and other details
-                        task_display = f"{task['time']} - {task['name']}: {task['description']} (ECTS: {task['ects']}, Percentage: {task['percentage']})"
+                        task_display = f"{task['time']} - {task['name']}: {task['description']} (ECTS: {task['total_ects']}, Percentage: {task['percentage']})"
                         
                         # Apply color styling based on the task status
                         if completed:
