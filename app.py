@@ -186,7 +186,7 @@ def save_tasks_to_csv(tasks):
     # Use .get('completed', False) to safely access the 'completed' status with a default of False
     df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed', '_'])
+                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
     df.to_csv('tasks3.csv', index=False)
 
 
@@ -207,9 +207,7 @@ def load_tasks_from_csv():
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
                 'due_date': row['Due Date'],
-                '_': row['_'],
                 'completed': row.get('Completed', False)  # Use get() method for safe access
-                
             }
             if date_key in tasks:
                 tasks[date_key].append(task_info)
