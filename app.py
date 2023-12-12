@@ -63,6 +63,15 @@ def get_events_by_term(term_id):
   # Load tasks from CSV if they exist, else initialize as empty dictionary
 
 
+def mark_as_completed(task_description, day):
+    # Update the 'completed' status in the session state
+    for task in st.session_state.tasks[day]:
+        if task['description'] == task_description:
+            task['completed'] = True
+            break
+    # Save the updated tasks to CSV
+    save_tasks_to_csv(st.session_state.tasks)
+
 def display_to_do():
     load_tasks_from_csv()  # Initialize session state
 
@@ -77,7 +86,6 @@ def display_to_do():
             task_name = task['name']
             task_time = task['time']
             due_date_str = task['due_date']
-            task_key = f"{task_name}_{due_date_str}"
 
             # Handle cases where remaining_hours might be None
             remaining_hours = task.get('remaining_hours')
@@ -95,12 +103,10 @@ def display_to_do():
                 color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
                 st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
-            if not task.get('completed', False):
-                if st.button(f"Mark as Completed", key=task_key):
-                    mark_as_completed(task_name, due_date_str)
-                    task['completed'] = True  # Setze den Status der Aufgabe auf abgeschlossen
-                    save_tasks_to_csv(tasks)  # Speichere die aktualisierten Aufgaben
-                    st.experimental_rerun()  # Seite neu laden, um Änderungen anzuzeigen
+
+                # Button to mark task as completed
+                if st.button(f"Complete {task_name}", key=f"complete_{task_name}_{day}"):
+                    mark_as_completed(task_name, day) # Seite neu laden, um Änderungen anzuzeigen
 
                 #
 
