@@ -288,7 +288,7 @@ def mark_as_completed(task_name, due_date):
            if task['name'] == task_name and task['due_date'] == due_date:
                 task['completed'] = True
                 save_tasks_to_csv(st.session_state.tasks)  # Save the updated tasks
-                break
+                
 
 
 
