@@ -129,7 +129,7 @@ def display_task_manager():
             # Filter events by the provided course ID
             if not events_df.empty:
                 # Ensure the course_id is a string and remove any leading/trailing whitespace
-                course_id = int(task_id).strip()
+                course_id = str(task_id).strip()
 
                 # Attempt to match the course ID as an integer if it is numeric
                 if course_id.isdigit():
