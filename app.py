@@ -125,7 +125,7 @@ def display_task_manager():
         if task_ects and task_ects.strip():
             task_ects = int(task_ects)
         if task_id is not None:
-            term_id = task_id
+            term_id = task_id # das war es glaube ich 
             events_df = get_events_by_term(term_id)
             # Filter events by the provided course ID
             if not events_df.empty:
@@ -138,7 +138,7 @@ def display_task_manager():
                     course_events = events_df[events_df['id'] == course_id]
                     title_list = course_events['title'].tolist()
                     if title_list and isinstance(title_list[0], str):
-                        task_name = title_list[0]  # Set the title as task description
+                        task_name = title_list[0]  # Set the title as task name
                     max_credits_list = course_events['maxCredits'].tolist()
                     if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
                         task_ects = (int(max_credits_list[0][0])/100) # Set maxCredits as ECTS
@@ -270,16 +270,30 @@ def edit_tasks():
                 del tasks[selected_date_key]
             save_tasks_to_csv(tasks)
             st.success("Task deleted successfully!")
+        
+        
+        
+        
+            
+
+
+                    
 
 
 
- 
-def mark_as_completed(task_description, day):
-    for task in st.session_state.tasks[day]:
-            if task['description'] == task_description:
+    # Function to handle marking tasks as completed
+def mark_as_completed(task_name, due_date):
+    for day, day_tasks in st.session_state.tasks.items():
+        for task in day_tasks:
+           if task['name'] == task_name and task['due_date'] == due_date:
                 task['completed'] = True
+                save_tasks_to_csv(st.session_state.tasks)  # Save the updated tasks
                 break
-    save_tasks_to_csv(st.session_state.tasks)
+
+
+
+
+
 
     # Display tasks with color coding
     for day, day_tasks in st.session_state.tasks.items():
@@ -290,13 +304,12 @@ def mark_as_completed(task_description, day):
             if task.get('completed', False):
                 # Completed tasks in green
                 st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
-                    mark_as_completed(task['description'], day)
             else:
                 # Pending tasks in default color or red if overdue
                 color = "red" if overdue else "black"
                 st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-            
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
+                    mark_as_completed(task['description'], day)
 
 
 
@@ -366,4 +379,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
