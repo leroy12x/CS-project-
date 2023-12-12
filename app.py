@@ -76,7 +76,7 @@ def display_to_do():
         if task.get('completed', False):
                 # Completed tasks in green
                 st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
-            else:
+        else:
 
                 for task in day_tasks:
                     task_name = task['name']
