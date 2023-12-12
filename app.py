@@ -78,8 +78,9 @@ def display_to_do():
             task_time = task['time']
 
             # Handle cases where remaining_hours might be None
-            remaining_hours = task.get('remaining_hours')
+            remaining_hours = task['remaining_hours']
              # Multiply ECTS by 30 to estimate work hours
+             
 
             # Check if task is completed
             if task.get('completed', False):
@@ -147,7 +148,8 @@ def display_task_manager():
             'name': task_name,
             'ects': task_ects,
             'percentage': task_percentage,
-            'due_date': task_due_date.strftime('%Y-%m-%d'),  # Format the date
+            'due_date': task_due_date.strftime('%Y-%m-%d'), 
+            'remaining_hours':(task_ects*task_percentage)*30, # Format the date
             'completed': False  # Correctly placed inside task_info
         }
 
