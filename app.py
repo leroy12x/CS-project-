@@ -118,7 +118,7 @@ def display_task_manager():
         start_date_time = get_datetime_on_date(task_due_date, start_time)
         task_percentage = int(task_percentage)
         if task_ects and task_ects.strip():
-            task_ects = int(task_ects)
+            task_ects = float(task_ects)
         if task_name is not None: 
             events_df = get_events_by_term(semester_id)
             # Filter events by the provided course ID
