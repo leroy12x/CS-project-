@@ -400,7 +400,7 @@ def main():
         edit_tasks()
     elif app_mode == "Weekly Calendar":
         display_weekly_calendar()
-    else app_mode == "Record Work":
+    elif app_mode == "Record Work":
         display_work_done()
 
 
