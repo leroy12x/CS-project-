@@ -279,7 +279,7 @@ def mark_as_completed(task_description, day):
             if task['description'] == task_description:
                 task['completed'] = True
                 break
-        save_tasks_to_csv(st.session_state.tasks)
+    save_tasks_to_csv(st.session_state.tasks)
 
     # Display tasks with color coding
     for day, day_tasks in st.session_state.tasks.items():
