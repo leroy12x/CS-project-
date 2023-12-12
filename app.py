@@ -89,12 +89,8 @@ def display_task_ects_estimate():
             else:
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "black"
-                st.markdown(f"<span style='color: {color};'>{task_name} ({ects_task} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                
-                # Display ECTS and estimated remaining work hours
-                st.write(f"{task['name']}({task['description']})")
-                st.write(f"ECTS: {task['total_ects']}")
-                st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
+                st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
+            
                     
                     
         
@@ -354,7 +350,8 @@ def display_weekly_calendar():
 # Anpassung der main-Funktion, um die neue Funktion aufzurufen
 
 # Function to fetch current semester information
-
+def work_done():
+    st.title("")  # Renamed from "Task Manager"
 
 
 
