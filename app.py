@@ -387,7 +387,7 @@ def display_work_done():
             
             # Save the updated tasks
             save_tasks_to_csv(tasks)
-            st.success(f"Updated remaining work hours for '{selected_task_details['name']}' to {remaining_hours} hours.")
+            st.success(f"Updated remaining work hours for '{selected_task_details['name']}' to {ects_task} hours.")
 
 
 
