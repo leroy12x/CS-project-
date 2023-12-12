@@ -67,19 +67,12 @@ def display_task_ects_estimate():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = load_tasks_from_csv()
+    tasks = load_tasks_from_csv() 
+    calculate_ects_percentage(tasks)
 
-    # Sort tasks by date in ascending order
-    sorted_tasks = {}
-    for key in sorted(tasks.keys()):
-        sorted_tasks[key] = tasks[key]
-
-    for day, day_tasks in sorted_tasks.items():
+    for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
 
-        # Sort tasks for the day by time in ascending order
-        day_tasks = sorted(day_tasks, key=lambda x: (datetime.strptime(x['due_date'], '%Y-%m-%d'), datetime.strptime(x['time'], '%H:%M')))
-        
         for task in day_tasks:
             task_name = task['name']
             
@@ -132,7 +125,7 @@ def display_task_manager():
         if task_ects and task_ects.strip():
             task_ects = int(task_ects)
         if task_id is not None:
-            term_id = semester_id
+            term_id = task_id
             events_df = get_events_by_term(term_id)
             # Filter events by the provided course ID
             if not events_df.empty:
