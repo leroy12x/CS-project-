@@ -290,12 +290,13 @@ def mark_as_completed(task_description, day):
             if task.get('completed', False):
                 # Completed tasks in green
                 st.markdown(f"<span style='color: green;'>{task['description']} - Completed on: {task['due_date']}</span>", unsafe_allow_html=True)
+                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
+                    mark_as_completed(task['description'], day)
             else:
                 # Pending tasks in default color or red if overdue
                 color = "red" if overdue else "black"
                 st.markdown(f"<span style='color: {color};'>{task['description']} - Due: {task['due_date']}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                if st.button(f"Mark as Completed", key=f"complete_{task['description']}_{day}"):
-                    mark_as_completed(task['description'], day)
+            
 
 
 
