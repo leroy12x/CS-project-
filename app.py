@@ -73,15 +73,14 @@ def display_to_do():
     for day, day_tasks in tasks.items():
         st.subheader(f"Tasks for {day}")
 
-        for task in day_tasks:
-            task_name = task['name']
-            task_time = task['time']
-            # Ensure 'ects' and 'percentage' are converted to numbers
-            task_ects = float(task['ects'])
-            task_percentage = float(task['percentage'])
-            task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
-
-            ects_task = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
+           # Handle cases where remaining_hours might be None
+            remaining_hours = task.get('remaining_hours')
+            if remaining_hours is None:
+                # Recalculate remaining hours if not available
+                task_ects = float(task['ects'])
+                task_percentage = float(task['percentage'])
+                total_ects = round(task_ects * (task_percentage / 100), 2)
+                remaining_hours = total_ects * 30  # Multiply ECTS by 30 to estimate work hours
  
             # Check if task is completed
             if task.get('completed', False):
@@ -175,10 +174,16 @@ def get_datetime_on_date(date, time):
 
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
-    # Use .get('completed', False) to safely access the 'completed' status with a default of False
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
-                       for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
+    df = pd.DataFrame([
+        (
+            key[0], key[1], key[2], 
+            task['time'], task['name'], task['description'], 
+            task['ects'], task['percentage'], task['due_date'], 
+            task.get('completed', False), task.get('remaining_hours', None)  # Added remaining_hours
+        )
+        for key, tasks_list in tasks.items() for task in tasks_list
+    ], columns=['Year', 'Month', 'Day', 'Time', 'Name', 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed', 'Remaining Hours'])  # Added 'Remaining Hours' column
+
     df.to_csv('tasks3.csv', index=False)
 
 
@@ -194,12 +199,13 @@ def load_tasks_from_csv():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
             task_info = {
                 'time': row['Time'],
-                'name':row['Name'],
+                'name': row['Name'],
                 'description': row['Description'],
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
                 'due_date': row['Due Date'],
-                'completed': row.get('Completed', False)  # Use get() method for safe access
+                'completed': row.get('Completed', False),
+                'remaining_hours': row.get('Remaining Hours')  # Load remaining_hours
             }
             if date_key in tasks:
                 tasks[date_key].append(task_info)
@@ -208,6 +214,7 @@ def load_tasks_from_csv():
         return tasks
     except FileNotFoundError:
         return {}
+
 
 
 
