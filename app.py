@@ -74,7 +74,7 @@ def display_to_do():
         st.subheader(f"Tasks for {day}")
 
            # Handle cases where remaining_hours might be None
-            remaining_hours = task.get('remaining_hours')
+        remaining_hours = task.get('remaining_hours')
             if remaining_hours is None:
                 # Recalculate remaining hours if not available
                 task_ects = float(task['ects'])
