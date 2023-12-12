@@ -155,7 +155,7 @@ def display_task_manager():
             'percentage': task_percentage,
             'due_date': task_due_date.strftime('%Y-%m-%d'),  # Format the date
             'completed': False 
-            'remaining_houres' : (task_ects*task_percentage)*30# Correctly placed inside task_info
+            'remaining_houres': (task_ects*task_percentage)*30# Correctly placed inside task_info
         }
 
         date_key = (start_date_time.year, start_date_time.month, start_date_time.day)
@@ -182,10 +182,10 @@ def get_datetime_on_date(date, time):
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
     # Use .get('completed', False) to safely access the 'completed' status with a default of False
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed',task['remaining_houres'] False))
+    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed') False,task['remaining_houres'])
                        for key, tasks_list in tasks.items() for task in tasks_list],
                       columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed','remaining_houres'])
-    df.to_csv('tasks3.csv', index=False)
+    df.to_csv('tasks4.csv', index=False)
 
 
 
@@ -194,7 +194,7 @@ def save_tasks_to_csv(tasks):
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
     try:
-        df = pd.read_csv('tasks3.csv')
+        df = pd.read_csv('tasks4.csv')
         tasks = {}
         for _, row in df.iterrows():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
