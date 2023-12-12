@@ -392,14 +392,14 @@ def display_work_done():
             task_percentage = float(selected_task_details['percentage'])
             total_ects = round(task_ects * (task_percentage / 100), 2)
             estimated_hours = total_ects * 30  # ECTS to hours
-            ects_task = max(0, estimated_hours - hours_worked)  # Ensure it doesn't go below zero
+            remaining_hours = max(0, estimated_hours - hours_worked)  # Ensure it doesn't go below zero
 
             # Update task info
-            selected_task_details['ects'] -= (ects_task/30)
+            selected_task_details['remaining_hours'] = remaining_hours
             
             # Save the updated tasks
             save_tasks_to_csv(tasks)
-            st.success(f"Updated remaining work hours for '{selected_task_details['name']}' to {ects_task} hours.")
+            st.success(f"Updated remaining work hours for '{selected_task_details['name']}' to {remaining_hours} hours.")
 
 
 
