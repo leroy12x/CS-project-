@@ -154,7 +154,8 @@ def display_task_manager():
             'ects': task_ects,
             'percentage': task_percentage,
             'due_date': task_due_date.strftime('%Y-%m-%d'),  # Format the date
-            'completed': False  # Correctly placed inside task_info
+            'completed': False 
+            'remaining_houres' : (task_ects*task_percentage)*30# Correctly placed inside task_info
         }
 
         date_key = (start_date_time.year, start_date_time.month, start_date_time.day)
@@ -181,9 +182,9 @@ def get_datetime_on_date(date, time):
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
     # Use .get('completed', False) to safely access the 'completed' status with a default of False
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
+    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed',task['remaining_houres'] False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
+                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed','remaining_houres'])
     df.to_csv('tasks3.csv', index=False)
 
 
@@ -204,7 +205,8 @@ def load_tasks_from_csv():
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
                 'due_date': row['Due Date'],
-                'completed': row.get('Completed', False)  # Use get() method for safe access
+                'completed': row.get('Completed', False) 
+                'remaining_houres': row['remaining_houres']# Use get() method for safe access
             }
             if date_key in tasks:
                 tasks[date_key].append(task_info)
@@ -381,14 +383,10 @@ def display_work_done():
         
         if st.button("Record Work"):
             # Calculate and update the remaining hours
-            task_ects = float(selected_task_details['ects'])
-            task_percentage = float(selected_task_details['percentage'])
-            total_ects = round(task_ects * (task_percentage / 100), 2)
-            estimated_hours = total_ects * 30  # ECTS to hours
-            ects_task = max(0, estimated_hours - hours_worked)  # Ensure it doesn't go below zero
+             # Ensure it doesn't go below zero
 
             # Update task info
-            selected_task_details['ects'] = (ects_task/30)
+            selected_task_details['remaining_houres'] -= hours_worked
             
             # Save the updated tasks
             save_tasks_to_csv(tasks)
