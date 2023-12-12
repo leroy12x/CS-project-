@@ -383,7 +383,7 @@ def display_work_done():
             ects_task = max(0, estimated_hours - hours_worked)  # Ensure it doesn't go below zero
 
             # Update task info
-            selected_task_details['ects_task'] = ects_task
+            selected_task_details['ects'] = ects_task
             
             # Save the updated tasks
             save_tasks_to_csv(tasks)
