@@ -141,6 +141,7 @@ def display_task_manager():
                     max_credits_list = course_events['maxCredits'].tolist()
                     if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
                         task_ects = (int(max_credits_list[0][0])/100)  # Set maxCredits as ECTS
+
                     else:
                         st.error(f"No maxCredits found for Course ID: {course_id}")
                 else:
