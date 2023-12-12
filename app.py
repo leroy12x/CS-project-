@@ -139,7 +139,7 @@ def display_task_manager():
                     title_list = course_events['title'].tolist()
                     if title_list and isinstance(title_list[0], str):
                         task_name = title_list[0]  # Set the title as task description
-                   max_credits_list = course_events['maxCredits'].tolist()
+                    max_credits_list = course_events['maxCredits'].tolist()
                     if max_credits_list and isinstance(max_credits_list[0], list) and len(max_credits_list[0]) > 0:
                         max_credits = int(max_credits_list[0][0])
                         st.write(max_credits) # Set maxCredits as ECTS
