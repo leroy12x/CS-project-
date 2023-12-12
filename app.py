@@ -149,7 +149,7 @@ def display_task_manager():
             'ects': task_ects,
             'percentage': task_percentage,
             'due_date': task_due_date.strftime('%Y-%m-%d'), 
-            'remaining_hours':(task_ects*task_percentage)*30, # Format the date
+            'remaining_hours':(task_ects*(task_percentage/100))*30, # Format the date
             'completed': False  # Correctly placed inside task_info
         }
 
