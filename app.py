@@ -62,9 +62,9 @@ def get_events_by_term(term_id):
 
   # Load tasks from CSV if they exist, else initialize as empty dictionary
 
-
 def display_to_do():
-    load_tasks_from_csv()  # Initialize session state
+    tasks = load_tasks_from_csv()
+    st.session_state.tasks = tasks   # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
     tasks = load_tasks_from_csv()
@@ -201,6 +201,7 @@ def save_tasks_to_csv(tasks):
     ], columns=['Year', 'Month', 'Day', 'Time', 'Name', 'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed', 'Remaining Hours'])  # Added 'Remaining Hours' column
 
     df.to_csv('tasks3.csv', index=False)
+    return tasks
 
 
 
