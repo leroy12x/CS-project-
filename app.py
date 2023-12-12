@@ -90,8 +90,7 @@ def display_task_ects_estimate():
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                st.write(f"Estimated Remaining Work Hours: {remaining_hours
-                                                            } hours")
+                st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
                     
                     
         
