@@ -67,7 +67,7 @@ def display_to_do():
     load_tasks_from_csv()  # Initialize session state
 
     st.title("Tasks with ECTS and Time Estimates")
-    tasks = load_tasks_from_csv()
+    tasks = load_tasks_from_csv() 
     calculate_ects_percentage(tasks)
 
     for day, day_tasks in tasks.items():
@@ -76,17 +76,13 @@ def display_to_do():
         for task in day_tasks:
             task_name = task['name']
             task_time = task['time']
+            # Ensure 'ects' and 'percentage' are converted to numbers
+            task_ects = float(task['ects'])
+            task_percentage = float(task['percentage'])
+            task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
 
-            # Check if 'remaining_hours' key exists in the task, otherwise calculate
-            if 'remaining_hours' in task:
-                remaining_hours = task['remaining_hours']
-            else:
-                # Ensure 'ects' and 'percentage' are converted to numbers
-                task_ects = float(task['ects'])
-                task_percentage = float(task['percentage'])
-                task['total_ects'] = round(task_ects * (task_percentage / 100), 2)
-                remaining_hours = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
-
+            ects_task = task['total_ects'] * 30  # Multiply ECTS by 30 to estimate work hours
+ 
             # Check if task is completed
             if task.get('completed', False):
                 st.markdown(f"<span style='color: green;'>{task_name} - Completed on: {task_time}</span>", unsafe_allow_html=True)
@@ -94,8 +90,7 @@ def display_to_do():
                 overdue = datetime.strptime(task['due_date'], '%Y-%m-%d') < datetime.now()
                 color = "red" if overdue else "orange"
                 st.markdown(f"<span style='color: {color};'>{task_name} ({task['total_ects']} ECTS) - Due: {task_time}{' (Overdue)' if overdue else ''}</span>", unsafe_allow_html=True)
-                st.write(f"Estimated Remaining Work Hours: {remaining_hours} hours")
-
+                st.write(f"Estimated Remaining Work Hours: {ects_task} hours")
     
                     
                     
@@ -154,8 +149,7 @@ def display_task_manager():
             'ects': task_ects,
             'percentage': task_percentage,
             'due_date': task_due_date.strftime('%Y-%m-%d'),  # Format the date
-            'completed': False 
-            'remaining_houres': (task_ects*task_percentage)*30# Correctly placed inside task_info
+            'completed': False  # Correctly placed inside task_info
         }
 
         date_key = (start_date_time.year, start_date_time.month, start_date_time.day)
@@ -182,10 +176,10 @@ def get_datetime_on_date(date, time):
 # Function to save tasks to a CSV file
 def save_tasks_to_csv(tasks):
     # Use .get('completed', False) to safely access the 'completed' status with a default of False
-    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed') False,task['remaining_houres'])
+    df = pd.DataFrame([(key[0], key[1], key[2], task['time'],task['name'],task['description'], task['ects'], task['percentage'], task['due_date'], task.get('completed', False))
                        for key, tasks_list in tasks.items() for task in tasks_list],
-                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed','remaining_houres'])
-    df.to_csv('tasks4.csv', index=False)
+                      columns=['Year', 'Month', 'Day', 'Time', 'Name' ,'Description', 'ECTS', 'Percentage', 'Due Date', 'Completed'])
+    df.to_csv('tasks3.csv', index=False)
 
 
 
@@ -194,7 +188,7 @@ def save_tasks_to_csv(tasks):
 # Function to load tasks from a CSV file
 def load_tasks_from_csv():
     try:
-        df = pd.read_csv('tasks4.csv')
+        df = pd.read_csv('tasks3.csv')
         tasks = {}
         for _, row in df.iterrows():
             date_key = (int(row['Year']), int(row['Month']), int(row['Day']))
@@ -205,8 +199,7 @@ def load_tasks_from_csv():
                 'ects': row['ECTS'],
                 'percentage': row['Percentage'],
                 'due_date': row['Due Date'],
-                'completed': row.get('Completed', False) 
-                'remaining_houres': row['remaining_houres']# Use get() method for safe access
+                'completed': row.get('Completed', False)  # Use get() method for safe access
             }
             if date_key in tasks:
                 tasks[date_key].append(task_info)
@@ -383,10 +376,14 @@ def display_work_done():
         
         if st.button("Record Work"):
             # Calculate and update the remaining hours
-             # Ensure it doesn't go below zero
+            task_ects = float(selected_task_details['ects'])
+            task_percentage = float(selected_task_details['percentage'])
+            total_ects = round(task_ects * (task_percentage / 100), 2)
+            estimated_hours = total_ects * 30  # ECTS to hours
+            ects_task = max(0, estimated_hours - hours_worked)  # Ensure it doesn't go below zero
 
             # Update task info
-            selected_task_details['remaining_houres'] -= hours_worked
+            selected_task_details['ects'] -= (ects_task/30)
             
             # Save the updated tasks
             save_tasks_to_csv(tasks)
