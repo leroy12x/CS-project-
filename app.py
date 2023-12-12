@@ -124,8 +124,12 @@ def display_task_manager():
     task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")      
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
-    if st.button("Add Task"):
-        
+    
+    if st.markdown(
+    f'<button style="background-color: green; color: white;">Add Task</button>',
+    unsafe_allow_html=True,
+    key="add_task_button"
+    ):    
            
         tasks = load_tasks_from_csv()
         start_time = datetime.strptime(task_allocated_time, "%H:%M").time()  # Just time component
