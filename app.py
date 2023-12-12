@@ -79,12 +79,7 @@ def display_to_do():
 
             # Handle cases where remaining_hours might be None
             remaining_hours = task.get('remaining_hours')
-            if remaining_hours is None:
-                # Recalculate remaining hours if not available
-                task_ects = float(task['ects'])
-                task_percentage = float(task['percentage'])
-                total_ects = round(task_ects * (task_percentage / 100), 2)
-                remaining_hours = total_ects * 30  # Multiply ECTS by 30 to estimate work hours
+             # Multiply ECTS by 30 to estimate work hours
 
             # Check if task is completed
             if task.get('completed', False):
