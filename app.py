@@ -275,7 +275,7 @@ def edit_tasks():
 
  
 def mark_as_completed(task_description, day):
-        for task in st.session_state.tasks[day]:
+    for task in st.session_state.tasks[day]:
             if task['description'] == task_description:
                 task['completed'] = True
                 break
