@@ -351,7 +351,7 @@ def display_weekly_calendar():
 
 # Function to record hours worked and subtract them from the Estimated Remaining Work Hours
 def work_done():
-    st.title("Record Work Done")
+    st.title("Record Work")
 
     tasks = load_tasks_from_csv()  # Load existing tasks
 
@@ -400,6 +400,9 @@ def main():
         edit_tasks()
     elif app_mode == "Weekly Calendar":
         display_weekly_calendar()
+    elif app_mode == "Record Work":
+        work_done()
+
 
 if __name__ == "__main__":
     main()
