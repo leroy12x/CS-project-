@@ -404,7 +404,7 @@ def initialize_session_state():
 
 def main():
     initialize_session_state()
-    st.title("StudySprint")  # Insert the title here
+    st.sidebar.title("StudySprint")  # Insert the title here
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar","Record Work"])
 
