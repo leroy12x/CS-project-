@@ -405,7 +405,6 @@ def initialize_session_state():
 def main():
     # Initialize Streamlit page configuration with your desired title
     st.set_page_config(page_title="StudySprint", page_icon=":books:")  # You can change the page_icon as well
-    st.markdown("<h1><u>StudySprint</u></h1>", unsafe_allow_html=True)
     initialize_session_state()
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar","Record Work"])
