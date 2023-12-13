@@ -403,8 +403,6 @@ def initialize_session_state():
         st.session_state.tasks = load_tasks_from_csv()
 
 def main():
-    # Initialize Streamlit page configuration with your desired title
-    st.set_page_config(page_title="Study_Sprint", page_icon=":books:")
     initialize_session_state()
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar","Record Work"])
