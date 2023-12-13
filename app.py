@@ -106,9 +106,6 @@ def display_to_do():
 
 
     
-# Function to create a styled button
-def styled_button(label):
-    return f"<button style='background-color: green; color: white;'>{label}</button>"
                     
                     
         
@@ -127,9 +124,7 @@ def display_task_manager():
     task_ects = st.text_input("Enter ECTS Points",placeholder=placeholder_text_ects, key="task_ects")      
     task_percentage = st.text_input("Enter Percentage of Grade", key="task_percentage")
             
-    if st.button(styled_button("Add Task")):
-    # Add Task logic
-    
+    if st.button("Add Task"):
         
            
         tasks = load_tasks_from_csv()
