@@ -403,8 +403,8 @@ def initialize_session_state():
         st.session_state.tasks = load_tasks_from_csv()
 
 def main():
-    st.title("StudySprint")  # Insert the title here
     initialize_session_state()
+    st.title("StudySprint")  # Insert the title here
     st.sidebar.title("Navigation")
     app_mode = st.sidebar.selectbox("Choose a Page", ["Create Tasks", "To Do List", "Edit Tasks", "Weekly Calendar","Record Work"])
 
